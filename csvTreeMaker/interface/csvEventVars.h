@@ -30,14 +30,14 @@ typedef std::vector< TLorentzVector > vecTLorentzVector;
 
 const Int_t rNumSys = 3;
 
-struct csvEventVars{
+struct EventVars{
 
 
   //////////////////////////////////////////////////////////////////////////
   ///  Tree branches/leaves
   //////////////////////////////////////////////////////////////////////////
 
-  explicit csvEventVars(){ }
+  explicit EventVars() { }
 
   Int_t  PassDIL_;
 
@@ -106,6 +106,7 @@ struct csvEventVars{
   vecTLorentzVector jet_vect_TLV_[rNumSys];
   vdouble jet_CSV_[rNumSys];
   vint jet_flavour_[rNumSys];
+  vint jet_partonflavour_[rNumSys];
   vdouble jet_pt_[rNumSys];
   vdouble jet_eta_[rNumSys];
 
@@ -115,10 +116,10 @@ struct csvEventVars{
 };
 
 
-typedef std::vector<csvEventVars> vcsvEventVars;
+typedef std::vector<EventVars> vEventVars;
 
 
-void csvEventVars::initialize(){
+void EventVars::initialize(){
 
   PassDIL_ = 0;
 
@@ -190,6 +191,8 @@ void csvEventVars::initialize(){
     jet_pt_[iSys].clear();
     jet_eta_[iSys].clear();
     jet_flavour_[iSys].clear();
+    jet_partonflavour_[iSys].clear();
+
 
   }
 

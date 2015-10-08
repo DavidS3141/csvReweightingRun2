@@ -139,7 +139,7 @@ class csvTreeMaker : public edm::EDAnalyzer {
 
 
   TTree *worldTree;
-  csvEventVars *eve; 
+  EventVars *eve; 
 
   // EGammaMvaEleEstimatorCSA14* myMVATrig;
  
@@ -203,7 +203,7 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   edm::Service<TFileService> fs_;
   worldTree = fs_->make<TTree>("worldTree", "worldTree");
   eve=0; 
-  worldTree->Branch("eve.", "csvEventVars", &eve, 8000, 1);
+  worldTree->Branch("eve.", "EventVars", &eve, 8000, 1);
 
 
   nevents=0;
@@ -606,6 +606,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   ///////
   // Loop over systematics: nominal, JESUp, JESDown
   ///////
+  bool passingTwoJet = false;
   for( int iSys=0; iSys<3; iSys++ ){
 
 
@@ -643,8 +644,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     int numJet = int( selectedJets.size() );
     int numTag = int( selectedJets_tag.size() );
 
-    if (numJet != 2) return;    
-         
+    if (numJet != 2) continue; //return;    
+    passingTwoJet = true;
     // Get Corrected MET (propagating JEC and JER)
     std::vector<pat::Jet> oldJetsForMET = miniAODhelper.GetSelectedJets(*pfjets, 0., 999, jetID::jetMETcorrection, '-' );
     std::vector<pat::Jet> oldJetsForMET_uncorr = miniAODhelper.GetUncorrectedJets(oldJetsForMET);
@@ -665,13 +666,15 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<double> jet_ptV; /// non existing
     std::vector<double> jet_etaV;
     vint jet_flavour_vect;
+    vint jet_partonflavour_vect;
 
     // Loop over selected jets
     for( std::vector<pat::Jet>::const_iterator iJet = selectedJets.begin(); iJet != selectedJets.end(); iJet++ ){ 
 
       jet_ptV.push_back(iJet->pt());
       jet_etaV.push_back(iJet->eta());
-      jet_flavour_vect.push_back(iJet->partonFlavour());
+      jet_partonflavour_vect.push_back(iJet->partonFlavour());
+      jet_flavour_vect.push_back(iJet->hadronFlavour());
 
       // Get jet 4Vector and add to vecTLorentzVector for jets
       TLorentzVector jet0p4;	  
@@ -693,6 +696,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     eve->jet_pt_[iSys]        = jet_ptV;
     eve->jet_eta_[iSys]        = jet_etaV;
     eve->jet_flavour_[iSys]          = jet_flavour_vect;
+    eve->jet_partonflavour_[iSys]          = jet_partonflavour_vect;
 
 
     // Add lepton 4Vector quantities to MHT
@@ -740,7 +744,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
   // Fill tree if pass full selection
-  worldTree->Fill();
+  if(passingTwoJet) worldTree->Fill();
 
 }
 
