@@ -1,0 +1,7 @@
+<lcgdict>
+  <class name="EventVars" />
+  <class name="std::vector<EventVars>" />
+  <class pattern="edm::Wrapper<EventVars>"/>
+  <class name="edm::Wrapper<std::vector<EventVars> >" />
+
+</lcgdict>
