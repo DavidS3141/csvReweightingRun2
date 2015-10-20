@@ -120,7 +120,7 @@ class csvTreeMaker : public edm::EDAnalyzer {
   HLTConfigProvider hlt_config_;
 
   bool verbose_;
-
+  bool isData;
   const int insample_;
   const std::string sampleName_;
   const double xSec_;
@@ -140,7 +140,7 @@ class csvTreeMaker : public edm::EDAnalyzer {
 
   TTree *worldTree;
   EventVars *eve; 
-
+  TH1F* h_nEvents;
   // EGammaMvaEleEstimatorCSA14* myMVATrig;
  
   MiniAODHelper miniAODhelper;
@@ -204,7 +204,10 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   worldTree = fs_->make<TTree>("worldTree", "worldTree");
   eve=0; 
   worldTree->Branch("eve.", "EventVars", &eve, 8000, 1);
-
+  h_nEvents = fs_->make<TH1F>("nEvents", "nEvents", 3, 0, 3);
+  h_nEvents->GetXaxis()->SetBinLabel(1,"All");
+  h_nEvents->GetXaxis()->SetBinLabel(2,"Pos");
+  h_nEvents->GetXaxis()->SetBinLabel(3,"Neg");
 
   nevents=0;
   nevents_wgt=0;
@@ -221,7 +224,7 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   // intLumi_ = 20000;
 
   analysisType::analysisType iAnalysisType = analysisType::LJ;
-  bool isData = ( insample_<0 );
+  isData = ( insample_<0 );
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, isData);
 
@@ -281,7 +284,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByToken(beamspotToken,bsHandle);
 
   edm::Handle<reco::GenParticleCollection> mcparticles;
-  iEvent.getByToken(mcparicleToken,mcparticles);
+  if ( !isData ) iEvent.getByToken(mcparicleToken,mcparticles);
 
   edm::Handle<double> rhoHandle;
   iEvent.getByToken(rhoToken,rhoHandle);
@@ -293,10 +296,13 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByToken(puInfoToken,PupInfo);
 
   edm::Handle<GenEventInfoProduct> GenEventInfoHandle;
-  iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
+  if ( !isData ) iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
 
-  double GenEventInfoWeight = GenEventInfoHandle.product()->weight();
-
+  double GenEventInfoWeight = 1;
+  if ( !isData ) GenEventInfoWeight = GenEventInfoHandle.product()->weight();
+  h_nEvents->Fill(0.5);
+  if (GenEventInfoWeight > 0)   h_nEvents->Fill(1.5);
+  else   h_nEvents->Fill(2.5);
 
   edm::Handle<edm::TriggerResults> triggerResults;
   iEvent.getByToken(triggerResultsToken, triggerResults);
@@ -305,7 +311,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   bool passDoubleMuonTrigger = false;
   bool passElectronMuonTrigger = false;
 
-
+  vstring triggerPaths;
+  vint triggerAcceps;
   if( triggerResults.isValid() ){
     std::vector<std::string> triggerNames = hlt_config_.triggerNames();
 
@@ -316,6 +323,9 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       if( hltIndex >= triggerResults->size() ) continue;
 
       int accept = triggerResults->accept(hltIndex);
+      /// saving trigger infos in to vectors
+      triggerPaths.push_back(pathName);
+      triggerAcceps.push_back(accept);
 
       if( accept ){
 	if( pathName=="HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v1" ) passDoubleElectronTrigger = true;
@@ -330,6 +340,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
   }
 
+  eve->TriggerPaths_ = triggerPaths;
+  eve->TriggerAcceps_ = triggerAcceps;
   eve->passDoubleElectronTrigger_ = ( passDoubleElectronTrigger ) ? 1 : 0;
   eve->passDoubleMuonTrigger_     = ( passDoubleMuonTrigger ) ? 1 : 0;
   eve->passElectronMuonTrigger_   = ( passElectronMuonTrigger ) ? 1 : 0;
