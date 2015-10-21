@@ -208,9 +208,10 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 
   std::string treefilename = mySample_inputDir_ + "*.root";
+
   // std::string treefilename = mySample_inputDir_ + "csv_treeMaker*.root";
   // std::string treefilename = "test/csv_treeMaker*.root";
-
+  // std::string treefilename = "/afs/cern.ch/user/l/lwming/RunII/CMSSW_7_4_12/src/csvReweightingRun2/csvTreeMaker/test/MCcsv_treeMaker.root";
 
   std::string s_end = "_histo_" + str_jobN + ".root";
   if( Njobs==1 ) s_end = "_histo.root";
@@ -259,6 +260,8 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   TH1D* h_first_cjet_csv = new TH1D("h_first_cjet_csv",";first jet CSV", 102, -0.01, 1.01 );
   TH1D* h_first_lfjet_csv = new TH1D("h_first_lfjet_csv",";first jet CSV", 102, -0.01, 1.01 );
   TH1D* h_first_otherjet_csv = new TH1D("h_first_otherjet_csv",";first jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_first_otherjet_csv_ee = new TH1D("h_first_otherjet_csv_ee",";first jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_first_otherjet_csv_mm = new TH1D("h_first_otherjet_csv_mm",";first jet CSV", 102, -0.01, 1.01 );
 
 
   TH1D* h_first_jet_flavour = new TH1D("h_first_jet_flavour",";first jet flavour", 28, -6, 22 );
@@ -271,6 +274,14 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   TH1D* h_second_jet_flavour = new TH1D("h_second_jet_flavour",";second jet flavour", 28, -6, 22 );
   TH1D* h_second_jet_partonflavour = new TH1D("h_second_jet_partonflavour",";second jet parton flavour", 28, -6, 22 );
   TH2D* h_second_jet_flavour_hadron_vs_parton = new TH2D("h_second_jet_flavour_hadron_vs_parton",";hadron flavour;parton flavour", 28, -6, 22, 28, -6, 22 );
+
+  TH1D* h_second_bjet_csv = new TH1D("h_second_bjet_csv",";second jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_second_cjet_csv = new TH1D("h_second_cjet_csv",";second jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_second_lfjet_csv = new TH1D("h_second_lfjet_csv",";second jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_second_otherjet_csv = new TH1D("h_second_otherjet_csv",";second jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_second_otherjet_csv_ee = new TH1D("h_second_otherjet_csv_ee",";second jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_second_otherjet_csv_mm = new TH1D("h_second_otherjet_csv_mm",";second jet CSV", 102, -0.01, 1.01 );
+
 
   TH1D* h_dr_leplep  = new TH1D("h_dr_leplep",";dr leplep", 100, 0., 5 );
   TH1D* h_mass_leplep  = new TH1D("h_mass_leplep",";mass leplep", 100, 0., 500 );
@@ -414,6 +425,24 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
     chain->GetEntry(ievt);
     numEvents_all++;
+    //--- check all trigger paths 
+    // if (numEvents_all == 10) {
+    //   std::cout << "----------------------------" << std::endl;
+    //   std::cout << "----------------------------" << std::endl;
+    //   std::cout << "----------------------------" << std::endl;
+
+    //   vstring hlt_paths = eve->TriggerPaths_ ;
+    //   vint hlt_acceps = eve->TriggerAcceps_ ;
+    //   for( unsigned int iPath=0; iPath<hlt_paths.size(); iPath++ ){
+    // 	std::string pathName = hlt_paths[iPath];
+    // 	int accept = hlt_acceps[iPath];
+    // 	std::cout << "trigger path name " << pathName << " ; acceptance is " << accept  << std::endl;
+
+    //   }
+    //   std::cout << "----------------------------" << std::endl;
+    //   std::cout << "----------------------------" << std::endl;
+
+    // }
 
     //// --------- various weights: PU, topPt, triggerSF, leptonSF...
     // double  wgt_topPtSF = eve->wgt_topPt_;
@@ -733,7 +762,22 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     else if( abs(first_jet_partonflavour) == 4) h_first_cjet_csv->Fill(first_jet_csv, wgt);
     else  {
       if(abs(first_jet_partonflavour) != 0) h_first_lfjet_csv->Fill(first_jet_csv, wgt);
-      else  h_first_otherjet_csv->Fill(first_jet_csv, wgt);
+      else  {
+	h_first_otherjet_csv->Fill(first_jet_csv, wgt);
+	if (TwoElectron) h_first_otherjet_csv_ee->Fill(first_jet_csv, wgt);
+	else if (TwoMuon) h_first_otherjet_csv_mm->Fill(first_jet_csv, wgt);
+      }
+    }
+
+    if( abs(second_jet_partonflavour) == 5) h_second_bjet_csv->Fill(second_jet_csv, wgt);
+    else if( abs(second_jet_partonflavour) == 4) h_second_cjet_csv->Fill(second_jet_csv, wgt);
+    else  {
+      if(abs(second_jet_partonflavour) != 0) h_second_lfjet_csv->Fill(second_jet_csv, wgt);
+      else  {
+	h_second_otherjet_csv->Fill(second_jet_csv, wgt);
+	if (TwoElectron) h_second_otherjet_csv_ee->Fill(second_jet_csv, wgt);
+	else if (TwoMuon) h_second_otherjet_csv_mm->Fill(second_jet_csv, wgt);
+      }
     }
 
     h_dr_leplep->Fill(eve->dR_leplep_, wgt);
