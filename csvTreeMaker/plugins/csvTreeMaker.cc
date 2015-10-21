@@ -328,13 +328,13 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       triggerAcceps.push_back(accept);
 
       if( accept ){
-	if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*") !=std::string::npos ) passDoubleElectronTrigger = true;
+	if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passDoubleElectronTrigger = true;
 
-	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*") !=std::string::npos ||
-	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*") !=std::string::npos ) passDoubleMuonTrigger = true;
+	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") !=std::string::npos ) passDoubleMuonTrigger = true;
 
-	if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*") !=std::string::npos ||
-	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*") !=std::string::npos ) passElectronMuonTrigger = true;
+	if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ) passElectronMuonTrigger = true;
 	
       }
     }
