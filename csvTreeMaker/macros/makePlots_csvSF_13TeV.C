@@ -34,7 +34,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TFile *histFile = TFile::Open(inputFileName);
 
 
-  TString dirprefix = "Images/Images_2014_08_26_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2015_02_23_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
