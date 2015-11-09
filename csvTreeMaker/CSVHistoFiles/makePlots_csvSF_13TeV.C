@@ -34,7 +34,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TFile *histFile = TFile::Open(inputFileName);
 
 
-  TString dirprefix = "Images_2015_10_16_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images_2015_11_3_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -54,11 +54,13 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TH1D* h_MC_nonb_jet_csv[nPt][nEta];
 
   /////
-  int nCSVBins = 18; //Number of bins 
-  // double xBins_hf[19] = {-0.04, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
-  double xBins_hf[19] = {-0.04, 0.0, 0.3025, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
+  // int nCSVBins = 18; //Number of bins 
+  // // double xBins_hf[19] = {-0.04, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
+  // double xBins_hf[19] = {-0.04, 0.0, 0.3025, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
 
-
+  int nCSVBins = 22; //Number of bins 
+  // double xBins_hf[19] = {-10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
+  double xBins_hf[23] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
   if(!isHF) nCSVBins = 21;
   // double xBins_lf[22] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
   double xBins_lf[22] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.917, 0.944, 0.970, 0.975, 0.980, 0.985, 0.990, 0.995, 1.01};
@@ -110,6 +112,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 	h_csv_mc_nonb = (TH1D*)h_MC_nonb_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_lf );
       }
 
+      //// first and last bin; underflow/overflow
       h_csv_data->SetBinContent(1,h_Data_jet_csv[iPt][iEta]->GetBinContent(1));
       h_csv_data->SetBinError(1,h_Data_jet_csv[iPt][iEta]->GetBinError(1));
 
@@ -119,6 +122,20 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
       h_csv_mc_nonb->SetBinContent(1,h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(1));
       h_csv_mc_nonb->SetBinError(1,h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(1));
 
+      h_csv_data->SetBinContent(nCSVBins,h_Data_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_Data_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
+      h_csv_data->SetBinError(nCSVBins,sqrt(pow(h_Data_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_Data_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+
+      h_csv_mc_b->SetBinContent(nCSVBins,h_MC_b_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_MC_b_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
+      h_csv_mc_b->SetBinError(nCSVBins,sqrt(pow(h_MC_b_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_MC_b_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+
+      h_csv_mc_nonb->SetBinContent(nCSVBins,h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
+      h_csv_mc_nonb->SetBinError(nCSVBins,sqrt(pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+
+      //// normalize MC to data
+      h_csv_mc_b->Scale(h_csv_data->Integral() / (h_csv_mc_b->Integral() + h_csv_mc_nonb->Integral()));
+      h_csv_mc_nonb->Scale(h_csv_data->Integral() / (h_csv_mc_b->Integral() + h_csv_mc_nonb->Integral()));
+
+      ////
       h_csv_data->SetStats(0);
       //h_csv_data->GetXaxis()->SetRangeUser(0.0001, 1.001);
 

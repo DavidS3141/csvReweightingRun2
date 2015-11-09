@@ -41,10 +41,7 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-        '/store/data/Run2015D/MuonEG/MINIAOD/PromptReco-v3/000/256/676/00000/40DD7627-AD5F-E511-A969-02163E013930.root'
-#        '/store/mc/RunIISpring15DR74/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v2/00000/0AB045B5-BB0C-E511-81FD-0025905A60B8.root'
-#        '/store/mc/RunIISpring15DR74/ttHTobb_M125_13TeV_powheg_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/00000/141B9915-1F08-E511-B9FF-001E675A6AB3.root',
-#        '/store/user/puigh/TTHSync/ttjets_phys14_20bx25_withfatjets_v2.root'
+        '/store/data/Run2015D/MuonEG/MINIAOD/05Oct2015-v2/60000/106398EB-C173-E511-8746-0025905A60B0.root'
             )
 )
 

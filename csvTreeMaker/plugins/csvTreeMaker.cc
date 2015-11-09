@@ -141,6 +141,8 @@ class csvTreeMaker : public edm::EDAnalyzer {
   TTree *worldTree;
   EventVars *eve; 
   TH1F* h_nEvents;
+  TH1F* h_numPV;
+
   // EGammaMvaEleEstimatorCSA14* myMVATrig;
  
   MiniAODHelper miniAODhelper;
@@ -194,7 +196,7 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   beamspotToken = consumes <reco::BeamSpot> (edm::InputTag(std::string("offlineBeamSpot")));
   rhoToken = consumes <double> (edm::InputTag(std::string("fixedGridRhoFastjetAll")));
   mcparicleToken = consumes <reco::GenParticleCollection> (edm::InputTag(std::string("prunedGenParticles")));
-  puInfoToken = consumes <std::vector< PileupSummaryInfo > > (edm::InputTag(std::string("addPileupInfo")));
+  puInfoToken = consumes <std::vector< PileupSummaryInfo > > (edm::InputTag(std::string("slimmedAddPileupInfo"))); //
 
   genInfoProductToken = consumes <GenEventInfoProduct> (edm::InputTag(std::string("generator")));
   
@@ -208,6 +210,8 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   h_nEvents->GetXaxis()->SetBinLabel(1,"All");
   h_nEvents->GetXaxis()->SetBinLabel(2,"Pos");
   h_nEvents->GetXaxis()->SetBinLabel(3,"Neg");
+
+  h_numPV = fs_->make<TH1F>("numPVs", "numPVs", 50, 0, 50);
 
   nevents=0;
   nevents_wgt=0;
@@ -258,7 +262,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
   double minTightLeptonPt = 20.;
-  double looseLeptonPt = 20.;
+  double looseLeptonPt = 15.;//20.;
 
   edm::Handle<reco::VertexCollection> vtxHandle;
   iEvent.getByToken(vertexToken,vtxHandle);
@@ -293,7 +297,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   miniAODhelper.SetRho(rho_event);
 
   edm::Handle<std::vector< PileupSummaryInfo > > PupInfo;
-  iEvent.getByToken(puInfoToken,PupInfo);
+  if ( !isData ) iEvent.getByToken(puInfoToken,PupInfo);
 
   edm::Handle<GenEventInfoProduct> GenEventInfoHandle;
   if ( !isData ) iEvent.getByToken(genInfoProductToken,GenEventInfoHandle);
@@ -311,8 +315,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   bool passDoubleMuonTrigger = false;
   bool passElectronMuonTrigger = false;
 
-  vstring triggerPaths;
-  vint triggerAcceps;
+  // vstring triggerPaths;
+  // vint triggerAcceps;
   if( triggerResults.isValid() ){
     std::vector<std::string> triggerNames = hlt_config_.triggerNames();
 
@@ -324,8 +328,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       int accept = triggerResults->accept(hltIndex);
       /// saving trigger infos in to vectors
-      triggerPaths.push_back(pathName);
-      triggerAcceps.push_back(accept);
+      // triggerPaths.push_back(pathName);
+      // triggerAcceps.push_back(accept);
 
       if( accept ){
 	if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passDoubleElectronTrigger = true;
@@ -340,8 +344,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
   }
 
-  eve->TriggerPaths_ = triggerPaths;
-  eve->TriggerAcceps_ = triggerAcceps;
+  // eve->TriggerPaths_ = triggerPaths;
+  // eve->TriggerAcceps_ = triggerAcceps;
   eve->passDoubleElectronTrigger_ = ( passDoubleElectronTrigger ) ? 1 : 0;
   eve->passDoubleMuonTrigger_     = ( passDoubleMuonTrigger ) ? 1 : 0;
   eve->passElectronMuonTrigger_   = ( passElectronMuonTrigger ) ? 1 : 0;
@@ -398,6 +402,9 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   eve->numPVs_ = numpv;
 
+  if (GenEventInfoWeight > 0)   h_numPV->Fill(numpv, 1);
+  else   h_numPV->Fill(numpv, -1);
+
 
   double numTruePV = -1;
   double numGenPV = -1;
@@ -446,7 +453,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   ///
   ////////
   std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( *electrons, minTightLeptonPt, electronID::electronSpring15M, 2.4 );
-  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( *electrons, looseLeptonPt, electronID::electronSpring15L, 2.4 );
+  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( *electrons, looseLeptonPt, electronID::electronSpring15M, 2.4 );
 
   int numTightElectrons = int(selectedElectrons_tight.size());
   int numLooseElectrons = int(selectedElectrons_loose.size());// - numTightElectrons;
@@ -458,7 +465,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   ///
   ////////
   std::vector<pat::Muon> selectedMuons_tight = miniAODhelper.GetSelectedMuons( *muons, minTightLeptonPt, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.4 );
-  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( *muons, looseLeptonPt, muonID::muonLoose );
+  std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( *muons, looseLeptonPt, muonID::muonTight, coneSize::R04, corrType::deltaBeta, 2.4 );
+  // std::vector<pat::Muon> selectedMuons_loose = miniAODhelper.GetSelectedMuons( *muons, looseLeptonPt, muonID::muonLoose );
 
   int numTightMuons = int(selectedMuons_tight.size());
   int numLooseMuons = int(selectedMuons_loose.size());// - numTightMuons;
@@ -475,9 +483,9 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // 
   /////////////
 
-  // bool passDIL = ( (numTightMuons+numTightElectrons)>=1 &&
-  // 		   (numLooseMuons+numLooseElectrons)==2 );
-  bool passDIL = (numTightMuons + numTightElectrons) == 2;
+  bool passDIL = ( (numTightMuons+numTightElectrons)>=1 &&
+  		   (numLooseMuons+numLooseElectrons)==2 );
+  // bool passDIL = (numTightMuons + numTightElectrons) == 2; //old selections
 
   // Event must be DIL, as requested
   if( ! passDIL ) return;
@@ -487,12 +495,12 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   //// DIL subcategories: ee, mumu, emu
   int TwoMuon = 0, TwoElectron = 0, MuonElectron = 0; 
-  // if ( numTightMuons>=1 && numLooseMuons==2 && numLooseElectrons==0 ) TwoMuon = 1;
-  // if ( numTightElectrons>=1 && numLooseElectrons==2 && numLooseMuons==0 ) TwoElectron = 1;
-  // if ( (numTightMuons + numTightElectrons)>=1 && numLooseMuons==1 && numLooseElectrons==1 ) MuonElectron = 1;
-  if ( numTightMuons==2 && numTightElectrons==0 ) TwoMuon = 1;
-  if ( numTightElectrons==2 && numTightMuons==0 ) TwoElectron = 1;
-  if ( numTightMuons==1 && numTightElectrons==1 ) MuonElectron = 1;
+  if ( numTightMuons>=1 && numLooseMuons==2 && numLooseElectrons==0 ) TwoMuon = 1;
+  if ( numTightElectrons>=1 && numLooseElectrons==2 && numLooseMuons==0 ) TwoElectron = 1;
+  if ( (numTightMuons + numTightElectrons)>=1 && numLooseMuons==1 && numLooseElectrons==1 ) MuonElectron = 1;
+  // if ( numTightMuons==2 && numTightElectrons==0 ) TwoMuon = 1; //old selections
+  // if ( numTightElectrons==2 && numTightMuons==0 ) TwoElectron = 1;
+  // if ( numTightMuons==1 && numTightElectrons==1 ) MuonElectron = 1;
 
   eve->TwoMuon_ = TwoMuon;
   eve->TwoElectron_ = TwoElectron;
@@ -509,7 +517,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   sum_lepton_vect.SetPxPyPzE(0., 0., 0., 0.);
 
   ///// --- loop over muons
-  for( std::vector<pat::Muon>::const_iterator iMu = selectedMuons_tight.begin(); iMu != selectedMuons_tight.end(); iMu++ ){ 
+  for( std::vector<pat::Muon>::const_iterator iMu = selectedMuons_loose.begin(); iMu != selectedMuons_loose.end(); iMu++ ){ 
     // Get muon 4Vector and add to vecTLorentzVector for muons
     TLorentzVector leptonP4;  
     leptonP4.SetPxPyPzE(iMu->px(),iMu->py(),iMu->pz(),iMu->energy());
@@ -526,7 +534,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   ///// --- loop over electrons
-  for( std::vector<pat::Electron>::const_iterator iEle = selectedElectrons_tight.begin(); iEle != selectedElectrons_tight.end(); iEle++ ){ 
+  for( std::vector<pat::Electron>::const_iterator iEle = selectedElectrons_loose.begin(); iEle != selectedElectrons_loose.end(); iEle++ ){ 
     // Get electron 4Vector and add to vecTLorentzVector for electrons
     TLorentzVector leptonP4;	  
     leptonP4.SetPxPyPzE(iEle->px(),iEle->py(),iEle->pz(),iEle->energy());
@@ -598,7 +606,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Do jets stuff
   std::vector<pat::Jet> pfJets_ID = miniAODhelper.GetSelectedJets(*pfjets, 0., 999, jetID::jetLoose, '-');
   /// lepton-jet overlap cleanning, might change the input lepton collections in the future
-  std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_tight, selectedElectrons_tight, 0.4);
+  std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_loose, selectedElectrons_loose, 0.4);
 
   std::vector<pat::Jet> unCorrectedJets = miniAODhelper.GetUncorrectedJets(pfJets_ID_clean);
   std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(unCorrectedJets, iEvent, iSetup);

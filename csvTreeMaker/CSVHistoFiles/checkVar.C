@@ -51,14 +51,21 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   var_list.push_back("first_jet_eta");
   var_list.push_back("first_jet_csv");
   var_list.push_back("first_jet_flavour");
-  var_list.push_back("first_jet_partonflavour");
+  // var_list.push_back("first_jet_partonflavour");
 
 
   var_list.push_back("second_jet_pt");
   var_list.push_back("second_jet_eta");
   var_list.push_back("second_jet_csv");
   var_list.push_back("second_jet_flavour");
-  var_list.push_back("second_jet_partonflavour");
+  // var_list.push_back("second_jet_partonflavour");
+
+  var_list.push_back("met_pt");
+  var_list.push_back("mht_pt");
+  var_list.push_back("dr_leplep");
+  var_list.push_back("mass_leplep");
+
+  // var_list.push_back("numPV");
 
   for (int i=0; i< var_list.size(); i++){
     TString varName = var_list[i];
@@ -72,8 +79,12 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   TString flavor_file = (isHF) ? "hf" : "lf"; 
   flavor_file.ToLower();
 
-  TFile *fileTTJets = TFile::Open("csv_rwt_" + flavor_file + "_TTJets_v0_histo.root");
-  TFile *fileZJets = TFile::Open("csv_rwt_" + flavor_file + "_DYJetsToLL_v0_histo.root");
+  TFile *fileTTJets = TFile::Open("csv_rwt_" + flavor_file + "_ttjets_v0_histo.root");
+  TFile *fileZJets = TFile::Open("csv_rwt_" + flavor_file + "_zjets_v0_histo.root");
+  TFile *filetW = TFile::Open("csv_rwt_" + flavor_file + "_singletW_v0_histo.root");
+  TFile *filetbarW = TFile::Open("csv_rwt_" + flavor_file + "_singletbarW_v0_histo.root");
+
+
   TFile *fileData1 = TFile::Open("csv_rwt_" + flavor_file + "_DoubleEG_v0_histo.root");
   TFile *fileData2 = TFile::Open("csv_rwt_" + flavor_file + "_DoubleMuon_v0_histo.root");
   TFile *fileData3 = TFile::Open("csv_rwt_" + flavor_file + "_MuonEG_v0_histo.root");
@@ -82,11 +93,21 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   TString plotName = dirprefix + varName + flavor_file + ".png";
 
   TString h_var_Name = Form("h_%s",varName.Data());
- 
+
   TH1D* h_var_ttjets = (TH1D*)fileTTJets->Get(h_var_Name.Data())->Clone(h_var_Name+"_ttjets");
-  std::cout << "number of ttjets: " << h_var_ttjets->Integral() << std::endl;
+  int nBins = h_var_ttjets->GetNbinsX();
+  double norm_ttjets = h_var_ttjets->Integral( 0, 1+nBins );
+
   TH1D* h_var_zjets = (TH1D*)fileZJets->Get(h_var_Name.Data())->Clone(h_var_Name+"_zjets");
-  std::cout << "number of zjets: " << h_var_zjets->Integral() << std::endl;
+  double norm_zjets = h_var_zjets->Integral( 0, 1+nBins );
+
+  TH1D* h_var_tW = (TH1D*)filetW->Get(h_var_Name.Data())->Clone(h_var_Name+"_tW");
+  TH1D* h_var_tbarW = (TH1D*)filetbarW->Get(h_var_Name.Data())->Clone(h_var_Name+"_tbarW");
+  h_var_tW->Add(h_var_tbarW);
+  double norm_tW = h_var_tW->Integral( 0, 1+nBins );
+
+  double norm_mc = norm_ttjets + norm_zjets + norm_tW;
+
   TH1D* h_var_2 = (TH1D*)fileData1->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleEG");
   TH1D* h_var_3 = (TH1D*)fileData2->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleMuon");
   TH1D* h_var_4 = (TH1D*)fileData3->Get(h_var_Name.Data())->Clone(h_var_Name+"_MuonEG");
@@ -94,13 +115,19 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   TH1D* h_var_data = (TH1D*)h_var_2->Clone(h_var_Name+"_data");
   h_var_data->Add(h_var_3);
   h_var_data->Add(h_var_4);
+  double norm_data = h_var_data->Integral( 0, 1+nBins );
 
-  std::cout << "number of data: " << h_var_data->Integral() << std::endl;
+  std::cout << "number of ttjets: " << norm_ttjets << "; fraction is " << norm_ttjets/norm_mc << std::endl;
+  std::cout << "number of zjets: " << norm_zjets << "; fraction is " << norm_zjets/norm_mc << std::endl;
+  std::cout << "number of tW: " << norm_tW << "; fraction is " << norm_tW/norm_mc << std::endl;
+  std::cout << "number of data: " << norm_data << "; Data/MC ratio is " << norm_data/norm_mc << std::endl;
+
   ////
-  if( !varName.Contains ("flavour") ){
+  if( !varName.Contains ("flavour") && !varName.Contains ("numPV")){
     h_var_data->Rebin(4);
     h_var_ttjets->Rebin(4);
     h_var_zjets->Rebin(4);
+    h_var_tW->Rebin(4);
   }
   h_var_data->SetStats(0);
 
@@ -108,22 +135,27 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   
   h_var_ttjets->SetFillColor(kRed);
   h_var_zjets->SetFillColor(kGreen+1);
+  h_var_tW->SetFillColor(kPink+1);
   
   h_var_ttjets->SetLineColor(kRed);
   h_var_zjets->SetLineColor(kGreen+1);
+  h_var_tW->SetLineColor(kPink+1);
   
   h_var_data->SetLineWidth(2);
   h_var_ttjets->SetLineWidth(2);
   h_var_zjets->SetLineWidth(2);
+  h_var_tW->SetLineWidth(2);
 
   //
   THStack *hs = new THStack("hs","");
   hs->Add(h_var_ttjets);
   hs->Add(h_var_zjets);
+  hs->Add(h_var_tW);
 
   
   TH1D* h_var_mc = (TH1D*)h_var_ttjets->Clone(h_var_Name+"_mc");
   h_var_mc->Add(h_var_zjets);
+  h_var_mc->Add(h_var_tW);
 
   TH1D* myRatio = (TH1D*)h_var_data->Clone(h_var_Name+"_ratio");
   myRatio->Divide(h_var_mc);
@@ -141,6 +173,7 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   
   legend->AddEntry(h_var_ttjets,"ttjets","l");
   legend->AddEntry(h_var_zjets,"zjets","l");
+  legend->AddEntry(h_var_tW,"tW","l");
   legend->AddEntry(h_var_data,"data","l");
   
 
@@ -173,9 +206,11 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
 
 
     myC->cd(1);
-  h_var_data->Draw("pe1");
-  hs->Draw("histsame");
-  h_var_data->Draw("pe1same");
+    h_var_data->SetMaximum(1.03*TMath::Max(h_var_data->GetMaximum(), hs->GetMaximum()));
+
+    h_var_data->Draw("pe1");
+    hs->Draw("histsame");
+    h_var_data->Draw("pe1same");
   
   legend->Draw();
   // BinInfoLatex.Draw();
@@ -232,6 +267,58 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
 
   ///
   delete myC;
+
+  //////// PU reweighting
+  if (varName.Contains ("numPV")){
+
+    TFile histofile("PileUPReweighting.root","recreate");
+    histofile.cd();
+
+    h_var_2->SetLineColor(kBlue);
+    h_var_3->SetLineColor(kOrange-3);
+    // h_var_4->SetLineColor(kMagenta);
+
+    h_var_ttjets->Write();
+    h_var_zjets->Write();
+    h_var_tW->Write();
+    h_var_2->Write();
+    h_var_3->Write();
+    h_var_4->Write();
+
+    ///    
+    h_var_ttjets->Scale(1./h_var_ttjets->Integral(0, 1+nBins));
+    h_var_zjets->Scale(1./h_var_zjets->Integral(0, 1+nBins));
+    h_var_tW->Scale(1./h_var_tW->Integral(0, 1+nBins));
+
+    h_var_2->Scale(1./h_var_2->Integral(0, 1+nBins));
+    h_var_3->Scale(1./h_var_3->Integral(0, 1+nBins));
+    h_var_4->Scale(1./h_var_4->Integral(0, 1+nBins));
+
+    TCanvas* myCan = new TCanvas("myCan", "myCan", 600,500);
+    myCan->cd();
+
+    h_var_2->Draw();
+    h_var_3->Draw("same");
+    h_var_4->Draw("same");
+
+    h_var_ttjets->Draw("same");
+    h_var_zjets->Draw("same");
+    h_var_tW->Draw("same");
+
+    myCan->Print("numPV_compare.png");
+
+    ///
+    h_var_mc->Scale(1./h_var_mc->Integral(0, 1+nBins));
+    h_var_data->Scale(1./h_var_data->Integral(0, 1+nBins));
+
+    TH1D* myPU = (TH1D*)h_var_data->Clone(h_var_Name+"_PUratio");
+    myPU->Divide(h_var_mc);
+
+
+    myPU->Write();
+
+  }
+
 
   std::cout << "Done." << std::endl;
 
