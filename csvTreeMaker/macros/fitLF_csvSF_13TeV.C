@@ -31,7 +31,7 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2015_02_25_fitLF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images_2015_11_11_fitLF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -65,13 +65,20 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
   // double csvbins[] = {-10.0, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
   // double csvbins_new[] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
   // same as last round
-  int ncsvbins = 17;//21;//17;
-  double csvbins[] = {-10.0, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.949, 1.01};
-  double csvbins_new[] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.949, 1.01};
+  /// --- 8TeV
+  // // int ncsvbins = 17;//21;//17;
+  // // double csvbins[] = {-10.0, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.949, 1.01};
+  // // double csvbins_new[] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.949, 1.01};
   // // Rebin for stats
   // int ncsvbins = 15;//21;//17;
   // double csvbins[] = {-10.0, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.825, 0.949, 1.01};
   // double csvbins_new[] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.825, 0.949, 1.01};
+
+  ///------------ 13TeV
+  int ncsvbins = 13;//21;//17;
+  double csvbins[] = {-10.0, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 1.01};
+  double csvbins_new[] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 1.01};
+
 
   std::vector<TString> bin_name;
   std::vector<TString> hist_name;
@@ -99,7 +106,7 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
   int NumHists_normal = int( hist_name.size() );
   int numHists = NumHists_normal+2;
 
-  ofstream fit_result_file[NumHists_normal];
+  ofstream fit_result_file[12];//[NumHists_normal];
 
   TH1D* h_csv_ratio[numHists];
   TH1D* h_csv_ratio_HF[numHists];
@@ -225,6 +232,10 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
     h_csv_mc_nonb_temp0_HFUp->Scale( h_csv_data[iHist]->Integral() / ( useUp*h_csv_mc_b[iHist]->Integral() + h_csv_mc_nonb[iHist]->Integral() ) );
     h_csv_mc_nonb_temp0_HFDown->Scale( h_csv_data[iHist]->Integral() / ( useDown*h_csv_mc_b[iHist]->Integral() + h_csv_mc_nonb[iHist]->Integral() ) );
 
+    ///---- normalize MC to data
+    h_csv_mc_b[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + h_csv_mc_nonb[iHist]->Integral() ) );
+    h_csv_mc_nonb[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + h_csv_mc_nonb[iHist]->Integral() ) );
+
     h_csv_ratio[iHist]->Add(h_csv_mc_b[iHist],-1);
     h_csv_ratio_HFUp[iHist]->Add(h_csv_mc_b_temp0_HFUp,-useUp);
     h_csv_ratio_HFDown[iHist]->Add(h_csv_mc_b_temp0_HFDown,-useDown);
@@ -261,6 +272,10 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
   h_csv_mc_nonb_all_HFUp->Scale( h_csv_ratio_all->Integral() / (useUp*h_csv_mc_b_all->Integral() +  h_csv_mc_nonb_all->Integral()) );
   h_csv_mc_nonb_all_HFDown->Scale( h_csv_ratio_all->Integral() / (useDown*h_csv_mc_b_all->Integral() +  h_csv_mc_nonb_all->Integral()) );
+
+  ///---- normalize MC to data
+  h_csv_mc_b_all->Scale( h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  h_csv_mc_nonb_all->Integral()) );
+  h_csv_mc_nonb_all->Scale( h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  h_csv_mc_nonb_all->Integral()) );
 
   h_csv_ratio_all->Add(h_csv_mc_b_all,-1);
   h_csv_ratio_all_HFUp->Add(h_csv_mc_b_all_HFUp,-useUp);
@@ -354,7 +369,7 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
   //// pol6
   //TF1* f0 = new TF1("f0","[0] + [1]*x + [2]*x*x + [3]*x*x*x + [4]*x*x*x*x + [5]*x*x*x*x*x + [6]*x*x*x*x*x*x",0,0.95 );
-  TF1* f0 = new TF1("f0","[0] + x*([1] + x*([2] + x*([3] + x*([4] + x*([5] + x*[6])))))",0,0.95 );
+  TF1* f0 = new TF1("f0","[0] + x*([1] + x*([2] + x*([3] + x*([4] + x*([5] + x*[6])))))",0,0.9 );//0.95
 
   //// pol7
   //TF1* f0 = new TF1("f0","[0] + [1]*x + [2]*x*x + [3]*x*x*x + [4]*x*x*x*x + [5]*x*x*x*x*x + [6]*x*x*x*x*x*x + [7]*x*x*x*x*x*x",0,0.95 );
@@ -552,7 +567,7 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
 
     double firstPoint = 0;
-    double lastPoint  = 0.95;
+    double lastPoint  = 0.9;//0.95
     for( int iBin=0; iBin<n; iBin++ ){
       double center = h_csv_ratio_final[iHist]->GetBinCenter(iBin+1);
       if( center<0 ){
@@ -617,13 +632,13 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
     maxY = std::min( maxY, 5. );
 
     h_csv_ratio[iHist]->SetMaximum(maxY);
-    h_csv_ratio[iHist]->SetMinimum(0.4);
-
-    h_csv_ratio[iHist]->GetXaxis()->SetRangeUser(-0.041,0.9489);
+    h_csv_ratio[iHist]->SetMinimum(0.2);//0.4
+    //0.9489
+    h_csv_ratio[iHist]->GetXaxis()->SetRangeUser(-0.041,0.9489); 
 
 
     h_csv_ratio_final[iHist]->SetMaximum(maxY);
-    h_csv_ratio_final[iHist]->SetMinimum(0.4);
+    h_csv_ratio_final[iHist]->SetMinimum(0.2);//0.4
     h_csv_ratio_final[iHist]->GetXaxis()->SetRangeUser(-0.041,0.9489);
 
     TLegend *legend = new TLegend(0.2,0.75,0.77,0.89);
@@ -683,8 +698,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     TString img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_only.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_only.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_only.pdf";
+    // c1->Print(img);
 
 
 
@@ -698,8 +713,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_JES.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_JES.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_JES.pdf";
+    // c1->Print(img);
 
 
 
@@ -712,8 +727,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_HF.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_HF.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_HF.pdf";
+    // c1->Print(img);
 
 
 
@@ -726,8 +741,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats1.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats1.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats1.pdf";
+    // c1->Print(img);
 
 
 
@@ -740,8 +755,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats2.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats2.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats2.pdf";
+    // c1->Print(img);
 
 
     TH1D* h_ratio_Stats1Up = (TH1D*)h_csv_ratio_Stats1Up[iHist]->Clone("h_ratio_Stats1Up");
@@ -795,8 +810,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats1.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats1.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats1.pdf";
+    // c1->Print(img);
 
 
 
@@ -824,8 +839,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats2.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats2.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats2.pdf";
+    // c1->Print(img);
 
 
 
@@ -844,8 +859,8 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
 
     img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_All.png";
     c1->Print(img);
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_All.pdf";
-    c1->Print(img);
+    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_All.pdf";
+    // c1->Print(img);
 
 
 
