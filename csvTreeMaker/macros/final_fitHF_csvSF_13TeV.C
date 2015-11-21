@@ -2136,7 +2136,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
 	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
 
-	fit_result_file[iHist] << "3, iterativefit, up_cferr1, 0, " 
+	fit_result_file[iHist] << "3, iterativefit, up_cferr1, 1, " 
 			       << etaMin << ", " << etaMax << ", " 
 			       << ptMin << ", " << ptMax << ", " 
 			       << x1 << ", " << x2 << ", " 
@@ -2167,7 +2167,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
 	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
 
-	fit_result_file[iHist] << "3, iterativefit, down_cferr1, 0, " 
+	fit_result_file[iHist] << "3, iterativefit, down_cferr1, 1, " 
 			       << etaMin << ", " << etaMax << ", " 
 			       << ptMin << ", " << ptMax << ", " 
 			       << x1 << ", " << x2 << ", " 
@@ -2198,7 +2198,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
 	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
 
-	fit_result_file[iHist] << "3, iterativefit, up_cferr2, 0, " 
+	fit_result_file[iHist] << "3, iterativefit, up_cferr2, 1, " 
 			       << etaMin << ", " << etaMax << ", " 
 			       << ptMin << ", " << ptMax << ", " 
 			       << x1 << ", " << x2 << ", " 
@@ -2229,7 +2229,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
 	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
 
-	fit_result_file[iHist] << "3, iterativefit, down_cferr2, 0, " 
+	fit_result_file[iHist] << "3, iterativefit, down_cferr2, 1, " 
 			       << etaMin << ", " << etaMax << ", " 
 			       << ptMin << ", " << ptMax << ", " 
 			       << x1 << ", " << x2 << ", " 
