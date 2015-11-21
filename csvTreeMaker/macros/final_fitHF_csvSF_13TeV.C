@@ -112,12 +112,10 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 			      TString inputFileName_JESDown  = "infile.root", 
 			      int iterNum=0, TString dirPostFix = "" ){
 
-  ofstream fit_result_file;
-  fit_result_file.open ("fitResult_HF_csvSF_13TeV.txt");
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2015_11_03_fitHF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2015_11_20_fitHF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -132,7 +130,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   bool verbose = false;
   bool makePlots = true;
 
-  std::string histofilename = Form("csv_rwt_fit_hf_v%d_final_2015_11_03.root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_hf_v%d_final_2015_11_20.root",iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -149,17 +147,23 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   // double csvbins[] = {-10.0, 0.0, 0.244, 0.418, 0.592, 0.679, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
   // double csvbins_new[] = {-0.04, 0.0, 0.244, 0.418, 0.592, 0.679, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
   // Compare to old SFs
-  int ncsvbins = 18;
-  double csvbins[] = { -10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01 };
-  double csvbins_new[] = { -0.04, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01 };
+  // int ncsvbins = 18; // 8TeV
+  // double csvbins[] = { -10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01 };
+  // double csvbins_new[] = { -0.04, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01 };
 
+  int ncsvbins = 18; //13TeV
+  double csvbins[] = {-10.0, 0.0, 0.303, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
+  double csvbins_new[] = { -0.04, 0.0, 0.303, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
 
+  std::cout << " ==> test 0 " << std::endl;
+
+  std::vector<TString> bin_name;
   std::vector<TString> hist_name;
   std::vector<TString> data_hist_name;
   std::vector<TString> mc_b_hist_name;
   std::vector<TString> mc_nonb_hist_name;
 
-  int maxPt  = 6;
+  int maxPt  = 5;//6;
   int maxEta = 1;
 
   TString prefix_hist = ( iterNum < 3 ) ? "" : "h_"; 
@@ -168,14 +172,20 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     for( int iEta=0; iEta<maxEta; iEta++ ){
       hist_name.push_back( Form("csv_ratio_Pt%d_Eta%d", iPt, iEta) );
 
+      bin_name.push_back( Form("Pt%d_Eta%d", iPt, iEta) );
+
       data_hist_name.push_back( Form("%scsv_Data_Pt%d_Eta%d", prefix_hist.Data(), iPt, iEta) );
       mc_b_hist_name.push_back( Form("%scsv_MC_bjets_Pt%d_Eta%d", prefix_hist.Data(), iPt, iEta) );
       mc_nonb_hist_name.push_back( Form("%scsv_MC_nonbjets_Pt%d_Eta%d", prefix_hist.Data(), iPt, iEta) );
     }
   }
 
+  std::cout << " ==> test 1 " << std::endl;
+
   int NumHists_normal = int( hist_name.size() );
   int numHists = NumHists_normal+2;
+
+  ofstream *fit_result_file = new ofstream[NumHists_normal];
 
   TH1D* h_csv_ratio[numHists];
   TH1D* h_csv_ratio_LF[numHists];
@@ -206,6 +216,8 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   TH1D* h_csv_mc_b_JESDown[NumHists_normal];
   TH1D* h_csv_mc_nonb_JESDown[NumHists_normal];
 
+  std::cout << " ==> test 2 " << std::endl;
+
 
   TH1D* h_csv_data_all;
   TH1D* h_csv_mc_b_all;
@@ -219,14 +231,24 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   TH1D* h_csv_mc_b_all_JESDown;
   TH1D* h_csv_mc_nonb_all_JESDown;
 
+  std::cout << " ==> test 3 " << std::endl;
+
   for( int iHist=0; iHist<NumHists_normal; iHist++ ){
+
+  std::cout << " ==> test 4 " << std::endl;
+
     TH1D* h_csv_data_temp0 = (TH1D*)file->Get( data_hist_name[iHist] )->Clone( Form("h_%s_temp0",data_hist_name[iHist].Data()) );
+
+  std::cout << " ==> test 5 " << std::endl;
+
     TH1D* h_csv_mc_b_temp0 = (TH1D*)file->Get( mc_b_hist_name[iHist] )->Clone( Form("h_%s_temp0",mc_b_hist_name[iHist].Data()) );
     TH1D* h_csv_mc_nonb_temp0 = (TH1D*)file->Get( mc_nonb_hist_name[iHist] )->Clone( Form("h_%s_temp0",mc_nonb_hist_name[iHist].Data()) );
 
     TH1D* h_csv_data_temp0_rebin = (TH1D*)h_csv_data_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",data_hist_name[iHist].Data()),csvbins);
     TH1D* h_csv_mc_b_temp0_rebin = (TH1D*)h_csv_mc_b_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_b_hist_name[iHist].Data()),csvbins);
     TH1D* h_csv_mc_nonb_temp0_rebin = (TH1D*)h_csv_mc_nonb_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_nonb_hist_name[iHist].Data()),csvbins);
+
+  std::cout << " ==> test 6 " << std::endl;
 
     // JES up/down
     TH1D* h_csv_mc_b_JESUp_temp0 = (TH1D*)file_JESUp->Get( mc_b_hist_name[iHist] )->Clone( Form("h_%s_JESUp_temp0",mc_b_hist_name[iHist].Data()) );
@@ -306,18 +328,41 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     TH1D* h_csv_mc_nonb_temp0_LFUp = (TH1D*)h_csv_mc_nonb[iHist]->Clone(Form("h_csv_mc_nonb_temp0_LFUp_%d",iHist));
     TH1D* h_csv_mc_nonb_temp0_LFDown = (TH1D*)h_csv_mc_nonb[iHist]->Clone(Form("h_csv_mc_nonb_temp0_LFDown_%d",iHist));
 
-    h_csv_mc_b_temp0_LFUp->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + useUp*h_csv_mc_nonb[iHist]->Integral() ) );
-    h_csv_mc_b_temp0_LFDown->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + useDown*h_csv_mc_nonb[iHist]->Integral() ) );
 
-    h_csv_mc_nonb_temp0_LFUp->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + useUp*h_csv_mc_nonb[iHist]->Integral() ) );
-    h_csv_mc_nonb_temp0_LFDown->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + useDown*h_csv_mc_nonb[iHist]->Integral() ) );
+    ////////////////
+    double data_integral = h_csv_data[iHist]->Integral();
+    double mc_b_integral = h_csv_mc_b[iHist]->Integral();
+    double mc_nonb_integral = h_csv_mc_nonb[iHist]->Integral();
+
+    h_csv_mc_b[iHist]->Scale( data_integral / ( mc_b_integral + mc_nonb_integral ) );
+    h_csv_mc_nonb[iHist]->Scale( data_integral / ( mc_b_integral + mc_nonb_integral ) );
+
     /////
 
-    h_csv_mc_b_JESUp[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b_JESUp[iHist]->Integral() + h_csv_mc_nonb_JESUp[iHist]->Integral() ) );
-    h_csv_mc_b_JESDown[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b_JESDown[iHist]->Integral() + h_csv_mc_nonb_JESDown[iHist]->Integral() ) );
+    double mc_nonb_temp0_LFUp_integral = useUp*h_csv_mc_nonb[iHist]->Integral();
+    double mc_nonb_temp0_LFDown_integral = useDown*h_csv_mc_nonb[iHist]->Integral();
 
-    h_csv_mc_nonb_JESUp[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b_JESUp[iHist]->Integral() + h_csv_mc_nonb_JESUp[iHist]->Integral() ) );
-    h_csv_mc_nonb_JESDown[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b_JESDown[iHist]->Integral() + h_csv_mc_nonb_JESDown[iHist]->Integral() ) );
+    h_csv_mc_b_temp0_LFUp->Scale( data_integral / ( mc_b_integral + mc_nonb_temp0_LFUp_integral ) );
+    h_csv_mc_b_temp0_LFDown->Scale( data_integral / ( mc_b_integral + mc_nonb_temp0_LFDown_integral ) );
+
+    h_csv_mc_nonb_temp0_LFUp->Scale( data_integral / ( mc_b_integral + mc_nonb_temp0_LFUp_integral ) );
+    h_csv_mc_nonb_temp0_LFDown->Scale( data_integral / ( mc_b_integral + mc_nonb_temp0_LFDown_integral ) );
+
+    /////
+
+    double mc_b_JESUp_integral = h_csv_mc_b_JESUp[iHist]->Integral();
+    double mc_nonb_JESUp_integral = h_csv_mc_nonb_JESUp[iHist]->Integral();
+
+    double mc_b_JESDown_integral = h_csv_mc_b_JESDown[iHist]->Integral();
+    double mc_nonb_JESDown_integral = h_csv_mc_nonb_JESDown[iHist]->Integral();
+
+    h_csv_mc_b_JESUp[iHist]->Scale( data_integral / ( mc_b_JESUp_integral + mc_nonb_JESUp_integral ) );
+    h_csv_mc_b_JESDown[iHist]->Scale( data_integral / ( mc_b_JESDown_integral + mc_nonb_JESDown_integral ) );
+
+    h_csv_mc_nonb_JESUp[iHist]->Scale( data_integral / ( mc_b_JESUp_integral + mc_nonb_JESUp_integral ) );
+    h_csv_mc_nonb_JESDown[iHist]->Scale( data_integral / ( mc_b_JESDown_integral + mc_nonb_JESDown_integral ) );
+
+    ////////////////
 
     ///////
     h_csv_ratio[iHist]->Add(h_csv_mc_nonb[iHist],-1);
@@ -376,6 +421,8 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     h_csv_ratio_Stats2Down[iHist]->Divide(h_csv_mc_b[iHist]);
   }
 
+
+  std::cout << " ==> test 7 " << std::endl;
 
   TH1D* h_csv_ratio_all = (TH1D*)h_csv_data_all->Clone("h_csv_ratio_all_temp");
   TH1D* h_csv_ratio_all_LFUp   = (TH1D*)h_csv_data_all->Clone("h_csv_ratio_all_LFUp_temp");
@@ -471,44 +518,48 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   }
 
-  double csvL = h_csv_ratio_cumulative->GetBinContent(4);
-  double csvL_LFUp = h_csv_ratio_cumulative_LFUp->GetBinContent(4) - csvL;
-  double csvL_JESUp = h_csv_ratio_cumulative_JESUp->GetBinContent(4) - csvL;
-  double csvL_LFDown = h_csv_ratio_cumulative_LFDown->GetBinContent(4) - csvL;
-  double csvL_JESDown = h_csv_ratio_cumulative_JESDown->GetBinContent(4) - csvL;
+  int binCSVL = h_csv_ratio_cumulative->FindBin(0.605);
+  int binCSVM = h_csv_ratio_cumulative->FindBin(0.89);
+  int binCSVT = h_csv_ratio_cumulative->FindBin(0.97);
+
+  double csvL = h_csv_ratio_cumulative->GetBinContent(binCSVL);
+  double csvL_LFUp = h_csv_ratio_cumulative_LFUp->GetBinContent(binCSVL) - csvL;
+  double csvL_JESUp = h_csv_ratio_cumulative_JESUp->GetBinContent(binCSVL) - csvL;
+  double csvL_LFDown = h_csv_ratio_cumulative_LFDown->GetBinContent(binCSVL) - csvL;
+  double csvL_JESDown = h_csv_ratio_cumulative_JESDown->GetBinContent(binCSVL) - csvL;
 
   double csvL_Up = sqrt( csvL_LFUp*csvL_LFUp + csvL_JESUp*csvL_JESUp );
   double csvL_Down = sqrt( csvL_LFDown*csvL_LFDown + csvL_JESDown*csvL_JESDown );
 
   double csvL_Err = 0.5 * (csvL_Up + csvL_Down);
 
-  printf("\t CSVL: %.3f +/- %.3f \n", csvL, csvL_Err );
+  printf(" CSVL: SFb = %.3f +/- %.3f \n", csvL, csvL_Err );
 
-  double csvM = h_csv_ratio_cumulative->GetBinContent(9);
-  double csvM_LFUp = h_csv_ratio_cumulative_LFUp->GetBinContent(9) - csvM;
-  double csvM_JESUp = h_csv_ratio_cumulative_JESUp->GetBinContent(9) - csvM;
-  double csvM_LFDown = h_csv_ratio_cumulative_LFDown->GetBinContent(9) - csvM;
-  double csvM_JESDown = h_csv_ratio_cumulative_JESDown->GetBinContent(9) - csvM;
+  double csvM = h_csv_ratio_cumulative->GetBinContent(binCSVM);
+  double csvM_LFUp = h_csv_ratio_cumulative_LFUp->GetBinContent(binCSVM) - csvM;
+  double csvM_JESUp = h_csv_ratio_cumulative_JESUp->GetBinContent(binCSVM) - csvM;
+  double csvM_LFDown = h_csv_ratio_cumulative_LFDown->GetBinContent(binCSVM) - csvM;
+  double csvM_JESDown = h_csv_ratio_cumulative_JESDown->GetBinContent(binCSVM) - csvM;
 
   double csvM_Up = sqrt( csvM_LFUp*csvM_LFUp + csvM_JESUp*csvM_JESUp );
   double csvM_Down = sqrt( csvM_LFDown*csvM_LFDown + csvM_JESDown*csvM_JESDown );
 
   double csvM_Err = 0.5 * (csvM_Up + csvM_Down);
 
-  printf("\t CSVL: %.3f +/- %.3f \n", csvM, csvM_Err );
+  printf(" CSVM: SFb = %.3f +/- %.3f \n", csvM, csvM_Err );
 
-  double csvT = h_csv_ratio_cumulative->GetBinContent(14);
-  double csvT_LFUp = h_csv_ratio_cumulative_LFUp->GetBinContent(14) - csvT;
-  double csvT_JESUp = h_csv_ratio_cumulative_JESUp->GetBinContent(14) - csvT;
-  double csvT_LFDown = h_csv_ratio_cumulative_LFDown->GetBinContent(14) - csvT;
-  double csvT_JESDown = h_csv_ratio_cumulative_JESDown->GetBinContent(14) - csvT;
+  double csvT = h_csv_ratio_cumulative->GetBinContent(binCSVT);
+  double csvT_LFUp = h_csv_ratio_cumulative_LFUp->GetBinContent(binCSVT) - csvT;
+  double csvT_JESUp = h_csv_ratio_cumulative_JESUp->GetBinContent(binCSVT) - csvT;
+  double csvT_LFDown = h_csv_ratio_cumulative_LFDown->GetBinContent(binCSVT) - csvT;
+  double csvT_JESDown = h_csv_ratio_cumulative_JESDown->GetBinContent(binCSVT) - csvT;
 
   double csvT_Up = sqrt( csvT_LFUp*csvT_LFUp + csvT_JESUp*csvT_JESUp );
   double csvT_Down = sqrt( csvT_LFDown*csvT_LFDown + csvT_JESDown*csvT_JESDown );
 
   double csvT_Err = 0.5 * (csvT_Up + csvT_Down);
 
-  printf("\t CSVL: %.3f +/- %.3f \n", csvT, csvT_Err );
+  printf(" CSVT: SFb = %.3f +/- %.3f \n", csvT, csvT_Err );
 
 
   hist_name.push_back("csv_ratio_all");
@@ -823,7 +874,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     h_csv_ratio[iHist]->SetStats(0);
 
     double maxY = 0;
-    for( int iBin=1; iBin<h_csv_ratio[iHist]->GetNbinsX()-2; iBin++ ){
+    for( int iBin=0; iBin<h_csv_ratio[iHist]->GetNbinsX()-2; iBin++ ){
       double content = h_csv_ratio[iHist]->GetBinContent(iBin+1);
       double err     = h_csv_ratio[iHist]->GetBinError(iBin+1);
 
@@ -884,7 +935,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
 
     h_csv_ratio[iHist]->Draw("pe1");
-    //h_csv_ratio_final[iHist]->Draw("histsame");
+    h_csv_ratio_final[iHist]->Draw("histsame");
     h_csv_ratio[iHist]->Draw("pe1same");
 
     legend2->Draw();
@@ -971,6 +1022,171 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     c1->Print(img);
     img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_All.pdf";
     c1->Print(img);
+
+
+
+    // Piecewise fitting
+    int Nbins = h_csv_ratio[iHist]->GetNbinsX();
+    
+    TF1* fint[Nbins-2];
+    TF1* fint_JESUp[Nbins-2];
+    TF1* fint_JESDown[Nbins-2];
+    TF1* fint_LFUp[Nbins-2];
+    TF1* fint_LFDown[Nbins-2];
+    TF1* fint_Stats1Up[Nbins-2];
+    TF1* fint_Stats1Down[Nbins-2];
+    TF1* fint_Stats2Up[Nbins-2];
+    TF1* fint_Stats2Down[Nbins-2];
+    for( int iBin=1; iBin<Nbins-1; iBin++ ){
+      double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+      double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+      double y1 = h_csv_ratio[iHist]->GetBinContent(iBin+1);
+      double y2 = h_csv_ratio[iHist]->GetBinContent(iBin+1+1);
+
+      double slope = (y2 - y1) / (x2 - x1);
+      double intercept = y1 - x1 * slope;
+
+      fint[iBin] = new TF1(Form("fint_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint[iBin]->SetParameter(0,intercept);
+      fint[iBin]->SetParameter(1,slope);
+
+      fint[iBin]->SetLineColor(kRed);
+      printf("\t central %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+      /// JESUp
+      double y1_JESUp = h_csv_ratio_JESUp[iHist]->GetBinContent(iBin+1);
+      double y2_JESUp = h_csv_ratio_JESUp[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_JESUp = (y2_JESUp - y1_JESUp) / (x2 - x1);
+      double intercept_JESUp = y1_JESUp - x1 * slope_JESUp;
+
+      fint_JESUp[iBin] = new TF1(Form("fint_JESUp_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_JESUp[iBin]->SetParameter(0,intercept_JESUp);
+      fint_JESUp[iBin]->SetParameter(1,slope_JESUp);
+
+      fint_JESUp[iBin]->SetLineColor(kRed);
+      printf("\t JESUp %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+      /// JESDown
+      double y1_JESDown = h_csv_ratio_JESDown[iHist]->GetBinContent(iBin+1);
+      double y2_JESDown = h_csv_ratio_JESDown[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_JESDown = (y2_JESDown - y1_JESDown) / (x2 - x1);
+      double intercept_JESDown = y1_JESDown - x1 * slope_JESDown;
+
+      fint_JESDown[iBin] = new TF1(Form("fint_JESDown_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_JESDown[iBin]->SetParameter(0,intercept_JESDown);
+      fint_JESDown[iBin]->SetParameter(1,slope_JESDown);
+
+      fint_JESDown[iBin]->SetLineColor(kRed);
+      printf("\t JESDown %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+      /// LFUp
+      double y1_LFUp = h_csv_ratio_LFUp[iHist]->GetBinContent(iBin+1);
+      double y2_LFUp = h_csv_ratio_LFUp[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_LFUp = (y2_LFUp - y1_LFUp) / (x2 - x1);
+      double intercept_LFUp = y1_LFUp - x1 * slope_LFUp;
+
+      fint_LFUp[iBin] = new TF1(Form("fint_LFUp_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_LFUp[iBin]->SetParameter(0,intercept_LFUp);
+      fint_LFUp[iBin]->SetParameter(1,slope_LFUp);
+
+      fint_LFUp[iBin]->SetLineColor(kRed);
+      printf("\t LFUp %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+      /// LFDown
+      double y1_LFDown = h_csv_ratio_LFDown[iHist]->GetBinContent(iBin+1);
+      double y2_LFDown = h_csv_ratio_LFDown[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_LFDown = (y2_LFDown - y1_LFDown) / (x2 - x1);
+      double intercept_LFDown = y1_LFDown - x1 * slope_LFDown;
+
+      fint_LFDown[iBin] = new TF1(Form("fint_LFDown_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_LFDown[iBin]->SetParameter(0,intercept_LFDown);
+      fint_LFDown[iBin]->SetParameter(1,slope_LFDown);
+
+      fint_LFDown[iBin]->SetLineColor(kRed);
+      printf("\t LFDown %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+
+
+      /// Stats1Up
+      double y1_Stats1Up = h_csv_ratio_Stats1Up[iHist]->GetBinContent(iBin+1);
+      double y2_Stats1Up = h_csv_ratio_Stats1Up[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_Stats1Up = (y2_Stats1Up - y1_Stats1Up) / (x2 - x1);
+      double intercept_Stats1Up = y1_Stats1Up - x1 * slope_Stats1Up;
+
+      fint_Stats1Up[iBin] = new TF1(Form("fint_Stats1Up_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_Stats1Up[iBin]->SetParameter(0,intercept_Stats1Up);
+      fint_Stats1Up[iBin]->SetParameter(1,slope_Stats1Up);
+
+      fint_Stats1Up[iBin]->SetLineColor(kRed);
+      printf("\t Stats1Up %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+      /// Stats1Down
+      double y1_Stats1Down = h_csv_ratio_Stats1Down[iHist]->GetBinContent(iBin+1);
+      double y2_Stats1Down = h_csv_ratio_Stats1Down[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_Stats1Down = (y2_Stats1Down - y1_Stats1Down) / (x2 - x1);
+      double intercept_Stats1Down = y1_Stats1Down - x1 * slope_Stats1Down;
+
+      fint_Stats1Down[iBin] = new TF1(Form("fint_Stats1Down_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_Stats1Down[iBin]->SetParameter(0,intercept_Stats1Down);
+      fint_Stats1Down[iBin]->SetParameter(1,slope_Stats1Down);
+
+      fint_Stats1Down[iBin]->SetLineColor(kRed);
+      printf("\t Stats1Down %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+
+      /// Stats2Up
+      double y1_Stats2Up = h_csv_ratio_Stats2Up[iHist]->GetBinContent(iBin+1);
+      double y2_Stats2Up = h_csv_ratio_Stats2Up[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_Stats2Up = (y2_Stats2Up - y1_Stats2Up) / (x2 - x1);
+      double intercept_Stats2Up = y1_Stats2Up - x1 * slope_Stats2Up;
+
+      fint_Stats2Up[iBin] = new TF1(Form("fint_Stats2Up_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_Stats2Up[iBin]->SetParameter(0,intercept_Stats2Up);
+      fint_Stats2Up[iBin]->SetParameter(1,slope_Stats2Up);
+
+      fint_Stats2Up[iBin]->SetLineColor(kRed);
+      printf("\t Stats2Up %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+      /// Stats2Down
+      double y1_Stats2Down = h_csv_ratio_Stats2Down[iHist]->GetBinContent(iBin+1);
+      double y2_Stats2Down = h_csv_ratio_Stats2Down[iHist]->GetBinContent(iBin+1+1);
+
+      double slope_Stats2Down = (y2_Stats2Down - y1_Stats2Down) / (x2 - x1);
+      double intercept_Stats2Down = y1_Stats2Down - x1 * slope_Stats2Down;
+
+      fint_Stats2Down[iBin] = new TF1(Form("fint_Stats2Down_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_Stats2Down[iBin]->SetParameter(0,intercept_Stats2Down);
+      fint_Stats2Down[iBin]->SetParameter(1,slope_Stats2Down);
+
+      fint_Stats2Down[iBin]->SetLineColor(kRed);
+      printf("\t Stats2Down %s \t intercept = %.3f, slope = %.3f, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f \n", hist_name[iHist].Data(), intercept, slope, x1, x2, y1, y2 );
+
+
+
+    }
+
+
+    h_csv_ratio[iHist]->Draw("pe1");
+    h_csv_ratio_final[iHist]->Draw("histsame");
+    for( int iBin=1; iBin<Nbins-1; iBin++ ) fint[iBin]->Draw("same");
+    h_csv_ratio[iHist]->Draw("pe1same");
+
+    legend2->Draw();
+ 
+    img = dirprefix + "interpolation_hfSF_" + hist_name[iHist] + "_fit.png";
+    c1->Print(img);
+    img = dirprefix + "interpolation_hfSF_" + hist_name[iHist] + "_fit.pdf";
+    c1->Print(img);
+
+    ///
 
 
     // Enforce non-negative weights
@@ -1385,48 +1601,117 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
       // h_cErr1Down->Scale(0.9403120);
       // h_cErr2Up->Scale(0.9454488);
       // h_cErr2Down->Scale(1.061163);
+
     if( iHist==0 ){
-      h_cErr1Up->Scale(7.596934e-01);
-      h_cErr1Down->Scale(1.331747e+00);
-      h_cErr2Up->Scale(1.078624e+00);
-      h_cErr2Down->Scale(9.192473e-01);
+      h_cErr1Up->Scale(7.865361e-01);
+      h_cErr1Down->Scale(1.360805e+00);
+      h_cErr2Up->Scale(9.921131e-01);
+      h_cErr2Down->Scale(1.007947e+00);
     }
     else if( iHist==1 ){
-      h_cErr1Up->Scale(7.973136e-01);
-      h_cErr1Down->Scale(1.283575e+00);
-      h_cErr2Up->Scale(1.057675e+00);
-      h_cErr2Down->Scale(9.420991e-01);
+      h_cErr1Up->Scale(8.640261e-01);
+      h_cErr1Down->Scale(1.123802e+00);
+      h_cErr2Up->Scale(1.007697e+00);
+      h_cErr2Down->Scale(9.924200e-01);
     }
     else if( iHist==2 ){
-      h_cErr1Up->Scale(8.417962e-01);
-      h_cErr1Down->Scale(1.210083e+00);
-      h_cErr2Up->Scale(1.002579e+00);
-      h_cErr2Down->Scale(9.971581e-01);
+      h_cErr1Up->Scale(9.048906e-01);
+      h_cErr1Down->Scale(1.114641e+00);
+      h_cErr2Up->Scale(9.804335e-01);
+      h_cErr2Down->Scale(1.020363e+00);
     }
     else if( iHist==3 ){
-      h_cErr1Up->Scale(8.634307e-01);
-      h_cErr1Down->Scale(1.176642e+00);
-      h_cErr2Up->Scale(9.881710e-01);
-      h_cErr2Down->Scale(1.013086e+00);
+      h_cErr1Up->Scale(8.926413e-01);
+      h_cErr1Down->Scale(1.116758e+00);
+      h_cErr2Up->Scale(9.664885e-01);
+      h_cErr2Down->Scale(1.035919e+00);
     }
     else if( iHist==4 ){
-      h_cErr1Up->Scale(8.301060e-01);
-      h_cErr1Down->Scale(1.238283e+00);
-      h_cErr2Up->Scale(9.706091e-01);
-      h_cErr2Down->Scale(1.034182e+00);
+      h_cErr1Up->Scale(8.271228e-01);
+      h_cErr1Down->Scale(1.257116e+00);
+      h_cErr2Up->Scale(9.155881e-01);
+      h_cErr2Down->Scale(1.101557e+00);
     }
     else if( iHist==5 ){
-      h_cErr1Up->Scale(6.598305e-01);
-      h_cErr1Down->Scale(1.433029e+00);
-      h_cErr2Up->Scale(9.270570e-01);
-      h_cErr2Down->Scale(1.038401e+00);
+      h_cErr1Up->Scale(9999);
+      h_cErr1Down->Scale(9999);
+      h_cErr2Up->Scale(9999);
+      h_cErr2Down->Scale(9999);
     }
+
 
     c_csv_ratio_final[iHist]->Write(Form("c_%s_final",hist_name[iHist].Data()));
     h_cErr1Up->Write(Form("c_%s_final_cErr1Up",hist_name[iHist].Data()));
     h_cErr1Down->Write(Form("c_%s_final_cErr1Down",hist_name[iHist].Data()));
     h_cErr2Up->Write(Form("c_%s_final_cErr2Up",hist_name[iHist].Data()));
     h_cErr2Down->Write(Form("c_%s_final_cErr2Down",hist_name[iHist].Data()));
+
+
+
+    // Piecewise fitting
+    TF1* fint_cErr1Up[Nbins-2];
+    TF1* fint_cErr1Down[Nbins-2];
+    TF1* fint_cErr2Up[Nbins-2];
+    TF1* fint_cErr2Down[Nbins-2];
+    for( int iBin=1; iBin<Nbins-1; iBin++ ){
+      double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+      double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+      int useBin1 = h_cErr1Up->FindBin(x1);
+      int useBin2 = h_cErr1Up->FindBin(x2);
+
+      // cErr1Up
+      double y1_cErr1Up = h_cErr1Up->GetBinContent(useBin1);
+      double y2_cErr1Up = h_cErr1Up->GetBinContent(useBin2);
+
+      double slope_cErr1Up = (y2_cErr1Up - y1_cErr1Up) / (x2 - x1);
+      double intercept_cErr1Up = y1_cErr1Up - x1 * slope_cErr1Up;
+
+      fint_cErr1Up[iBin] = new TF1(Form("fint_cErr1Up_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_cErr1Up[iBin]->SetParameter(0,intercept_cErr1Up);
+      fint_cErr1Up[iBin]->SetParameter(1,slope_cErr1Up);
+
+      fint_cErr1Up[iBin]->SetLineColor(kRed);
+
+      // cErr1Down
+      double y1_cErr1Down = h_cErr1Down->GetBinContent(useBin1);
+      double y2_cErr1Down = h_cErr1Down->GetBinContent(useBin2);
+
+      double slope_cErr1Down = (y2_cErr1Down - y1_cErr1Down) / (x2 - x1);
+      double intercept_cErr1Down = y1_cErr1Down - x1 * slope_cErr1Down;
+
+      fint_cErr1Down[iBin] = new TF1(Form("fint_cErr1Down_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_cErr1Down[iBin]->SetParameter(0,intercept_cErr1Down);
+      fint_cErr1Down[iBin]->SetParameter(1,slope_cErr1Down);
+
+      fint_cErr1Down[iBin]->SetLineColor(kRed);
+
+      // cErr2Up
+      double y1_cErr2Up = h_cErr2Up->GetBinContent(useBin1);
+      double y2_cErr2Up = h_cErr2Up->GetBinContent(useBin2);
+
+      double slope_cErr2Up = (y2_cErr2Up - y1_cErr2Up) / (x2 - x1);
+      double intercept_cErr2Up = y1_cErr2Up - x1 * slope_cErr2Up;
+
+      fint_cErr2Up[iBin] = new TF1(Form("fint_cErr2Up_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_cErr2Up[iBin]->SetParameter(0,intercept_cErr2Up);
+      fint_cErr2Up[iBin]->SetParameter(1,slope_cErr2Up);
+
+      fint_cErr2Up[iBin]->SetLineColor(kRed);
+
+      // cErr2Down
+      double y1_cErr2Down = h_cErr2Down->GetBinContent(useBin1);
+      double y2_cErr2Down = h_cErr2Down->GetBinContent(useBin2);
+
+      double slope_cErr2Down = (y2_cErr2Down - y1_cErr2Down) / (x2 - x1);
+      double intercept_cErr2Down = y1_cErr2Down - x1 * slope_cErr2Down;
+
+      fint_cErr2Down[iBin] = new TF1(Form("fint_cErr2Down_bin%d",iBin),"[0] + [1]*x",x1,x2);
+      fint_cErr2Down[iBin]->SetParameter(0,intercept_cErr2Down);
+      fint_cErr2Down[iBin]->SetParameter(1,slope_cErr2Down);
+
+      fint_cErr2Down[iBin]->SetLineColor(kRed);
+    }
 
 
 
@@ -1455,9 +1740,16 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     f4->SetParameter(nParsF4-2,0.3);
     f4->SetParameter(nParsF4-1,0.7);
 
-    TF1 *f5 = new TF1("fit_csv_5",fit_csv_3,0.001,1.01,20);
+    TF1 *f55 = new TF1("fit_csv_5",fit_csv_5,0.001,1.01,20);
+    int nParsF55 = f55->GetNpar();
+    for( int iPar=0; iPar<nParsF55; iPar++ ) f55->SetParameter(iPar,1.);
+
+    // TF1 *f5 = new TF1("f5","[0] + [1]*x + [2]*x*x + [3]*x*x*x + [4]*x*x*x*x + [5]*x*x*x*x*x + [6]*x*x*x*x*x*x + [7]*x*x*x*x*x*x*x + [8]*x*x*x*x*x*x*x*x",0.001,1.01);
+    // int nParsF5 = f5->GetNpar();
+    // for( int iPar=0; iPar<nParsF5; iPar++ ) f5->SetParameter(iPar,1.);
+    TF1 *f5 = new TF1("f5","pol8",0.001,1.01);
     int nParsF5 = f5->GetNpar();
-    for( int iPar=0; iPar<nParsF5; iPar++ ) f5->SetParameter(iPar,1.);
+    for( int iPar=0; iPar<nParsF5; iPar++ ) f5->SetParameter(iPar,double(10.*(iPar+1)));
 
 
 
@@ -1479,14 +1771,15 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     for( int iBin=0; iBin<h_fit_csv_ratio_final->GetNbinsX(); iBin++ ){
       h_fit_csv_ratio_final->SetBinError(iBin+1,0.2);
     }
-    TH1D* h_fit_csv_ratio_final_rebin = (TH1D*)h_csv_ratio_final[iHist]->Clone( Form("h_fit_csv_ratio_final_%s_rebin",hist_name[iHist].Data()) );
+    // TH1D* h_fit_csv_ratio_final_rebin = (TH1D*)h_csv_ratio_final[iHist]->Clone( Form("h_fit_csv_ratio_final_%s_rebin",hist_name[iHist].Data()) );
 
-    h_fit_csv_ratio_final_rebin->Rebin(10);
-    h_fit_csv_ratio_final_rebin->Scale(1/10.);
-    for( int iBin=0; iBin<h_fit_csv_ratio_final_rebin->GetNbinsX(); iBin++ ){
-      h_fit_csv_ratio_final_rebin->SetBinError(iBin+1,0.2);
-    }
+    // h_fit_csv_ratio_final_rebin->Rebin(10);
+    // h_fit_csv_ratio_final_rebin->Scale(1/10.);
+    // for( int iBin=0; iBin<h_fit_csv_ratio_final_rebin->GetNbinsX(); iBin++ ){
+    //   h_fit_csv_ratio_final_rebin->SetBinError(iBin+1,0.2);
+    // }
 
+    TH1D* h_fit_csv_ratio_final_rebin = (TH1D*)h_csv_ratio[iHist]->Clone( Form("h_fit_csv_ratio_final_%s_rebin",hist_name[iHist].Data()) );
 
     //h_csv_ratio[iHist]->Fit(f1,"+mrN0S");
     //for(int i=0;i<10;i++) h_fit_csv_ratio_final->Fit(f3,"+mrN0S");
@@ -1517,6 +1810,440 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
     img = dirprefix + "piecewise_fit_compare_" + hist_name[iHist] + ".png";
     if( makePlots ) c1->Print(img);
+
+
+    if( iHist<NumHists_normal ){
+
+      fit_result_file[iHist].open( Form("BTVScaleFactorFitResult/fitResult_HF_csvSF_13TeV_%s.txt", bin_name[iHist].Data()) );
+
+      TString etaMin = "0.0";
+      TString etaMax = "2.4";
+
+      TString ptMin = "";
+      TString ptMax = "";
+      if( hist_name[iHist].Contains("Pt0") ){
+	ptMin = "20";
+	ptMax = "30";
+      }
+      else if( hist_name[iHist].Contains("Pt1") ){
+	ptMin = "30";
+	ptMax = "40";
+      }
+      else if( hist_name[iHist].Contains("Pt2") ){
+	ptMin = "40";
+	ptMax = "60";
+      }
+      else if( hist_name[iHist].Contains("Pt3") ){
+	ptMin = "60";
+	ptMax = "100";
+      }
+      else if( hist_name[iHist].Contains("Pt4") ){
+	ptMin = "100";
+	ptMax = "10000";
+      }
+
+      // central
+      fit_result_file[iHist] << "3, iterativefit, central, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, central, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, central, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, central, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i->Eval( lastPoint ) << "\"" << "\n";
+
+      // JESUp
+      fit_result_file[iHist] << "3, iterativefit, up_jes, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_JESUp[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, up_jes, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_JESUp->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, up_jes, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_JESUp[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, up_jes, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_JESUp->Eval( lastPoint ) << "\"" << "\n";
+
+      // JESDown
+      fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_JESDown[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_JESDown->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_JESDown[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_JESDown->Eval( lastPoint ) << "\"" << "\n";
+
+
+      // LFUp
+      fit_result_file[iHist] << "3, iterativefit, up_lf, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_LFUp[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, up_lf, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_LFUp->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, up_lf, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_LFUp[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, up_lf, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_LFUp->Eval( lastPoint ) << "\"" << "\n";
+
+      // LFDown
+      fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_LFDown[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_LFDown->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_LFDown[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_LFDown->Eval( lastPoint ) << "\"" << "\n";
+
+
+      // Stats1Up
+      fit_result_file[iHist] << "3, iterativefit, up_hfstats1, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_Stats1Up[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, up_hfstats1, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_Stats1Up->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, up_hfstats1, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_Stats1Up[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, up_hfstats1, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_Stats1Up->Eval( lastPoint ) << "\"" << "\n";
+
+      // Stats1Down
+      fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_Stats1Down[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_Stats1Down->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_Stats1Down[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_Stats1Down->Eval( lastPoint ) << "\"" << "\n";
+
+
+
+
+      // Stats2Up
+      fit_result_file[iHist] << "3, iterativefit, up_hfstats2, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_Stats2Up[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, up_hfstats2, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_Stats2Up->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, up_hfstats2, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_Stats2Up[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, up_hfstats2, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_Stats2Up->Eval( lastPoint ) << "\"" << "\n";
+
+      // Stats2Down
+      fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_csv_ratio_Stats2Down[iHist]->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << m_i_Stats2Down->Eval( firstPoint ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_Stats2Down[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << m_i_Stats2Down->Eval( lastPoint ) << "\"" << "\n";
+
+
+      // Charm uncertainties
+      // CErr1Up
+      fit_result_file[iHist] << "3, iterativefit, up_cferr1, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_cErr1Up->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, up_cferr1, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << h_cErr1Up->GetBinContent( h_cErr1Up->FindBin(firstPoint) ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, up_cferr1, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_cErr1Up[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, up_cferr1, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << h_cErr1Up->GetBinContent( h_cErr1Up->FindBin(lastPoint) ) << "\"" << "\n";
+
+
+      // CErr1Down
+      fit_result_file[iHist] << "3, iterativefit, down_cferr1, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_cErr1Down->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, down_cferr1, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << h_cErr1Down->GetBinContent( h_cErr1Down->FindBin(firstPoint) ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, down_cferr1, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_cErr1Down[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, down_cferr1, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << h_cErr1Down->GetBinContent( h_cErr1Down->FindBin(lastPoint) ) << "\"" << "\n";
+
+
+      // CErr2Up
+      fit_result_file[iHist] << "3, iterativefit, up_cferr2, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_cErr2Up->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, up_cferr2, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << h_cErr2Up->GetBinContent( h_cErr2Up->FindBin(firstPoint) ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, up_cferr2, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_cErr2Up[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, up_cferr2, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << h_cErr2Up->GetBinContent( h_cErr2Up->FindBin(lastPoint) ) << "\"" << "\n";
+
+
+      // CErr2Down
+      fit_result_file[iHist] << "3, iterativefit, down_cferr2, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "-15" << ", " << "0" << ", " 
+			     << "\"" << h_cErr2Down->GetBinContent(1) << "\"" << "\n";
+
+      fit_result_file[iHist] << "3, iterativefit, down_cferr2, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << "0" << ", " << firstPoint << ", " 
+			     << "\"" << h_cErr2Down->GetBinContent( h_cErr2Down->FindBin(firstPoint) ) << "\"" << "\n";
+
+      for( int iBin=1; iBin<Nbins-1; iBin++ ){
+	double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
+	double x2 = h_csv_ratio[iHist]->GetBinCenter(iBin+1+1);
+
+	fit_result_file[iHist] << "3, iterativefit, down_cferr2, 0, " 
+			       << etaMin << ", " << etaMax << ", " 
+			       << ptMin << ", " << ptMax << ", " 
+			       << x1 << ", " << x2 << ", " 
+			       << "\"" << fint_cErr2Down[iBin]->GetExpFormula("p") << "\"" << "\n";
+      }
+
+      fit_result_file[iHist] << "3, iterativefit, down_cferr2, 1, " 
+			     << etaMin << ", " << etaMax << ", " 
+			     << ptMin << ", " << ptMax << ", " 
+			     << lastPoint << ", " << "1.1" << ", " 
+			     << "\"" << h_cErr2Down->GetBinContent( h_cErr2Down->FindBin(lastPoint) ) << "\"" << "\n";
+
+
+    } // end if( iHist<NumHists_normal )
 
 
     /*
@@ -1553,9 +2280,26 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     std::cout << " ======> TEST 2 " << std::endl;
 
   }
-    std::cout << " ======> TEST 3 " << std::endl;
+  std::cout << " ======> TEST 3 " << std::endl;
 
-  fit_result_file.close();
+
+  //// CHARM
+  // central
+  ofstream fit_result_file_charm;
+  fit_result_file_charm.open( "BTVScaleFactorFitResult/fitResult_CF_csvSF_13TeV.txt" );
+
+  fit_result_file_charm << "3, iterativefit, central, 1, " 
+			<< "0.0" << ", " << "2.4" << ", " 
+			<< "20.0" << ", " << "10000" << ", " 
+			<< "-15" << ", " << "1.1" << ", " 
+			<< "\"" << "1.0" << "\"" << "\n";
+  
+  fit_result_file_charm.close();
+
+  for( int iHist=0; iHist<NumHists_normal; iHist++ ){
+    fit_result_file[iHist].close();
+  }
+
     std::cout << " ======> TEST 4 " << std::endl;
 
 
