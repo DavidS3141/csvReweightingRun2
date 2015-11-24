@@ -48,8 +48,8 @@ process.source = cms.Source("PoolSource",
 
 
 process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
-    inSample = cms.int32(-300),##
-    sampleName = cms.string("MuonEG"),##
+    inSample = cms.int32(-100),##
+    sampleName = cms.string("DoubleEG"),##
     XS = cms.double(1.),
     nGen = cms.double(1.),
     lumi = cms.double(10000),

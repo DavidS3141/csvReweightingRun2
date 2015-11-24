@@ -104,6 +104,8 @@ struct EventVars{
   Float_t MET_[rNumSys];
   Float_t MET_phi_[rNumSys];
   Float_t MHT_[rNumSys];
+  Float_t METNoHF_[rNumSys];
+  Float_t METNoHF_phi_[rNumSys];
 
   vecTLorentzVector jet_vect_TLV_[rNumSys];
   vdouble jet_CSV_[rNumSys];
@@ -188,6 +190,8 @@ void EventVars::initialize(){
     MET_[iSys]                            = -99.9;
     MET_phi_[iSys]                        = -99.9;
     MHT_[iSys]     = -99.9;
+    METNoHF_[iSys]                            = -99.9;
+    METNoHF_phi_[iSys]                        = -99.9;
 
   
     jet_vect_TLV_[iSys].clear();
