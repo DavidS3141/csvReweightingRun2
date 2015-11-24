@@ -446,11 +446,29 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   TH1D* h_csv_mc_nonb_all_LFDown = (TH1D*)h_csv_mc_nonb_all->Clone("h_csv_mc_nonb_all_LFDown");
 
 
-  h_csv_mc_b_all_LFUp->Scale( h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  useUp*h_csv_mc_nonb_all->Integral()) );
-  h_csv_mc_b_all_LFDown->Scale( h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  useDown*h_csv_mc_nonb_all->Integral()) );
+  double mc_nonb_all_integral_LFUp = useUp*h_csv_mc_nonb_all->Integral();
+  double mc_nonb_all_integral_LFDown = useDown*h_csv_mc_nonb_all->Integral();
 
-  h_csv_mc_nonb_all_LFUp->Scale( useUp * h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  useUp*h_csv_mc_nonb_all->Integral()) );
-  h_csv_mc_nonb_all_LFDown->Scale( useDown * h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  useDown*h_csv_mc_nonb_all->Integral()) );
+
+  h_csv_mc_b_all_LFUp->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral + mc_nonb_all_integral_LFUp) );
+  h_csv_mc_b_all_LFDown->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral + mc_nonb_all_integral_LFDown) );
+
+  h_csv_mc_nonb_all_LFUp->Scale( useUp * h_csv_ratio_all->Integral() / (mc_b_all_integral + mc_nonb_all_integral_LFUp) );
+  h_csv_mc_nonb_all_LFDown->Scale( useDown * h_csv_ratio_all->Integral() / (mc_b_all_integral + mc_nonb_all_integral_LFUp) );
+
+
+  double mc_b_all_integral_JESUp = h_csv_mc_b_all_JESUp->Integral();
+  double mc_nonb_all_integral_JESUp = h_csv_mc_nonb_all_JESUp->Integral();
+
+  double mc_b_all_integral_JESDown = h_csv_mc_b_all_JESDown->Integral();
+  double mc_nonb_all_integral_JESDown = h_csv_mc_nonb_all_JESDown->Integral();
+
+  h_csv_mc_b_all_JESUp->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral_JESUp + mc_nonb_all_integral_JESUp) );
+  h_csv_mc_b_all_JESDown->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral_JESDown + mc_nonb_all_integral_JESDown) );
+
+  h_csv_mc_nonb_all_JESUp->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral_JESUp + mc_nonb_all_integral_JESUp) );
+  h_csv_mc_nonb_all_JESDown->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral_JESDown + mc_nonb_all_integral_JESUp) );
+
 
   h_csv_ratio_all->Add(h_csv_mc_nonb_all,-1);
   h_csv_ratio_all_LFUp->Add(h_csv_mc_nonb_all_LFUp,-1);
