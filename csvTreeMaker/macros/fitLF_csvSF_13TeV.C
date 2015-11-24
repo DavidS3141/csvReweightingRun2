@@ -27,7 +27,7 @@
 #include "Math/MinimizerOptions.h"
 
 //______________________________________________________________________________
-void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, TString dirPostFix = "" ){
+void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, string JES="", TString dirPostFix = "" ){
 
   TH1::SetDefaultSumw2();
 
@@ -51,7 +51,7 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
   std::cout << " ###===> iteration version " << iterNum << std::endl;
 
 
-  std::string histofilename = Form("csv_rwt_fit_lf_v%d.root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_lf_v%d%s.root",iterNum, JES.c_str()) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -233,8 +233,11 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
     h_csv_mc_nonb_temp0_HFDown->Scale( h_csv_data[iHist]->Integral() / ( useDown*h_csv_mc_b[iHist]->Integral() + h_csv_mc_nonb[iHist]->Integral() ) );
 
     ///---- normalize MC to data
-    h_csv_mc_b[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + h_csv_mc_nonb[iHist]->Integral() ) );
-    h_csv_mc_nonb[iHist]->Scale( h_csv_data[iHist]->Integral() / ( h_csv_mc_b[iHist]->Integral() + h_csv_mc_nonb[iHist]->Integral() ) );
+    double mc_b_integral = h_csv_mc_b[iHist]->Integral();
+    double mc_nonb_integral = h_csv_mc_nonb[iHist]->Integral();
+
+    h_csv_mc_b[iHist]->Scale( h_csv_data[iHist]->Integral() / ( mc_b_integral + mc_nonb_integral ) );
+    h_csv_mc_nonb[iHist]->Scale( h_csv_data[iHist]->Integral() / ( mc_b_integral + mc_nonb_integral ) );
 
     h_csv_ratio[iHist]->Add(h_csv_mc_b[iHist],-1);
     h_csv_ratio_HFUp[iHist]->Add(h_csv_mc_b_temp0_HFUp,-useUp);
@@ -274,8 +277,11 @@ void fitLF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, T
   h_csv_mc_nonb_all_HFDown->Scale( h_csv_ratio_all->Integral() / (useDown*h_csv_mc_b_all->Integral() +  h_csv_mc_nonb_all->Integral()) );
 
   ///---- normalize MC to data
-  h_csv_mc_b_all->Scale( h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  h_csv_mc_nonb_all->Integral()) );
-  h_csv_mc_nonb_all->Scale( h_csv_ratio_all->Integral() / (h_csv_mc_b_all->Integral() +  h_csv_mc_nonb_all->Integral()) );
+  double mc_b_all_integral = h_csv_mc_b_all->Integral();
+  double mc_nonb_all_integral = h_csv_mc_nonb_all->Integral();
+
+  h_csv_mc_b_all->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral +  mc_nonb_all_integral) );
+  h_csv_mc_nonb_all->Scale( h_csv_ratio_all->Integral() / (mc_b_all_integral +  mc_nonb_all_integral) );
 
   h_csv_ratio_all->Add(h_csv_mc_b_all,-1);
   h_csv_ratio_all_HFUp->Add(h_csv_mc_b_all_HFUp,-useUp);

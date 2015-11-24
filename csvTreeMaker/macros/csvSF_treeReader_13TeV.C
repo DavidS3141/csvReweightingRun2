@@ -65,11 +65,15 @@ TH1D* c_csv_wgt_hf[9][6];
 TH1D* h_csv_wgt_lf[9][4][3];
 
 //*****************************************************************************
-// data 552.673 + 993.722 +
-void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi=1546.395 ) {
+// old data 552.673 + 993.722 = 1546.395 ; new 887.308 + 1557.133
+void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi=2444.441 ) {
+
+  // set seed for reproducibility
+  TRandom3 r(12345);
+
   ////PU reweighting
   TFile* f_PUwgt = new TFile ((string(getenv("CMSSW_BASE")) + "/src/csvReweightingRun2/csvTreeMaker/CSVHistoFiles/PileUPReweighting.root").c_str());
-  TH1F* h_PU = (TH1F*)f_PUwgt->Get("numPVs_PUratio")->Clone();
+  TH1D* h_PU = (TH1D*)f_PUwgt->Get("numPVs_PUratio")->Clone();
 
   ///// csv WPs
   double Mwp = 0.89;
@@ -87,8 +91,8 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   std::string inputFileLF = "data/csv_rwt_lf_IT.root";
 
   if( verNum>0 ){
-    inputFileHF = Form("CSVHistoFiles/csv_rwt_fit_hf_v%i%s.root", verNum-1, JES.c_str());
-    inputFileLF = Form("CSVHistoFiles/csv_rwt_fit_lf_v%i%s.root", verNum-1, JES.c_str());
+    inputFileHF = Form("data/csv_rwt_fit_hf_v%i%s.root", verNum-1, JES.c_str());
+    inputFileLF = Form("data/csv_rwt_fit_lf_v%i%s.root", verNum-1, JES.c_str());
 
     std::cout << "\t inputFileHF = " << inputFileHF << std::endl;
     std::cout << "\t inputFileLF = " << inputFileLF << std::endl;
@@ -124,7 +128,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
   else if( insample==2300 ){
-    mySample_xSec_ = 3*2008.4; 
+    mySample_xSec_ = 3*2008.4;//*1.15; // SF = 1.15 for DY
     mySample_nGen_ = 19259109;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
@@ -218,6 +222,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
   std::string s_end = "_histo_" + str_jobN + ".root";
   if( Njobs==1 ) s_end = "_histo.root";
+  // if( Njobs==1 ) s_end = "_histo_emu.root"; // checking different dilepton categories
 
 
   std::string histofilename = Form("CSVHistoFiles/csv_rwt_hf_%s_v%i%s%s",mySample_sampleName_.c_str(),verNum, JES.c_str(), s_end.c_str());
@@ -255,6 +260,12 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   TH1::SetDefaultSumw2();
   double maxPt1 = 300. , maxPt2 = 200.;
   if (!isHF) {maxPt1 = 200. ; maxPt2 = 100. ;}
+  TH1D* h_nJets_noSF  = new TH1D("h_nJets_noSF",";numJet", 10, 0, 10 );
+  TH1D* h_nJets  = new TH1D("h_nJets",";numJet", 10, 0, 10 );
+
+  TH1D* h_nTags_noSF  = new TH1D("h_nTags_noSF",";numTag", 5, 0, 5 );
+  TH1D* h_nTags  = new TH1D("h_nTags",";numTag", 5, 0, 5 );
+
   TH1D* h_first_jet_pt  = new TH1D("h_first_jet_pt",";first jet p_{T}", 100, 0., maxPt1 );
   TH1D* h_first_jet_eta = new TH1D("h_first_jet_eta",";first jet #eta", 70, -3.5, 3.5 );
   TH1D* h_first_jet_csv = new TH1D("h_first_jet_csv",";first jet CSV", 102, -0.01, 1.01 );
@@ -468,7 +479,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     double Xsec = mySample_xSec_;//eve->wgt_xs_;
     double nGen = ( maxNentries>0 ) ? maxNentries : mySample_nGen_;//eve->wgt_nGen_;
     double lumi = ( intLumi > 0 ) ? intLumi : eve->wgt_lumi_ ;
-
+    if (insample < 0) lumi = 1;
     double wgt_gen = ( insample==2300 ) ? (eve->wgt_generator_/fabs(eve->wgt_generator_) ): 1;
     double wgt = wgt_gen * lumi * (Xsec/nGen);//"weight_PU*topPtWgt*osTriggerSF*lepIDAndIsoSF*"; // various weights
 
@@ -477,12 +488,27 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     wgt *= totalWgt;
 
     ///// PU wgt
-    int numPVs = eve->numPVs_  ;
+    int numPVs = eve->numTruePV_ ; // official PU recipe, using numTruePV for MC
     h_numPV->Fill(numPVs, wgt);
-    double PUwgt = h_PU->GetBinContent(h_PU->FindBin(numPVs));
-    // if(PUwgt == 0) PUwgt = 1;
+    double PUwgt = (insample < 0) ? 1 : h_PU->GetBinContent(h_PU->FindBin(numPVs));
     // PUwgt = 1;
     wgt *= PUwgt;
+
+    /// csv wgt
+    vecTLorentzVector jet_vect_TLV = eve->jet_vect_TLV_[iSys];
+    vdouble jet_CSV = eve->jet_CSV_[iSys];
+    vint jet_flavour = eve->jet_flavour_[iSys];
+
+    double csvWgtHF, csvWgtLF, csvWgtCF;
+    double newCSVwgt = ( insample<0 ) ? 1 : get_csv_wgt(jet_vect_TLV, jet_CSV, jet_flavour,iSys, csvWgtHF, csvWgtLF, csvWgtCF);
+    double wgtfakeData = wgt*newCSVwgt; // 1 for data
+    if( verbose ) std::cout << " HF/LF csv wgts are: " << csvWgtHF << "/"<< csvWgtLF << "\t new CSV wgt = " << newCSVwgt << std::endl; 
+    ///// for iteration
+    if (verNum !=0 && insample>=0) {
+      if ( isHF ) wgt *= csvWgtLF; // applying lfSFs
+      else        wgt *= csvWgtHF; // applying lfSFs
+      // wgt *= newCSVwgt;
+    }
 
     if (insample < 0) wgt = 1;
 
@@ -494,8 +520,8 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 
     //////------- exactly 2 jets -----
-    vecTLorentzVector jet_vect_TLV = eve->jet_vect_TLV_[iSys];
-    vdouble jet_CSV = eve->jet_CSV_[iSys];
+    // vecTLorentzVector jet_vect_TLV = eve->jet_vect_TLV_[iSys];
+    // vdouble jet_CSV = eve->jet_CSV_[iSys];
 
     int numJets = int(jet_vect_TLV.size()) ;
     if (numJets !=2) continue;
@@ -513,7 +539,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     if( jet1_btag<Lwp || jet2_btag<Lwp ) failLooseBtag = true;
 
     double MHT = eve->MHT_[iSys];
-    double met_pt = eve->MET_[iSys];
+    double met_pt = eve->METNoHF_[iSys]; //changed due to the use of silver json
 
     //////------- get two leptons variables from trees-----
     int TwoMuon = eve->TwoMuon_;
@@ -605,6 +631,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     if ( insample == -200 ) lepselection2 = lepselection1a;
     if ( insample == -100 ) lepselection2 = lepselection1b;
     if ( insample == -300 ) lepselection2 = lepselection1c;
+    // lepselection2 = lepselection1c; // checking different dilepton categories
 
     // if (DataSet.find ("DoubleMuon") !=std::string::npos ) lepselection2 = lepselection1a;
     // if (DataSet.find ("DoubleEG") !=std::string::npos ) lepselection2 = lepselection1b;
@@ -698,7 +725,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     nPass++;
     ///// --------jet variables
     // vdouble jet_CSV = eve->jet_CSV_[iSys];
-    vint jet_flavour = eve->jet_flavour_[iSys];
+    // vint jet_flavour = eve->jet_flavour_[iSys];
     vint jet_partonflavour = eve->jet_partonflavour_[iSys];
 
     double first_jet_pt = -9.;
@@ -718,7 +745,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
     // double minDR_lepton_first_jet = 99, minDR_lepton_second_jet = 99;
 
-
+    int numTags = 0;
     for( int iJet=0; iJet<int(jet_vect_TLV.size()); iJet++ ){
       TLorentzVector myJet = jet_vect_TLV[iJet];
       // myJet.SetPxPyPzE( jet_vect_TLV[iJet][0], jet_vect_TLV[iJet][1], jet_vect_TLV[iJet][2], jet_vect_TLV[iJet][3] );
@@ -728,7 +755,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       double myJetEta = myJet.Eta();
       int myFlavor = jet_flavour[iJet];
       int mypartonFlavor = jet_partonflavour[iJet];
-      
+      if (myCSV > Mwp) numTags++;
       if( iJet==0 ){
 	first_jet_pt = myJetPt;
 	first_jet_eta = myJetEta;
@@ -776,6 +803,11 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
     if( verbose ) std::cout << "   -first jet pt, eta is " << first_jet_pt << ";  "<<first_jet_eta << std::endl;
     if( verbose ) std::cout << "   -second jet pt, eta is " << second_jet_pt << ";  "<<second_jet_eta << std::endl;
+
+    h_nJets->Fill(numJets, wgt);
+    h_nJets_noSF->Fill(numJets, wgt/newCSVwgt);
+    h_nTags->Fill(numTags, wgt);
+    h_nTags_noSF->Fill(numTags, wgt/newCSVwgt);
 
     h_first_jet_pt->Fill(first_jet_pt, wgt);
     h_first_jet_eta->Fill(first_jet_eta, wgt);
@@ -832,28 +864,92 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 
 
-    double csvWgtHF, csvWgtLF, csvWgtCF;
-    double newCSVwgt = ( insample<0 ) ? 1 : get_csv_wgt(jet_vect_TLV, jet_CSV, jet_flavour,iSys, csvWgtHF, csvWgtLF, csvWgtCF);
-    double wgtfakeData = wgt*newCSVwgt; // 1 for data
-    if( verbose ) std::cout << " HF/LF csv wgts are: " << csvWgtHF << "/"<< csvWgtLF << "\t new CSV wgt = " << newCSVwgt << std::endl; 
-    ///// for iteration
-    if (verNum !=0 && insample>=0) {
-      if ( isHF ) wgt *= csvWgtLF; // applying lfSFs
-      else        wgt *= csvWgtHF; // applying lfSFs
-    }
+    // double csvWgtHF, csvWgtLF, csvWgtCF;
+    // double newCSVwgt = ( insample<0 ) ? 1 : get_csv_wgt(jet_vect_TLV, jet_CSV, jet_flavour,iSys, csvWgtHF, csvWgtLF, csvWgtCF);
+    // double wgtfakeData = wgt*newCSVwgt; // 1 for data
+    // if( verbose ) std::cout << " HF/LF csv wgts are: " << csvWgtHF << "/"<< csvWgtLF << "\t new CSV wgt = " << newCSVwgt << std::endl; 
+    // ///// for iteration
+    // if (verNum !=0 && insample>=0) {
+    //   // if ( isHF ) wgt *= csvWgtLF; // applying lfSFs
+    //   // else        wgt *= csvWgtHF; // applying lfSFs
+    //   wgt *= newCSVwgt;
+    // }
 
 
     ///// ------  tag and proble jet selections --------
     // 2nd jet --> tag, 1st jet --> probe
     bool jetselection2a = (second_jet_csv > Mwp) ? 1:0; //Probe jet being the first_jet
     bool firstjetb = ( abs(first_jet_flavour)==5 ) ? 1:0;
-
-
     if(!isHF) {
       jetselection2a = (second_jet_csv < Lwp) ? 1:0 ; 
       firstjetb = ( abs(first_jet_flavour)==5 || abs(first_jet_flavour)==4 );
     }
 
+    // 1st jet --> tag, 2nd jet --> proble
+    bool jetselection2b = ( first_jet_csv > Mwp ) ; //Probe jet being the second_jet
+    bool secondjetb = ( abs(second_jet_flavour)==5 );
+    if(!isHF) {
+      jetselection2b = ( first_jet_csv < Lwp ) ? 1:0 ; 
+      secondjetb = ( abs(second_jet_flavour)==5 || abs(second_jet_flavour)==4 );
+    }
+
+
+    bool twoTagJet = ( (second_jet_csv > Mwp) && (first_jet_csv > Mwp) );
+    if( !isHF ) twoTagJet = ( (second_jet_csv < Lwp) && (first_jet_csv < Lwp) );
+    //// default setting
+    twoTagJet = false;
+
+    if( twoTagJet ){
+    /// If you have two tag jets, choose one randomly
+      bool useFirstJet = ( r.Binomial(1,0.5) < 0.5 );
+
+      double jetPt = -99;
+      double jetAbsEta = -99;
+      bool jetB = false;
+      double jetCSV = -99;
+
+      if( useFirstJet ){
+	jetPt = first_jet_pt;
+	jetAbsEta = fabs(first_jet_eta);
+	jetB = firstjetb;
+	jetCSV = first_jet_csv;
+      }
+      else{
+	jetPt = second_jet_pt;
+	jetAbsEta = fabs(second_jet_eta);
+	jetB = secondjetb;
+	jetCSV = second_jet_csv;
+      }
+
+      int iPt = -1; int iEta = -1;
+      if (jetPt >=19.99 && jetPt<30) iPt = 0;
+      else if (jetPt >=30 && jetPt<40) iPt = 1;
+      else if (jetPt >=40 && jetPt<60) iPt = 2;
+      else if (jetPt >=60 && jetPt<100) iPt = 3;
+      else if (jetPt >=100 && jetPt<160) iPt = 4;
+      else if (jetPt >=160 && jetPt<10000) iPt = 5;
+      
+      if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
+      else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
+      else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
+
+      if (isHF && iEta>0) iEta=0;
+      if (!isHF && iPt>3) iPt=3;
+      if (isHF && iPt>4) iPt=4;
+
+      if( insample<0 )	h_Data_jet_csv[iPt][iEta]->Fill(jetCSV); 
+      else{
+	if( jetB ){
+	  h_MC_b_jet_csv[iPt][iEta]->Fill(jetCSV, wgt);
+	}
+	else  {
+	  h_MC_nonb_jet_csv[iPt][iEta]->Fill(jetCSV, wgt);
+	}
+      }
+
+    }
+    else{
+      /// Otherwise, do selection as before
 
     if ( jetselection2a ){
       double jetPt = first_jet_pt;
@@ -872,12 +968,14 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
 
       if (isHF && iEta>0) iEta=0;
+      if (isHF && iPt>4) iPt=4;
+
       if (!isHF && iPt>3) iPt=3;
 
       ///fake data
       // h_Data_jet_csv[iPt][iEta]->Fill(first_jet_csv, wgtfakeData); 
 
-      if( insample<0 )	h_Data_jet_csv[iPt][iEta]->Fill(first_jet_csv, wgtfakeData); 
+      if( insample<0 )	h_Data_jet_csv[iPt][iEta]->Fill(first_jet_csv); 
       else{
 	if( firstjetb ){
 	  h_MC_b_jet_csv[iPt][iEta]->Fill(first_jet_csv, wgt);
@@ -886,13 +984,6 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 	  h_MC_nonb_jet_csv[iPt][iEta]->Fill(first_jet_csv, wgt);
 	}
       }
-    }
-    // 1st jet --> tag, 2nd jet --> proble
-    bool jetselection2b = ( first_jet_csv > Mwp ) ; //Probe jet being the second_jet
-    bool secondjetb = ( abs(second_jet_flavour)==5 );
-    if(!isHF) {
-      jetselection2b = ( first_jet_csv < Lwp ) ? 1:0 ; 
-      secondjetb = ( abs(second_jet_flavour)==5 || abs(second_jet_flavour)==4 );
     }
 
 
@@ -913,12 +1004,14 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
 
       if (isHF && iEta>0) iEta=0;
+      if (isHF && iPt>4) iPt=4;
+
       if (!isHF && iPt>3) iPt=3;
 
       ///fake data
       // h_Data_jet_csv[iPt][iEta]->Fill(second_jet_csv, wgtfakeData);       
 
-      if( insample<0 )	h_Data_jet_csv[iPt][iEta]->Fill(second_jet_csv, wgtfakeData); 
+      if( insample<0 )	h_Data_jet_csv[iPt][iEta]->Fill(second_jet_csv); 
       else{
 	if( secondjetb ){
 	  h_MC_b_jet_csv[iPt][iEta]->Fill(second_jet_csv, wgt); 
@@ -928,7 +1021,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 	}
       }
     }
-    
+    }
 
   } // end loop over events
   std::cout << "total selected events is " << nPass << std::endl;
@@ -958,14 +1051,17 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 void fillCSVhistos(TFile* fileHF, TFile* fileLF){
   //// more pt bins ???
+  int nPt = 5; /// change
+  int nPtLF = 4;
+  int nEta = 3;
   for( int iSys=0; iSys<9; iSys++ ){
-    for( int iPt=0; iPt<6; iPt++ ) h_csv_wgt_hf[iSys][iPt] = NULL;
-    for( int iPt=0; iPt<4; iPt++ ){
-      for( int iEta=0; iEta<3; iEta++ )h_csv_wgt_lf[iSys][iPt][iEta] = NULL;
+    for( int iPt=0; iPt<nPt; iPt++ ) h_csv_wgt_hf[iSys][iPt] = NULL;
+    for( int iPt=0; iPt<nPtLF; iPt++ ){
+      for( int iEta=0; iEta<nEta; iEta++ )h_csv_wgt_lf[iSys][iPt][iEta] = NULL;
     }
   }
   for( int iSys=0; iSys<5; iSys++ ){
-    for( int iPt=0; iPt<6; iPt++ ) c_csv_wgt_hf[iSys][iPt] = NULL;
+    for( int iPt=0; iPt<nPt; iPt++ ) c_csv_wgt_hf[iSys][iPt] = NULL;
   }
 
   // CSV reweighting /// only care about the nominal ones !!!
@@ -1016,14 +1112,14 @@ void fillCSVhistos(TFile* fileHF, TFile* fileLF){
       break;
     }
 
-    for( int iPt=0; iPt<6; iPt++ ) h_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_hf.Data()) );
+    for( int iPt=0; iPt<nPt; iPt++ ) h_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_hf.Data()) );
 
     if( iSys<5 ){
-      for( int iPt=0; iPt<6; iPt++ ) c_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("c_csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_c.Data()) );
+      for( int iPt=0; iPt<nPt; iPt++ ) c_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("c_csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_c.Data()) );
     }
     
-    for( int iPt=0; iPt<4; iPt++ ){
-      for( int iEta=0; iEta<3; iEta++ )h_csv_wgt_lf[iSys][iPt][iEta] = (TH1D*)fileLF->Get( Form("csv_ratio_Pt%i_Eta%i_%s",iPt,iEta,syst_csv_suffix_lf.Data()) );
+    for( int iPt=0; iPt<nPtLF; iPt++ ){
+      for( int iEta=0; iEta<nEta; iEta++ )h_csv_wgt_lf[iSys][iPt][iEta] = (TH1D*)fileLF->Get( Form("csv_ratio_Pt%i_Eta%i_%s",iPt,iEta,syst_csv_suffix_lf.Data()) );
     }
   }
 
@@ -1086,7 +1182,7 @@ double get_csv_wgt( vecTLorentzVector jets, vdouble jetCSV, vint jetFlavor, int 
     else if (jetPt >=40 && jetPt<60) iPt = 2;
     else if (jetPt >=60 && jetPt<100) iPt = 3;
     else if (jetPt >=100 && jetPt<160) iPt = 4;
-    else if (jetPt >=160 && jetPt<10000) iPt = 5;
+    else if (jetPt >=160 && jetPt<10000) iPt = 4;  //5; low stats. combine with Pt bin 4
 
     if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
     else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
