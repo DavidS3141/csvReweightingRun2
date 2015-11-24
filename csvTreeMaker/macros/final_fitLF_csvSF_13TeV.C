@@ -34,7 +34,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2015_11_22_fitLF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2015_11_24_fitLF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -47,7 +47,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   std::cout << " ###===> iteration version " << iterNum << std::endl;
 
 
-  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2015_11_22.root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2015_11_24.root",iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -126,15 +126,15 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   TH1D* h_csv_mc_nonb_JESDown[NumHists_normal];
 
 
-  TH1D* h_csv_data_all;
-  TH1D* h_csv_mc_b_all;
-  TH1D* h_csv_mc_nonb_all;
+  TH1D* h_csv_data_all = NULL;
+  TH1D* h_csv_mc_b_all = NULL;
+  TH1D* h_csv_mc_nonb_all = NULL;
 
-  TH1D* h_csv_mc_b_all_JESUp;
-  TH1D* h_csv_mc_nonb_all_JESUp;
+  TH1D* h_csv_mc_b_all_JESUp = NULL;
+  TH1D* h_csv_mc_nonb_all_JESUp = NULL;
 
-  TH1D* h_csv_mc_b_all_JESDown;
-  TH1D* h_csv_mc_nonb_all_JESDown;
+  TH1D* h_csv_mc_b_all_JESDown = NULL;
+  TH1D* h_csv_mc_nonb_all_JESDown = NULL;
 
   for( int iHist=0; iHist<NumHists_normal; iHist++ ){
     TH1D* h_csv_data_temp0 = (TH1D*)file->Get( data_hist_name[iHist] )->Clone( Form("h_%s_temp0",data_hist_name[iHist].Data()) );
@@ -363,16 +363,17 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
     h_mc_b_cumulative->SetBinContent( iBin+1, h_csv_mc_b_all->Integral(iBin+1,nBins) );
   }
 
-  for( int iBin=0; iBin<nBins; iBin++ ) printf("\t iBin = %d, numerator = %4.2f, denominator = %4.2f, ratio = %4.2f \n", iBin+1, 
-					       h_csv_ratio_cumulative->GetBinContent(iBin+1), h_mc_nonb_cumulative->GetBinContent(iBin+1),
-					       h_csv_ratio_cumulative->GetBinContent(iBin+1)/h_mc_nonb_cumulative->GetBinContent(iBin+1) );
+  
+  // for( int iBin=0; iBin<nBins; iBin++ ) printf("\t iBin = %d, numerator = %4.2f, denominator = %4.2f, ratio = %4.2f \n", iBin+1, 
+  // 					       h_csv_ratio_cumulative->GetBinContent(iBin+1), h_mc_nonb_cumulative->GetBinContent(iBin+1),
+  // 					       h_csv_ratio_cumulative->GetBinContent(iBin+1)/h_mc_nonb_cumulative->GetBinContent(iBin+1) );
 
 
   h_csv_ratio_cumulative->Divide(h_mc_nonb_cumulative);
 
 
-  for( int iBin=0; iBin<nBins; iBin++ ) printf("\t iBin = %d, cumulative ratio = %4.2f \n ", iBin+1, h_csv_ratio_cumulative->GetBinContent(iBin+1));
-  for( int iBin=0; iBin<nBins; iBin++ ) printf("\t iBin = %d, ratio = %4.2f \n ", iBin+1, h_csv_ratio_all->GetBinContent(iBin+1));
+  // for( int iBin=0; iBin<nBins; iBin++ ) printf("\t iBin = %d, cumulative ratio = %4.2f \n ", iBin+1, h_csv_ratio_cumulative->GetBinContent(iBin+1));
+  // for( int iBin=0; iBin<nBins; iBin++ ) printf("\t iBin = %d, ratio = %4.2f \n ", iBin+1, h_csv_ratio_all->GetBinContent(iBin+1));
 
   hist_name.push_back("csv_ratio_all");
   hist_name.push_back("csv_ratio_cumulative_all");
@@ -546,7 +547,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
     for( int iPar=0; iPar<nPars; iPar++ ) f0->SetParameter(iPar,1.);
 
-    TFitResultPtr r = h_csv_ratio[iHist]->Fit(f0,"+mrN0S");
+    TFitResultPtr r = h_csv_ratio[iHist]->Fit(f0,"+mrN0QS");
 
     fit_chi2[iHist] = f0->GetChisquare();
     fit_ndof[iHist] = f0->GetNDF();
@@ -570,42 +571,42 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
     //r->Print("V");     // print full information of fit including covariance matrix
 
     if( iHist!=numHists-1 ){
-      TFitResultPtr r_HFUp = h_csv_ratio_HFUp[iHist]->Fit(f0_HFUp,"+mrN0S");
+      TFitResultPtr r_HFUp = h_csv_ratio_HFUp[iHist]->Fit(f0_HFUp,"+mrNQ0S");
       fit_chi2_HFUp[iHist] = f0_HFUp->GetChisquare();
       fit_ndof_HFUp[iHist] = f0_HFUp->GetNDF();
       fit_prob_HFUp[iHist] = f0_HFUp->GetProb();
 
-      TFitResultPtr r_HFDown = h_csv_ratio_HFDown[iHist]->Fit(f0_HFDown,"+mrN0S");
+      TFitResultPtr r_HFDown = h_csv_ratio_HFDown[iHist]->Fit(f0_HFDown,"+mrNQ0S");
       fit_chi2_HFDown[iHist] = f0_HFDown->GetChisquare();
       fit_ndof_HFDown[iHist] = f0_HFDown->GetNDF();
       fit_prob_HFDown[iHist] = f0_HFDown->GetProb();
 
-      TFitResultPtr r_JESUp = h_csv_ratio_JESUp[iHist]->Fit(f0_JESUp,"+mrN0S");
+      TFitResultPtr r_JESUp = h_csv_ratio_JESUp[iHist]->Fit(f0_JESUp,"+mrNQ0S");
       fit_chi2_JESUp[iHist] = f0_JESUp->GetChisquare();
       fit_ndof_JESUp[iHist] = f0_JESUp->GetNDF();
       fit_prob_JESUp[iHist] = f0_JESUp->GetProb();
 
-      TFitResultPtr r_JESDown = h_csv_ratio_JESDown[iHist]->Fit(f0_JESDown,"+mrN0S");
+      TFitResultPtr r_JESDown = h_csv_ratio_JESDown[iHist]->Fit(f0_JESDown,"+mrNQ0S");
       fit_chi2_JESDown[iHist] = f0_JESDown->GetChisquare();
       fit_ndof_JESDown[iHist] = f0_JESDown->GetNDF();
       fit_prob_JESDown[iHist] = f0_JESDown->GetProb();
 
-      TFitResultPtr r_Stats1Up = h_csv_ratio_Stats1Up[iHist]->Fit(f0_Stats1Up,"+mrN0S");
+      TFitResultPtr r_Stats1Up = h_csv_ratio_Stats1Up[iHist]->Fit(f0_Stats1Up,"+mrNQ0S");
       fit_chi2_Stats1Up[iHist] = f0_Stats1Up->GetChisquare();
       fit_ndof_Stats1Up[iHist] = f0_Stats1Up->GetNDF();
       fit_prob_Stats1Up[iHist] = f0_Stats1Up->GetProb();
 
-      TFitResultPtr r_Stats1Down = h_csv_ratio_Stats1Down[iHist]->Fit(f0_Stats1Down,"+mrN0S");
+      TFitResultPtr r_Stats1Down = h_csv_ratio_Stats1Down[iHist]->Fit(f0_Stats1Down,"+mrNQ0S");
       fit_chi2_Stats1Down[iHist] = f0_Stats1Down->GetChisquare();
       fit_ndof_Stats1Down[iHist] = f0_Stats1Down->GetNDF();
       fit_prob_Stats1Down[iHist] = f0_Stats1Down->GetProb();
 
-      TFitResultPtr r_Stats2Up = h_csv_ratio_Stats2Up[iHist]->Fit(f0_Stats2Up,"+mrN0S");
+      TFitResultPtr r_Stats2Up = h_csv_ratio_Stats2Up[iHist]->Fit(f0_Stats2Up,"+mrNQ0S");
       fit_chi2_Stats2Up[iHist] = f0_Stats2Up->GetChisquare();
       fit_ndof_Stats2Up[iHist] = f0_Stats2Up->GetNDF();
       fit_prob_Stats2Up[iHist] = f0_Stats2Up->GetProb();
 
-      TFitResultPtr r_Stats2Down = h_csv_ratio_Stats2Down[iHist]->Fit(f0_Stats2Down,"+mrN0S");
+      TFitResultPtr r_Stats2Down = h_csv_ratio_Stats2Down[iHist]->Fit(f0_Stats2Down,"+mrNQ0S");
       fit_chi2_Stats2Down[iHist] = f0_Stats2Down->GetChisquare();
       fit_ndof_Stats2Down[iHist] = f0_Stats2Down->GetNDF();
       fit_prob_Stats2Down[iHist] = f0_Stats2Down->GetProb();
