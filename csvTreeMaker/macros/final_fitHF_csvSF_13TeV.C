@@ -115,7 +115,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2015_11_20_fitHF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2015_11_23_fitHF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -130,7 +130,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   bool verbose = false;
   bool makePlots = true;
 
-  std::string histofilename = Form("csv_rwt_fit_hf_v%d_final_2015_11_20.root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_hf_v%d_final_2015_11_23.root",iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -334,8 +334,8 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
     double mc_b_integral = h_csv_mc_b[iHist]->Integral();
     double mc_nonb_integral = h_csv_mc_nonb[iHist]->Integral();
 
-    h_csv_mc_b[iHist]->Scale( data_integral / ( mc_b_integral + mc_nonb_integral ) );
-    h_csv_mc_nonb[iHist]->Scale( data_integral / ( mc_b_integral + mc_nonb_integral ) );
+    // h_csv_mc_b[iHist]->Scale( data_integral / ( mc_b_integral + mc_nonb_integral ) );
+    // h_csv_mc_nonb[iHist]->Scale( data_integral / ( mc_b_integral + mc_nonb_integral ) );
 
     /////
 
@@ -442,6 +442,15 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   TH1D* h_csv_ratio_cumulative_Stats2Down = (TH1D*)h_csv_ratio_all->Clone("h_csv_ratio_cumulative_Stats2Down");
 
   int nBins = h_csv_ratio_cumulative->GetNbinsX();
+
+
+  double data_all_integral = h_csv_ratio_all->Integral();
+  double mc_b_all_integral = h_csv_mc_b_all->Integral();
+  double mc_nonb_all_integral = h_csv_mc_nonb_all->Integral();
+
+  h_csv_mc_b_all->Scale( data_all_integral / ( mc_b_all_integral + mc_nonb_all_integral ) );
+  h_csv_mc_nonb_all->Scale( data_all_integral / ( mc_b_all_integral + mc_nonb_all_integral ) );
+
 
   TH1D* h_csv_mc_b_all_LFUp = (TH1D*)h_csv_mc_b_all->Clone("h_csv_mc_b_all_LFUp");
   TH1D* h_csv_mc_b_all_LFDown = (TH1D*)h_csv_mc_b_all->Clone("h_csv_mc_b_all_LFDown");
@@ -645,7 +654,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   TF1* btagSFUp   = new TF1("btagSFUp","1.02*(0.607239*x*x*x*x+-1.49984*x*x*x+1.3473*x*x+-0.599888*x+1.09396)",0.15,0.95);
   TF1* btagSFDown = new TF1("btagSFUp","0.98*(0.607239*x*x*x*x+-1.49984*x*x*x+1.3473*x*x+-0.599888*x+1.09396)",0.15,0.95);
   h_csv_ratio_cumulative->SetStats(0);
-  h_csv_ratio_cumulative->GetYaxis()->SetRangeUser(0.88,1.1);
+  h_csv_ratio_cumulative->GetYaxis()->SetRangeUser(0.78,1.1);
   h_csv_ratio_cumulative->GetXaxis()->SetRangeUser(0.1,1.00);
   h_csv_ratio_cumulative->SetMarkerStyle(20);
   h_csv_ratio_cumulative->SetTitle(";CSV;Heavy flavor scale factor");
@@ -2296,6 +2305,228 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   
   fit_result_file_charm.close();
 
+
+
+  // Uncertainties
+  ofstream fit_result_file_unc;
+  fit_result_file_unc.open( "BTVScaleFactorFitResult/fitResult_uncertainties_csvSF_13TeV.txt" );
+
+  fit_result_file_unc << "3, iterativefit, up_jes, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_jes, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_hf, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_hf, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_hf, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_hf, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_lf, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_lf, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_lf, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_lf, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_cferr1, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_cferr1, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_cferr2, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_cferr2, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_cferr1, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_cferr1, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_cferr2, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_cferr2, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+
+
+  fit_result_file_unc << "3, iterativefit, up_hfstats1, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_hfstats1, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_hfstats2, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_hfstats2, 2, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+
+
+  fit_result_file_unc << "3, iterativefit, up_hfstats1, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_hfstats1, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_hfstats2, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_hfstats2, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+
+
+  fit_result_file_unc << "3, iterativefit, up_lfstats1, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_lfstats1, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_lfstats2, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_lfstats2, 0, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+
+  fit_result_file_unc << "3, iterativefit, up_lfstats1, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_lfstats1, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, up_lfstats2, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+  fit_result_file_unc << "3, iterativefit, down_lfstats2, 1, " 
+		      << "0.0" << ", " << "2.4" << ", " 
+		      << "20.0" << ", " << "10000" << ", " 
+		      << "-15" << ", " << "1.1" << ", " 
+		      << "\"" << "1.0" << "\"" << "\n";
+
+
+  fit_result_file_charm.close();
+
+
+
   for( int iHist=0; iHist<NumHists_normal; iHist++ ){
     fit_result_file[iHist].close();
   }
@@ -2344,6 +2575,20 @@ h_c_jet_csv_Pt5_Eta0->Integral()/h_c_jet_csv_CharmCSVSF_Pt5_Eta0_SysC2->Integral
 h_c_jet_csv_Pt5_Eta0->Integral()/h_c_jet_csv_CharmCSVSF_Pt5_Eta0_SysC3->Integral()
 h_c_jet_csv_Pt5_Eta0->Integral()/h_c_jet_csv_CharmCSVSF_Pt5_Eta0_SysC4->Integral()
 
+
+
+TFile* f_old = new TFile("csv_rwt_fit_hf_v3_final_2015_11_23.root");
+TFile* f_new = new TFile("csv_rwt_fit_hf_v3_final_2015_11_23_1probe.root");
+
+
+TH1D* h_old = (TH1D*)f_old->Get("csv_ratio_Pt0_Eta0_final")->Clone("h_old");
+TH1D* h_new = (TH1D*)f_new->Get("csv_ratio_Pt0_Eta0_final")->Clone("h_new");
+
+TH1D* h_ratio = (TH1D*)h_new->Clone("h_ratio");
+
+h_ratio->Divide(h_old);
+
+h_ratio->Draw();
 
 
  */
