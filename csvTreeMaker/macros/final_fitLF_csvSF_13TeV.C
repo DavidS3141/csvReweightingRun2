@@ -5,7 +5,7 @@
 #include "TVirtualFitter.h"
 #include "TGraphAsymmErrors.h"
 #include "TLegend.h"
-
+#include "TLatex.h"
 
 #include <iostream>
 #include <algorithm>
@@ -34,7 +34,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2015_11_24_fitLF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2015_11_30_fitLF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -47,9 +47,29 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   std::cout << " ###===> iteration version " << iterNum << std::endl;
 
 
-  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2015_11_24.root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2015_11_30.root",iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
+
+
+
+  TString lumiinfo = "2.4 fb^{-1} (13 TeV)";
+  TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
+  LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
+  LumiInfoLatex.SetTextSize(0.04);
+
+  //TString cmsinfo =   "CMS Preliminary";
+  TString cmsinfo =   "CMS";
+  TLatex CMSInfoLatex(0.155, 0.91, cmsinfo);
+  CMSInfoLatex.SetNDC(); CMSInfoLatex.SetTextFont(42);
+  CMSInfoLatex.SetTextFont(61);
+  CMSInfoLatex.SetTextSize(0.055); //SBOUTLE
+
+  std::string publishinfo =   "Preliminary"; //DPUIGH
+  TLatex PublishInfoLatex(0.25, 0.91, publishinfo.c_str()); //SBOUTLE
+  PublishInfoLatex.SetNDC();
+  PublishInfoLatex.SetTextFont(52);
+  PublishInfoLatex.SetTextSize(0.045); //SBOUTLE
 
 
   double useUp = 1.2;
@@ -82,6 +102,9 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   std::vector<TString> mc_b_hist_name;
   std::vector<TString> mc_nonb_hist_name;
 
+  std::vector<TString> label_ptbin;
+  std::vector<TString> label_etabin;
+
   int maxPt  = 4;
   int maxEta = 3;
 
@@ -96,6 +119,15 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
       data_hist_name.push_back( Form("%scsv_Data_Pt%d_Eta%d", prefix_hist.Data(), iPt, iEta) );
       mc_b_hist_name.push_back( Form("%scsv_MC_bjets_Pt%d_Eta%d", prefix_hist.Data(), iPt, iEta) );
       mc_nonb_hist_name.push_back( Form("%scsv_MC_nonbjets_Pt%d_Eta%d", prefix_hist.Data(), iPt, iEta) );
+
+      if( iPt==0 )      label_ptbin.push_back("20 < p_{T} < 30 GeV");
+      else if( iPt==1 ) label_ptbin.push_back("30 < p_{T} < 40 GeV");
+      else if( iPt==2 ) label_ptbin.push_back("40 < p_{T} < 60 GeV");
+      else if( iPt==3 ) label_ptbin.push_back("p_{T} > 60 GeV");
+
+      if( iEta==0 ) label_etabin.push_back("|#eta| < 0.8");
+      else if( iEta==1 ) label_etabin.push_back("0.8 < |#eta| < 1.6");
+      else if( iEta==2 ) label_etabin.push_back("1.6 < |#eta| < 2.4");
     }
   }
 
@@ -531,6 +563,8 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   int NumFinalBins = 1000;
 
   TCanvas *c1 = new TCanvas("c1");
+  gPad->SetRightMargin(.05);
+
   for( int iHist=0; iHist<numHists-1; iHist++ ){
     // delete DELETE
     if( iHist>numHists-3 ) continue;
@@ -757,24 +791,51 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
 
 
+    //////
+    TString ptselectioninfo = label_ptbin[iHist];
 
-    TLegend *legend4 = new TLegend(0.2,0.75,0.77,0.89);
+    TLatex PTSELECTIONInfoLatex(0.14, 0.84, ptselectioninfo);
+    PTSELECTIONInfoLatex.SetNDC();
+    PTSELECTIONInfoLatex.SetTextFont(42);
+    PTSELECTIONInfoLatex.SetTextSize(0.04);
+
+    TString etaselectioninfo = label_etabin[iHist];
+
+    TLatex ETASELECTIONInfoLatex(0.14, 0.78, etaselectioninfo);
+    ETASELECTIONInfoLatex.SetNDC();
+    ETASELECTIONInfoLatex.SetTextFont(42);
+    ETASELECTIONInfoLatex.SetTextSize(0.04);
+
+
+    ///////
+
+
+    // TLegend *legend4 = new TLegend(0.2,0.75,0.77,0.89);
+    TLegend *legend4 = new TLegend(0.75,0.72,0.87,0.89);
     legend4->SetFillColor(kWhite);
     legend4->SetLineColor(kWhite);
     legend4->SetShadowColor(kWhite);
     legend4->SetTextFont(42);
-    legend4->SetTextSize(0.05);
+    legend4->SetTextSize(0.04);
 
-    legend4->SetNColumns(2);
+    // legend4->SetNColumns(2);
 
     legend4->AddEntry(h_csv_ratio[iHist],"LF SF","p");
     legend4->AddEntry(h_csv_ratio_final[iHist],"LF Fit","l");
 
 
+    h_csv_ratio_final[iHist]->SetTitle("");
     h_csv_ratio_final[iHist]->Draw("hist");
     h_csv_ratio[iHist]->Draw("pe1same");
 
     legend4->Draw();
+
+    LumiInfoLatex.Draw();
+    CMSInfoLatex.Draw();
+    PublishInfoLatex.Draw();
+
+    PTSELECTIONInfoLatex.Draw();
+    ETASELECTIONInfoLatex.Draw();
 
     TString img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_only.png";
     c1->Print(img);
