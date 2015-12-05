@@ -8,7 +8,10 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '74X_dataRun2_reMiniAOD_v0'  ##Data
+process.GlobalTag.globaltag = '74X_dataRun2_v5'  ##Data
+
+# Load the producer for MVA IDs. Make sure it is also added to the sequence!
+process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 #process.options.allowUnscheduled = cms.untracked.bool(True)
@@ -48,8 +51,13 @@ process.source = cms.Source("PoolSource",
 
 
 process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
-    inSample = cms.int32(-100),##
-    sampleName = cms.string("DoubleEG"),##
+#    inSample = cms.int32(-100),##
+#    sampleName = cms.string("DoubleEG"),##
+#    inSample = cms.int32(-200),##
+#    sampleName = cms.string("DoubleMuon"),##
+    inSample = cms.int32(-300),##
+    sampleName = cms.string("MuonEG"),##
+
     XS = cms.double(1.),
     nGen = cms.double(1.),
     lumi = cms.double(10000),
@@ -60,4 +68,4 @@ process.TFileService = cms.Service("TFileService",
 	fileName = cms.string('csv_treeMaker.root')
 )
 
-process.p = cms.Path(process.ttHTreeMaker)
+process.p = cms.Path(process.electronMVAValueMapProducer * process.ttHTreeMaker)
