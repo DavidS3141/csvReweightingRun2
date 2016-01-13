@@ -65,8 +65,14 @@ TH1D* c_csv_wgt_hf[9][6];
 TH1D* h_csv_wgt_lf[9][4][3];
 
 //*****************************************************************************
-// old data 552.673 + 993.722 = 1546.395 ; new 887.308 + 1557.133
-void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi=2444.441 ) {
+// old data 552.673 + 993.722 = 1546.395 ; new 887.308 + 1557.133 = 2444.441; latest 924.846 + 1579.186 = 2504.032
+void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi=2504.032 ) {
+  /// tag and probe, jeremy's control region
+  bool tpj =  false; //true;
+
+  //skipping runs/lumis
+  bool doSkip = false;
+  std::vector<int> runs={260532,260533,260536,260534,257822,257823,260431,260373,260627,256734,258443,260593,260576,260577,260575,260538,257490,259861,260541,260424,260425,260426,260427,259884,257400,256729,257487,257394,257395,257396,257397,257399};
 
   // set seed for reproducibility
   TRandom3 r(12345);
@@ -76,8 +82,16 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   TH1D* h_PU = (TH1D*)f_PUwgt->Get("numPVs_PUratio")->Clone();
 
   ///// csv WPs
-  double Mwp = 0.89;
-  double Lwp =  0.605;
+  double Mwp = 0.800;//0.89;
+  double Lwp =  0.460;//0.605;
+  if(!isCSV){
+    Mwp = 0.725;
+    Lwp = 0.545;
+  }
+
+  /// which btagger is used
+  string taggerName = "csv";
+  if(!isCSV) taggerName = "cMVA";
 
   ////////////////// 
   /// JES uncertainty different jet collections and associated variables
@@ -91,8 +105,8 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   std::string inputFileLF = "data/csv_rwt_lf_IT.root";
 
   if( verNum>0 ){
-    inputFileHF = Form("data/csv_rwt_fit_hf_v%i%s.root", verNum-1, JES.c_str());
-    inputFileLF = Form("data/csv_rwt_fit_lf_v%i%s.root", verNum-1, JES.c_str());
+    inputFileHF = Form("data/%s_rwt_fit_hf_v%i%s.root", taggerName.c_str(), verNum-1, JES.c_str());
+    inputFileLF = Form("data/%s_rwt_fit_lf_v%i%s.root", taggerName.c_str(), verNum-1, JES.c_str());
 
     std::cout << "\t inputFileHF = " << inputFileHF << std::endl;
     std::cout << "\t inputFileLF = " << inputFileLF << std::endl;
@@ -121,17 +135,23 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   std::string mySample_inputDir_ = "";
   if( insample==2500 ){
     mySample_xSec_ = 831.76;//https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
-    mySample_nGen_ = 19757190+96834559;//19899500;
+    mySample_nGen_ = 19757202+96834408; //19757190+96834559;//from DAS //19899500;
     mySample_sampleName_ = "ttjets";//"TTJets";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150217_005136/0000/";
     //mySample_inputDir_ = "/uscms_data/d2/dpuigh/TTH/miniAOD/CMSSW_7_2_3/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
   else if( insample==2300 ){
-    mySample_xSec_ = 3*2008.4;//*1.15; // SF = 1.15 for DY
-    mySample_nGen_ = 19259109;//19310834; //28445565; 
+    mySample_xSec_ = 3*2008.4;//*1.3; // SF = 1.15 for DY
+    mySample_nGen_ = 19259101;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+  }
+  else if( insample==2310 ){
+    mySample_xSec_ = 18610;//*1.3;//correctMe
+    mySample_nGen_ = 21843377;//correctMe
+    mySample_sampleName_ = "lowMasszjets";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
   else if( insample==2400 ){
@@ -188,6 +208,12 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     mySample_sampleName_ = "singletbarW";//"Tbar_tW_DR";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
+  else if( insample==2600 ){
+    mySample_xSec_ =  12.178; // correctMe???
+    mySample_nGen_ = 1965200;
+    mySample_sampleName_ = "WW";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+  }
   else if( insample==9125 ){
     mySample_xSec_ = 0.5085 * 1.0;// YR3 * BR(all)  
     mySample_nGen_ = 199700;//199000;
@@ -222,11 +248,11 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
   std::string s_end = "_histo_" + str_jobN + ".root";
   if( Njobs==1 ) s_end = "_histo.root";
-  // if( Njobs==1 ) s_end = "_histo_emu.root"; // checking different dilepton categories
+  // if( Njobs==1 ) s_end = "_histo_ge2jNoTagCut.root"; // tpj //change the output file name; checking different dilepton categories
 
 
-  std::string histofilename = Form("CSVHistoFiles/csv_rwt_hf_%s_v%i%s%s",mySample_sampleName_.c_str(),verNum, JES.c_str(), s_end.c_str());
-  if( !isHF ) histofilename = Form("CSVHistoFiles/csv_rwt_lf_%s_v%i%s%s",mySample_sampleName_.c_str(),verNum, JES.c_str(), s_end.c_str());
+  std::string histofilename = Form("CSVHistoFiles/%s_rwt_hf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
+  if( !isHF ) histofilename = Form("CSVHistoFiles/%s_rwt_lf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
 
   std::cout << "  treefilename  = " << treefilename.c_str() << std::endl;
   std::cout << "  histofilename = " << histofilename.c_str() << std::endl;
@@ -262,9 +288,19 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   if (!isHF) {maxPt1 = 200. ; maxPt2 = 100. ;}
   TH1D* h_nJets_noSF  = new TH1D("h_nJets_noSF",";numJet", 10, 0, 10 );
   TH1D* h_nJets  = new TH1D("h_nJets",";numJet", 10, 0, 10 );
+  TH1D* h_nJets30_noSF  = new TH1D("h_nJets30_noSF",";numJet", 10, 0, 10 );
+  TH1D* h_nJets30  = new TH1D("h_nJets30",";numJet", 10, 0, 10 );
 
   TH1D* h_nTags_noSF  = new TH1D("h_nTags_noSF",";numTag", 5, 0, 5 );
   TH1D* h_nTags  = new TH1D("h_nTags",";numTag", 5, 0, 5 );
+
+  TH1D* h_probe_jet_csv = new TH1D("h_probe_jet_csv",";probe jet CSV", 102, -0.01, 1.01 );
+  TH1D* h_probe_jet_csv_noSF = new TH1D("h_probe_jet_csv_noSF",";probe jet CSV", 102, -0.01, 1.01 );
+
+  TH1D* h_probe_jet_pt = new TH1D("h_probe_jet_pt",";probe jet p_{T}", 100, 0, maxPt1 );
+  TH1D* h_probe_jet_pt_noSF = new TH1D("h_probe_jet_pt_noSF",";probe jet p_{T}", 100, 0, maxPt1 );
+
+  TH1D* h_all_jet_pt = new TH1D("h_all_jet_pt","; jet p_{T}", 100, 0, maxPt1 );
 
   TH1D* h_first_jet_pt  = new TH1D("h_first_jet_pt",";first jet p_{T}", 100, 0., maxPt1 );
   TH1D* h_first_jet_eta = new TH1D("h_first_jet_eta",";first jet #eta", 70, -3.5, 3.5 );
@@ -377,13 +413,20 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
   // // double xBins_hf[19] = {-10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
   // double xBins_hf[19] = {-10.0, 0.0, 0.3025, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
 
+  /// default -0.1 for csv < 0
   int nBins = 22; //Number of bins 
   // double xBins_hf[19] = {-10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
-  double xBins_hf[23] = {-10.0, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
+  //  double xBins_hf[23] = {-10.0, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
+  double xBins_hf[23] = {-10.0, 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.827, 0.854, 0.881, 0.908, 0.935, 0.948, 0.961, 0.974, 0.987, 1.01};
+  double xBins_hf_cMVA[23] = {-10.0, 0.0, 0.091, 0.182, 0.273, 0.364, 0.455, 0.545, 0.581, 0.617, 0.653, 0.689, 0.725, 0.751, 0.777, 0.803, 0.829, 0.855, 0.884, 0.913, 0.942, 0.971, 1.01};
+
+
   if(!isHF) nBins = 21;
   // double xBins_lf[22] = {-10.0, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
-  double xBins_lf[22] = {-10.0, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.917, 0.944, 0.970, 0.975, 0.980, 0.985, 0.990, 0.995, 1.01};
- 
+  // double xBins_lf[22] = {-10.0, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.917, 0.944, 0.970, 0.975, 0.980, 0.985, 0.990, 0.995, 1.01};
+  double xBins_lf[22] = {-10.0, 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.845, 0.890, 0.935, 0.946, 0.957, 0.968, 0.979, 0.990, 1.01};
+  double xBins_lf_cMVA[22] = {-10.0, 0.0, 0.091, 0.182, 0.273, 0.364, 0.455, 0.545, 0.581, 0.617, 0.653, 0.689, 0.725, 0.768, 0.811, 0.855, 0.879, 0.903, 0.927, 0.951, 0.975, 1.01};
+
 
   ////////
   //// book the histograms with the appropriate names, binnings
@@ -394,18 +437,30 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       TString h_b_Name = Form("csv_MC_bjets_Pt%i_Eta%i",iPt,iEta);
       TString h_nonb_Name = Form("csv_MC_nonbjets_Pt%i_Eta%i",iPt,iEta);
 
-
+      /////
       if ( isHF ){
-	h_Data_jet_csv[iPt][iEta] = new TH1D(h_Data_Name, h_Data_Name, nBins, xBins_hf); 
-	h_MC_b_jet_csv[iPt][iEta] = new TH1D(h_b_Name, h_b_Name, nBins, xBins_hf); 
-	h_MC_nonb_jet_csv[iPt][iEta] = new TH1D(h_nonb_Name, h_nonb_Name, nBins, xBins_hf); 
-
+	if(isCSV){
+	  h_Data_jet_csv[iPt][iEta] = new TH1D(h_Data_Name, h_Data_Name, nBins, xBins_hf); 
+	  h_MC_b_jet_csv[iPt][iEta] = new TH1D(h_b_Name, h_b_Name, nBins, xBins_hf); 
+	  h_MC_nonb_jet_csv[iPt][iEta] = new TH1D(h_nonb_Name, h_nonb_Name, nBins, xBins_hf); 
+	}
+	else{
+	  h_Data_jet_csv[iPt][iEta] = new TH1D(h_Data_Name, h_Data_Name, nBins, xBins_hf_cMVA); 
+	  h_MC_b_jet_csv[iPt][iEta] = new TH1D(h_b_Name, h_b_Name, nBins, xBins_hf_cMVA); 
+	  h_MC_nonb_jet_csv[iPt][iEta] = new TH1D(h_nonb_Name, h_nonb_Name, nBins, xBins_hf_cMVA); 
+	}
       }
       else { 
-	h_Data_jet_csv[iPt][iEta] = new TH1D(h_Data_Name, h_Data_Name, nBins, xBins_lf); 
-	h_MC_b_jet_csv[iPt][iEta] = new TH1D(h_b_Name, h_b_Name, nBins, xBins_lf); 
-	h_MC_nonb_jet_csv[iPt][iEta] = new TH1D(h_nonb_Name, h_nonb_Name, nBins, xBins_lf); 
-
+	if(isCSV){
+	  h_Data_jet_csv[iPt][iEta] = new TH1D(h_Data_Name, h_Data_Name, nBins, xBins_lf); 
+	  h_MC_b_jet_csv[iPt][iEta] = new TH1D(h_b_Name, h_b_Name, nBins, xBins_lf); 
+	  h_MC_nonb_jet_csv[iPt][iEta] = new TH1D(h_nonb_Name, h_nonb_Name, nBins, xBins_lf); 
+	}
+	else{
+	  h_Data_jet_csv[iPt][iEta] = new TH1D(h_Data_Name, h_Data_Name, nBins, xBins_lf_cMVA); 
+	  h_MC_b_jet_csv[iPt][iEta] = new TH1D(h_b_Name, h_b_Name, nBins, xBins_lf_cMVA); 
+	  h_MC_nonb_jet_csv[iPt][iEta] = new TH1D(h_nonb_Name, h_nonb_Name, nBins, xBins_lf_cMVA); 
+	}
       }   
     }
   }
@@ -474,13 +529,26 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
     // }
 
+    //skipping runs/lumis for data
+    if(doSkip && insample < 0){
+      int runNumber = eve->run_;
+      bool skipEvent = false;
+      for(int iRun=0; iRun<int(runs.size()); iRun++ ){
+	if(runNumber == runs[iRun]) {
+	  skipEvent = true;
+	  break;
+	}
+      }
+      if (skipEvent) continue;
+    }
+
     //// --------- various weights: PU, topPt, triggerSF, leptonSF...
     // double  wgt_topPtSF = eve->wgt_topPt_;
     double Xsec = mySample_xSec_;//eve->wgt_xs_;
     double nGen = ( maxNentries>0 ) ? maxNentries : mySample_nGen_;//eve->wgt_nGen_;
     double lumi = ( intLumi > 0 ) ? intLumi : eve->wgt_lumi_ ;
     if (insample < 0) lumi = 1;
-    double wgt_gen = ( insample==2300 ) ? (eve->wgt_generator_/fabs(eve->wgt_generator_) ): 1;
+    double wgt_gen = ( insample==2300 || insample==2310) ? (eve->wgt_generator_/fabs(eve->wgt_generator_) ): 1;
     double wgt = wgt_gen * lumi * (Xsec/nGen);//"weight_PU*topPtWgt*osTriggerSF*lepIDAndIsoSF*"; // various weights
 
 
@@ -492,11 +560,13 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     h_numPV->Fill(numPVs, wgt);
     double PUwgt = (insample < 0) ? 1 : h_PU->GetBinContent(h_PU->FindBin(numPVs));
     // PUwgt = 1;
-    wgt *= PUwgt;
+    // wgt *= PUwgt; // wait for data samples to get the new Pileup weights
 
     /// csv wgt
     vecTLorentzVector jet_vect_TLV = eve->jet_vect_TLV_[iSys];
-    vdouble jet_CSV = eve->jet_CSV_[iSys];
+    vdouble jet_CSV;
+    if(isCSV) jet_CSV = eve->jet_CSV_[iSys];
+    else  jet_CSV = eve->jet_cMVA_[iSys];
     vint jet_flavour = eve->jet_flavour_[iSys];
 
     double csvWgtHF, csvWgtLF, csvWgtCF;
@@ -505,9 +575,11 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     if( verbose ) std::cout << " HF/LF csv wgts are: " << csvWgtHF << "/"<< csvWgtLF << "\t new CSV wgt = " << newCSVwgt << std::endl; 
     ///// for iteration
     if (verNum !=0 && insample>=0) {
-      if ( isHF ) wgt *= csvWgtLF; // applying lfSFs
-      else        wgt *= csvWgtHF; // applying lfSFs
-      // wgt *= newCSVwgt;
+      if( verNum < 3 ){
+	if ( isHF ) wgt *= csvWgtLF; // applying lfSFs
+	else        wgt *= csvWgtHF; // applying lfSFs
+      }
+      else      wgt *= newCSVwgt;
     }
 
     if (insample < 0) wgt = 1;
@@ -520,11 +592,11 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 
     //////------- exactly 2 jets -----
-    // vecTLorentzVector jet_vect_TLV = eve->jet_vect_TLV_[iSys];
-    // vdouble jet_CSV = eve->jet_CSV_[iSys];
-
     int numJets = int(jet_vect_TLV.size()) ;
-    if (numJets !=2) continue;
+    if (tpj){
+      if (numJets < 2) continue;
+    }
+    else if (numJets != 2) continue;
     numEvents_2jets++;
 
     h_hf_event_selection->Fill(1.5, wgt);
@@ -539,7 +611,8 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     if( jet1_btag<Lwp || jet2_btag<Lwp ) failLooseBtag = true;
 
     double MHT = eve->MHT_[iSys];
-    double met_pt = eve->METNoHF_[iSys]; //changed due to the use of silver json
+    double met_pt = eve->MET_[iSys];
+    //    double met_pt = eve->METNoHF_[iSys]; //changed due to the use of silver json
 
     //////------- get two leptons variables from trees-----
     int TwoMuon = eve->TwoMuon_;
@@ -555,7 +628,10 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     // vint lepton_isTight = eve->lepton_isTight_;
     // vint lepton_isLoose = eve->lepton_isLoose_;
     vint lepton_trkCharge = eve->lepton_trkCharge_;
-
+    if (tpj){
+      if (! (lepton_vect_TLV[0].Pt()>20 && lepton_vect_TLV[1].Pt()>20) ) continue; //tpj
+      if (mass_leplep < 20 ) continue; //tpj
+    }
     ////------- no need to calculate two-lepton variables any more
     // int numLooseLeptons=0;
     // for( int iLep=0; iLep<int(lepton_vect_TLV.size()); iLep++ ){
@@ -628,16 +704,20 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     }
     // for MC events
     bool lepselection2 = ( lepselection1a || lepselection1b || lepselection1c ) ;
+    if (tpj) {
+      if(isHF) lepselection2 = lepselection1c; // tpj, checking different dilepton categories
+      else   lepselection2 = (lepselection1a || lepselection1b);
+    }
+    // ///// different lepton flavor
+    // lepselection2 = lepselection1b;
+
     if ( insample == -200 ) lepselection2 = lepselection1a;
     if ( insample == -100 ) lepselection2 = lepselection1b;
     if ( insample == -300 ) lepselection2 = lepselection1c;
-    // lepselection2 = lepselection1c; // checking different dilepton categories
 
     // if (DataSet.find ("DoubleMuon") !=std::string::npos ) lepselection2 = lepselection1a;
     // if (DataSet.find ("DoubleEG") !=std::string::npos ) lepselection2 = lepselection1b;
     // if (DataSet.find ("MuonEG") !=std::string::npos )lepselection2 = lepselection1c;
-
-    // if (!isHF) lepselection2 = ( lepselection1a || lepselection1b || lepselection1c ) ;
 
     if( lepselection1a ) numEvents_lepselection1a++;
     if( lepselection1b ) numEvents_lepselection1b++;
@@ -709,23 +789,16 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 
     /////------ extra seletions -----
-    // double dR_leplep = eve->dR_leplep_;
-    // bool isCleanEvent = 1;
-    // int oppositeLepCharge = eve->oppositeLepCharge_;
-
-    // bool exselection = ((dR_leplep > 0.2) && (mass_leplep > 12) && (isCleanEvent == 1) && (oppositeLepCharge == 1)); //General dilepton selection   
-    // bool exselection = ((dR_leplep > 0.2) && (mass_leplep > 12) && (isCleanEvent == 1)); //General dilepton selection // opposite sign applied in treemaking
-
     if ( !exselection ) continue;
     numEvents_exselection++;
 
-    if(isHF && !passTightBtag) continue;
-    if(!isHF && !failLooseBtag) continue;
-
+    if(!tpj){
+      if(isHF && !passTightBtag) continue;
+      if(!isHF && !failLooseBtag) continue;
+    }
     nPass++;
+
     ///// --------jet variables
-    // vdouble jet_CSV = eve->jet_CSV_[iSys];
-    // vint jet_flavour = eve->jet_flavour_[iSys];
     vint jet_partonflavour = eve->jet_partonflavour_[iSys];
 
     double first_jet_pt = -9.;
@@ -746,6 +819,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
     // double minDR_lepton_first_jet = 99, minDR_lepton_second_jet = 99;
 
     int numTags = 0;
+    int numJets30 = 0;
     for( int iJet=0; iJet<int(jet_vect_TLV.size()); iJet++ ){
       TLorentzVector myJet = jet_vect_TLV[iJet];
       // myJet.SetPxPyPzE( jet_vect_TLV[iJet][0], jet_vect_TLV[iJet][1], jet_vect_TLV[iJet][2], jet_vect_TLV[iJet][3] );
@@ -755,8 +829,14 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       double myJetEta = myJet.Eta();
       int myFlavor = jet_flavour[iJet];
       int mypartonFlavor = jet_partonflavour[iJet];
+      //tpj
+      if(myJetPt > 30) numJets30++;
+      else if(tpj) continue;
+
       if (myCSV > Mwp) numTags++;
-      if( iJet==0 ){
+
+      // if( iJet==0 ){
+      if( (tpj && numJets30==1) || (!tpj && iJet==0) ){ //tpj
 	first_jet_pt = myJetPt;
 	first_jet_eta = myJetEta;
 	first_jet_csv = myCSV;
@@ -775,7 +855,8 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 	//   if( lepton_isTight[iLep] ) h_mass_tight_lepton_first_jet->Fill(sum.M());
 	// }
       }
-      if( iJet==1 ){
+      // if( iJet==1 ){
+      if( (tpj && numJets30==2) || (!tpj && iJet==1) ){ //tpj
 	second_jet_pt = myJetPt;
 	second_jet_eta = myJetEta;
 	second_jet_csv = myCSV;
@@ -799,15 +880,20 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 
     } // end loop over jets
-    
+    if (tpj && numJets30 != 2) continue; //tpj
 
     if( verbose ) std::cout << "   -first jet pt, eta is " << first_jet_pt << ";  "<<first_jet_eta << std::endl;
     if( verbose ) std::cout << "   -second jet pt, eta is " << second_jet_pt << ";  "<<second_jet_eta << std::endl;
 
+    h_nJets30->Fill(numJets30, wgt);
+    h_nJets30_noSF->Fill(numJets30, wgt/newCSVwgt);
     h_nJets->Fill(numJets, wgt);
     h_nJets_noSF->Fill(numJets, wgt/newCSVwgt);
     h_nTags->Fill(numTags, wgt);
     h_nTags_noSF->Fill(numTags, wgt/newCSVwgt);
+
+    h_all_jet_pt->Fill(first_jet_pt, wgt);
+    h_all_jet_pt->Fill(second_jet_pt, wgt);
 
     h_first_jet_pt->Fill(first_jet_pt, wgt);
     h_first_jet_eta->Fill(first_jet_eta, wgt);
@@ -864,18 +950,6 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 
 
-    // double csvWgtHF, csvWgtLF, csvWgtCF;
-    // double newCSVwgt = ( insample<0 ) ? 1 : get_csv_wgt(jet_vect_TLV, jet_CSV, jet_flavour,iSys, csvWgtHF, csvWgtLF, csvWgtCF);
-    // double wgtfakeData = wgt*newCSVwgt; // 1 for data
-    // if( verbose ) std::cout << " HF/LF csv wgts are: " << csvWgtHF << "/"<< csvWgtLF << "\t new CSV wgt = " << newCSVwgt << std::endl; 
-    // ///// for iteration
-    // if (verNum !=0 && insample>=0) {
-    //   // if ( isHF ) wgt *= csvWgtLF; // applying lfSFs
-    //   // else        wgt *= csvWgtHF; // applying lfSFs
-    //   wgt *= newCSVwgt;
-    // }
-
-
     ///// ------  tag and proble jet selections --------
     // 2nd jet --> tag, 1st jet --> probe
     bool jetselection2a = (second_jet_csv > Mwp) ? 1:0; //Probe jet being the first_jet
@@ -893,6 +967,24 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       secondjetb = ( abs(second_jet_flavour)==5 || abs(second_jet_flavour)==4 );
     }
 
+    /// closure test probe jet csv histogram
+    //tpj
+    if (tpj || (!tpj && jetselection2a)) {
+      h_probe_jet_csv->Fill(first_jet_csv, wgt);
+      h_probe_jet_csv_noSF->Fill(first_jet_csv, wgt/newCSVwgt);
+
+      h_probe_jet_pt->Fill(first_jet_pt, wgt);
+      h_probe_jet_pt_noSF->Fill(first_jet_pt, wgt/newCSVwgt);
+
+    }
+    if (tpj || (!tpj && jetselection2b)) {
+      h_probe_jet_csv->Fill(second_jet_csv, wgt);
+      h_probe_jet_csv_noSF->Fill(second_jet_csv, wgt/newCSVwgt);
+
+      h_probe_jet_pt->Fill(second_jet_pt, wgt);
+      h_probe_jet_pt_noSF->Fill(second_jet_pt, wgt/newCSVwgt);
+
+    }
 
     bool twoTagJet = ( (second_jet_csv > Mwp) && (first_jet_csv > Mwp) );
     if( !isHF ) twoTagJet = ( (second_jet_csv < Lwp) && (first_jet_csv < Lwp) );
@@ -971,7 +1063,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       if (isHF && iPt>4) iPt=4;
 
       if (!isHF && iPt>3) iPt=3;
-
+      if(tpj) iPt = iPt-1;
       ///fake data
       // h_Data_jet_csv[iPt][iEta]->Fill(first_jet_csv, wgtfakeData); 
 
@@ -1007,7 +1099,7 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
       if (isHF && iPt>4) iPt=4;
 
       if (!isHF && iPt>3) iPt=3;
-
+      if(tpj) iPt = iPt-1;
       ///fake data
       // h_Data_jet_csv[iPt][iEta]->Fill(second_jet_csv, wgtfakeData);       
 
@@ -1051,17 +1143,18 @@ void csvSF_treeReader_13TeV(bool isHF=1, int verNum = 0, string JES="", int insa
 
 void fillCSVhistos(TFile* fileHF, TFile* fileLF){
   //// more pt bins ???
-  int nPt = 5; /// change
-  int nPtLF = 4;
+  int minPt = 0;//0; tpj
+  int nPt = 5;//5-1; /// change
+  int nPtLF = 4;//4-1;
   int nEta = 3;
   for( int iSys=0; iSys<9; iSys++ ){
-    for( int iPt=0; iPt<nPt; iPt++ ) h_csv_wgt_hf[iSys][iPt] = NULL;
-    for( int iPt=0; iPt<nPtLF; iPt++ ){
+    for( int iPt=minPt; iPt<nPt; iPt++ ) h_csv_wgt_hf[iSys][iPt] = NULL;
+    for( int iPt=minPt; iPt<nPtLF; iPt++ ){
       for( int iEta=0; iEta<nEta; iEta++ )h_csv_wgt_lf[iSys][iPt][iEta] = NULL;
     }
   }
   for( int iSys=0; iSys<5; iSys++ ){
-    for( int iPt=0; iPt<nPt; iPt++ ) c_csv_wgt_hf[iSys][iPt] = NULL;
+    for( int iPt=minPt; iPt<nPt; iPt++ ) c_csv_wgt_hf[iSys][iPt] = NULL;
   }
 
   // CSV reweighting /// only care about the nominal ones !!!
@@ -1112,13 +1205,13 @@ void fillCSVhistos(TFile* fileHF, TFile* fileLF){
       break;
     }
 
-    for( int iPt=0; iPt<nPt; iPt++ ) h_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_hf.Data()) );
+    for( int iPt=minPt; iPt<nPt; iPt++ ) h_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_hf.Data()) );
 
     if( iSys<5 ){
-      for( int iPt=0; iPt<nPt; iPt++ ) c_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("c_csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_c.Data()) );
+      for( int iPt=minPt; iPt<nPt; iPt++ ) c_csv_wgt_hf[iSys][iPt] = (TH1D*)fileHF->Get( Form("c_csv_ratio_Pt%i_Eta0_%s",iPt,syst_csv_suffix_c.Data()) );
     }
     
-    for( int iPt=0; iPt<nPtLF; iPt++ ){
+    for( int iPt=minPt; iPt<nPtLF; iPt++ ){
       for( int iEta=0; iEta<nEta; iEta++ )h_csv_wgt_lf[iSys][iPt][iEta] = (TH1D*)fileLF->Get( Form("csv_ratio_Pt%i_Eta%i_%s",iPt,iEta,syst_csv_suffix_lf.Data()) );
     }
   }
@@ -1190,6 +1283,10 @@ double get_csv_wgt( vecTLorentzVector jets, vdouble jetCSV, vint jetFlavor, int 
 
     if (iPt < 0 || iEta < 0) std::cout << "Error, couldn't find Pt, Eta bins for this b-flavor jet, jetPt = " << jetPt << ", jetAbsEta = " << jetAbsEta << std::endl;
 
+    //tpj
+    // if(iPt==0) continue;
+    // else iPt = iPt-1;
+
     if (abs(flavor) == 5 ){
       int useCSVBin = (csv>=0.) ? h_csv_wgt_hf[iSysHF][iPt]->FindBin(csv) : 1;
       double iCSVWgtHF = h_csv_wgt_hf[iSysHF][iPt]->GetBinContent(useCSVBin);
@@ -1205,7 +1302,7 @@ double get_csv_wgt( vecTLorentzVector jets, vdouble jetCSV, vint jetFlavor, int 
       // if( iSysC==0 ) printf(" iJet,\t flavor=%d,\t pt=%.1f,\t eta=%.2f,\t csv=%.3f,\t wgt=%.2f \n",
       //      flavor, jetPt, iJet->eta, csv, iCSVWgtC );
     }
-    else {
+    else {//tpj
       if (iPt >=3) iPt=3;       /// [30-40], [40-60] and [60-10000] only 3 Pt bins for lf
       int useCSVBin = (csv>=0.) ? h_csv_wgt_lf[iSysLF][iPt][iEta]->FindBin(csv) : 1;
       double iCSVWgtLF = h_csv_wgt_lf[iSysLF][iPt][iEta]->GetBinContent(useCSVBin);

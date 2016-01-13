@@ -108,11 +108,11 @@ class csvTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT<edm::ValueMap<int> > EDMeleMVAcategoriesToken;
 
   edm::EDGetTokenT <reco::VertexCollection> vertexToken;
-  edm::EDGetTokenT <pat::ElectronCollection> electronToken;
+  // edm::EDGetTokenT <pat::ElectronCollection> electronToken;
   edm::EDGetTokenT <pat::MuonCollection> muonToken;
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
-  edm::EDGetTokenT <pat::METCollection> metNoHFToken;
+  // edm::EDGetTokenT <pat::METCollection> metNoHFToken;
 
   edm::EDGetTokenT <pat::PackedCandidateCollection> packedpfToken;
 
@@ -198,16 +198,17 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring15Trig25nsV1Categories",""));
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
-  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
+  // electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
   metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
-  metNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsNoHF")));
+  // metNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsNoHF")));
 
 
   packedpfToken = consumes <pat::PackedCandidateCollection> (edm::InputTag(std::string("packedPFCandidates")));
 
   beamspotToken = consumes <reco::BeamSpot> (edm::InputTag(std::string("offlineBeamSpot")));
+  //  rhoToken = consumes <double> (edm::InputTag(std::string("fixedGridRhoFastjetCentral")));
   rhoToken = consumes <double> (edm::InputTag(std::string("fixedGridRhoFastjetAll")));
   mcparicleToken = consumes <reco::GenParticleCollection> (edm::InputTag(std::string("prunedGenParticles")));
   puInfoToken = consumes <std::vector< PileupSummaryInfo > > (edm::InputTag(std::string("slimmedAddPileupInfo"))); //
@@ -305,8 +306,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
 
-  edm::Handle<pat::METCollection> pfmetNoHF;
-  iEvent.getByToken(metNoHFToken,pfmetNoHF);
+  // edm::Handle<pat::METCollection> pfmetNoHF;
+  // iEvent.getByToken(metNoHFToken,pfmetNoHF);
 
   edm::Handle<pat::PackedCandidateCollection> packedPFcands;
   iEvent.getByToken(packedpfToken,packedPFcands);
@@ -704,11 +705,11 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<pat::Jet> oldJetsForMET_uncorr = miniAODhelper.GetUncorrectedJets(oldJetsForMET);
     std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, iSysType);
     std::vector<pat::MET> newMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmet);
-    std::vector<pat::MET> newMETs_NoHF = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmetNoHF);
+    // std::vector<pat::MET> newMETs_NoHF = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmetNoHF);
 
     pat::MET correctedMET = newMETs.at(0); 
     // TLorentzVector metV(correctedMET.px(),correctedMET.py(),0.0,correctedMET.pt());
-    pat::MET correctedMET_NoHF = newMETs_NoHF.at(0); 
+    // pat::MET correctedMET_NoHF = newMETs_NoHF.at(0); 
 
        
     // Initialize event vars, selected jets
@@ -718,6 +719,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     vecTLorentzVector jetV;
     std::vector<double> csvV;
+    std::vector<double> cMVAV;
     std::vector<double> jet_ptV; /// non existing
     std::vector<double> jet_etaV;
     vint jet_flavour_vect;
@@ -742,12 +744,16 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       double myCSV = miniAODhelper.GetJetCSV(*iJet, "pfCombinedInclusiveSecondaryVertexV2BJetTags");
       csvV.push_back(myCSV);
+
+      double mycMVA = miniAODhelper.GetJetCSV(*iJet, "pfCombinedMVABJetTags");
+      cMVAV.push_back(mycMVA);
     
     }// end loop over iJet
 
     ////
     eve->jet_vect_TLV_[iSys]   = jetV;
     eve->jet_CSV_[iSys]        = csvV;
+    eve->jet_cMVA_[iSys]        = cMVAV;
     eve->jet_pt_[iSys]        = jet_ptV;
     eve->jet_eta_[iSys]        = jet_etaV;
     eve->jet_flavour_[iSys]          = jet_flavour_vect;
@@ -784,8 +790,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     eve->MET_[iSys]      = correctedMET.pt();
     eve->MET_phi_[iSys]  = correctedMET.phi();
     // MET_NoHF
-    eve->METNoHF_[iSys]      = correctedMET_NoHF.pt();
-    eve->METNoHF_phi_[iSys]  = correctedMET_NoHF.phi();
+    // eve->METNoHF_[iSys]      = correctedMET_NoHF.pt();
+    // eve->METNoHF_phi_[iSys]  = correctedMET_NoHF.phi();
 
 
     // nJets/Tags

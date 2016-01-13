@@ -6,44 +6,47 @@ root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1, 0, "", -100)'
 root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1, 0, "", -200)'
 root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1, 0, "", -300)'
 
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -100)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -200)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -300)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -100)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -200)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -300)'
 
+set postFix = "" ### change
 ## Iterations (three seems to be sufficent)
 foreach jes ( "" )#"JESUp" "JESDown") 
     echo "----->start running for $jes ----------="
-    foreach iter ( 0 1 2 )
+    foreach iter ( 0 3 )#1 2 )
 	echo "   ----->start iteration version $iter ----------="
 
-	foreach sample( 2500 2300 2514 2515 )
+	foreach sample( 2500 2300 2310 2514 2515 2600 )# 
 
 	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1,'$iter', "'$jes'", '$sample')'
-	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0,'$iter', "'$jes'", '$sample')'
+#	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0,'$iter', "'$jes'", '$sample')'
 
 	end
 
-	echo "   ----->start hadd all samples ----------="
-	## hadd all samples
-	if ($iter == 0) then
-	    hadd -f macros/csv_rwt_hf_all_v{$iter}{$jes}.root CSVHistoFiles/csv_rwt_hf_*_v{$iter}{$jes}_histo.root
-	    hadd -f macros/csv_rwt_lf_all_v{$iter}{$jes}.root CSVHistoFiles/csv_rwt_lf_*_v{$iter}{$jes}_histo.root
-	else
-	    hadd -f macros/csv_rwt_hf_all_v{$iter}{$jes}.root CSVHistoFiles/csv_rwt_hf_*_v{$iter}{$jes}_histo.root CSVHistoFiles/csv_rwt_hf_DoubleEG_v0_histo.root CSVHistoFiles/csv_rwt_hf_DoubleMuon_v0_histo.root CSVHistoFiles/csv_rwt_hf_MuonEG_v0_histo.root
-	    hadd -f macros/csv_rwt_lf_all_v{$iter}{$jes}.root CSVHistoFiles/csv_rwt_lf_*_v{$iter}{$jes}_histo.root CSVHistoFiles/csv_rwt_lf_DoubleEG_v0_histo.root CSVHistoFiles/csv_rwt_lf_DoubleMuon_v0_histo.root CSVHistoFiles/csv_rwt_lf_MuonEG_v0_histo.root
+	if ($iter > 10) then ## change the argument
+	    echo "   ----->start hadd all samples ----------="
+	    ## hadd all samples
+	    
+	    if ($iter == 0 && $jes == "") then
+		hadd -f macros/csv_rwt_hf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_hf_*_v{$iter}{$jes}_histo{$postFix}.root
+		hadd -f macros/csv_rwt_lf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_lf_*_v{$iter}{$jes}_histo{$postFix}.root
+	    else
+		    hadd -f macros/csv_rwt_hf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_hf_*_v{$iter}{$jes}_histo{$postFix}.root CSVHistoFiles/csv_rwt_hf_MuonEG_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_hf_DoubleEG_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_hf_DoubleMuon_v0_histo{$postFix}.root
+		    hadd -f macros/csv_rwt_lf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_lf_*_v{$iter}{$jes}_histo{$postFix}.root CSVHistoFiles/csv_rwt_lf_DoubleEG_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_lf_DoubleMuon_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_lf_MuonEG_v0_histo{$postFix}.root
+	    endif
+	    
+	    ## Do LF and HF fitting
+	    echo "   ----->start fitting SFs ----------="
+	    cd macros/
+	    root -b -q head13TeV.C fitHF_csvSF_13TeV.C'("csv_rwt_hf_all_v'$iter''$jes''$postFix'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
+	    root -b -q head13TeV.C fitLF_csvSF_13TeV.C'("csv_rwt_lf_all_v'$iter''$jes''$postFix'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
+	    
+#	    echo "   ----->copy SFs to data/----------="
+#	    cp csv_rwt_fit_hf_v{$iter}{$jes}.root  ../data/
+#	    cp csv_rwt_fit_lf_v{$iter}{$jes}.root  ../data/
+	    cd -
 	endif
-
-	## Do LF and HF fitting
-	echo "   ----->start fitting SFs ----------="
-	cd macros/
-	root -b -q head13TeV.C fitHF_csvSF_13TeV.C'("csv_rwt_hf_all_v'$iter''$jes'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
-	root -b -q head13TeV.C fitLF_csvSF_13TeV.C'("csv_rwt_lf_all_v'$iter''$jes'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
-
-	echo "   ----->copy SFs to data/----------="
-	cp csv_rwt_fit_hf_v{$iter}{$jes}.root  ../data/
-	cp csv_rwt_fit_lf_v{$iter}{$jes}.root  ../data/
-	cd -
-
     end
 
 end

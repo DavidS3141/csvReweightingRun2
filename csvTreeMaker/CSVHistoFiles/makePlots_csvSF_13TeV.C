@@ -30,17 +30,18 @@
 #include <sstream>
 
 void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = true, TString dirPostFix = "", bool compareIterations = false ) {
+  TH1::SetDefaultSumw2();
 
   TFile *histFile = TFile::Open(inputFileName);
 
 
-  TString dirprefix = "Images_2015_11_3_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images_2015_12_1_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
 
   // single jet specific plots
-  int nPt = 6;
+  int nPt = 5;//6;
   int nEta = 1;
   TString flavor = "HF";
   if ( !isHF ){
@@ -75,10 +76,6 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TString flavor_file = flavor;
   flavor_file.ToLower();
 
-  TFile *fitFile_iter0 = TFile::Open("csv_rwt_fit_" + flavor_file + "_v0.root");
-  TFile *fitFile_iter1 = TFile::Open("csv_rwt_fit_" + flavor_file + "_v0.root");
-  TFile *fitFile_iter2 = TFile::Open("csv_rwt_fit_" + flavor_file + "_v0.root");
-
 
 
   TString plotName;
@@ -88,6 +85,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
     for ( int iEta=0; iEta<nEta; iEta++){
       iHist++;
 
+    if(!compareIterations){
       TString h_Data_Name = Form("csv_Data_Pt%i_Eta%i",iPt,iEta);
       TString h_b_Name = Form("csv_MC_bjets_Pt%i_Eta%i",iPt,iEta);
       TString h_nonb_Name = Form("csv_MC_nonbjets_Pt%i_Eta%i",iPt,iEta);
@@ -132,8 +130,10 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
       h_csv_mc_nonb->SetBinError(nCSVBins,sqrt(pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
 
       //// normalize MC to data
-      h_csv_mc_b->Scale(h_csv_data->Integral() / (h_csv_mc_b->Integral() + h_csv_mc_nonb->Integral()));
-      h_csv_mc_nonb->Scale(h_csv_data->Integral() / (h_csv_mc_b->Integral() + h_csv_mc_nonb->Integral()));
+      double norm_mc_b = h_csv_mc_b->Integral();
+      double norm_mc_nonb = h_csv_mc_nonb->Integral();
+      h_csv_mc_b->Scale(h_csv_data->Integral() / (norm_mc_b + norm_mc_nonb));
+      h_csv_mc_nonb->Scale(h_csv_data->Integral() / (norm_mc_b + norm_mc_nonb));
 
       ////
       h_csv_data->SetStats(0);
@@ -267,8 +267,12 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
       c1->Print(plotName.Data());
 
-
+    }
       if( compareIterations ){
+	TFile *fitFile_iter0 = TFile::Open("../data/15fb/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter1 = TFile::Open("Nov20th_files/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter2 = TFile::Open("Nov20th_files/csv_rwt_fit_" + flavor_file + "_v2.root");
+
 
 
 	TString h_iter_Data_Name = Form("h_csv_Data_Pt%i_Eta%i",iPt,iEta);
@@ -338,6 +342,8 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	h_fit_iter0->SetStats(0);
 	h_fit_iter0->GetYaxis()->SetRangeUser(0.,2.);
+	h_fit_iter0->GetXaxis()->SetRangeUser(0.605,1.01); /// change HF range
+	// h_fit_iter0->GetXaxis()->SetRangeUser(0.890,1.01); /// change HF range
 
 	h_fit_iter0->SetTitle(";CSV;Data/MC CSV SF");
 
@@ -350,6 +356,16 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	c1->RedrawAxis();
 
+	///-------
+      TString title    = Form("%s SF Pt%i Eta%i",flavor.Data(),iPt,iEta);
+
+      TLatex BinInfoLatex(0.6, 0.86, title.Data());
+	
+      BinInfoLatex.SetNDC();
+      BinInfoLatex.SetTextFont(42);
+      BinInfoLatex.SetTextSize(0.04);
+
+	///-------
 
 	TLegend *legend_iter = new TLegend(0.14,0.93,0.9,0.98);
 
@@ -360,6 +376,10 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 	legend_iter->SetTextSize(0.05);
 
 	legend_iter->SetNColumns(3);
+
+	// legend_iter->AddEntry(h_iter0,"emu","l");
+	// legend_iter->AddEntry(h_iter1,"ee","l");
+	// legend_iter->AddEntry(h_iter2,"mumu","l");
 
 	legend_iter->AddEntry(h_iter0,"Iter0","l");
 	legend_iter->AddEntry(h_iter1,"Iter1","l");

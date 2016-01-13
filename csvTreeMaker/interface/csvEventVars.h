@@ -104,11 +104,12 @@ struct EventVars{
   Float_t MET_[rNumSys];
   Float_t MET_phi_[rNumSys];
   Float_t MHT_[rNumSys];
-  Float_t METNoHF_[rNumSys];
-  Float_t METNoHF_phi_[rNumSys];
+  /* Float_t METNoHF_[rNumSys]; */
+  /* Float_t METNoHF_phi_[rNumSys]; */
 
   vecTLorentzVector jet_vect_TLV_[rNumSys];
   vdouble jet_CSV_[rNumSys];
+  vdouble jet_cMVA_[rNumSys];
   vint jet_flavour_[rNumSys];
   vint jet_partonflavour_[rNumSys];
   vdouble jet_pt_[rNumSys];
@@ -190,12 +191,13 @@ void EventVars::initialize(){
     MET_[iSys]                            = -99.9;
     MET_phi_[iSys]                        = -99.9;
     MHT_[iSys]     = -99.9;
-    METNoHF_[iSys]                            = -99.9;
-    METNoHF_phi_[iSys]                        = -99.9;
+    /* METNoHF_[iSys]                            = -99.9; */
+    /* METNoHF_phi_[iSys]                        = -99.9; */
 
   
     jet_vect_TLV_[iSys].clear();
     jet_CSV_[iSys].clear();
+    jet_cMVA_[iSys].clear();
     jet_pt_[iSys].clear();
     jet_eta_[iSys].clear();
     jet_flavour_[iSys].clear();
