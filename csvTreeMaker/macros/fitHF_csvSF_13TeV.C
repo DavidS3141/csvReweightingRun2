@@ -107,14 +107,17 @@ Double_t fit_csv_5(Double_t *x, Double_t *par)
 
 
 //______________________________________________________________________________
-void fitHF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, string JES="", TString dirPostFix = "" ){
+void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root", int iterNum=0, string JES="", TString dirPostFix = "" ){
+
+  TString taggerName = "csv";
+  if(!isCSV) taggerName = "cMVA";
 
   ofstream fit_result_file;
-  fit_result_file.open (dirPostFix+"fitResult_HF_csvSF_13TeV.txt");
+  fit_result_file.open (dirPostFix+"fitResult_HF_"+ taggerName +"SF_13TeV.txt");
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images_2015_11_11_fitHF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images_2016_2_3_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -136,7 +139,7 @@ void fitHF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, s
   bool makePlots = true;
 
   // std::string histofilename = Form("csv_rwt_fit_hf_v%d%s%s.root",iterNum, JES.c_str(),dirPostFix.Data()) ;
-  std::string histofilename = Form("csv_rwt_fit_hf_v%d%s.root",iterNum, JES.c_str()) ;
+  std::string histofilename = Form("%s_rwt_fit_hf_v%d%s.root", taggerName.Data(), iterNum, JES.c_str()) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -165,6 +168,10 @@ void fitHF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, s
 
   double csvbins[] = {-10.0, 0.0, 0.24, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.827, 0.854, 0.881, 0.908, 0.935, 0.948, 0.961, 0.974, 0.987, 1.01};
   double csvbins_new[] = {-0.04, 0.0, 0.24, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.827, 0.854, 0.881, 0.908, 0.935, 0.948, 0.961, 0.974, 0.987, 1.01};
+
+  double cMVAbins[] = {-1.01, -0.8575, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
+  double cMVAbins_new[] = {-1.01, -0.8575, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
+  // double cMVAbins_new[] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
 
 
   int maxPt  = 5;//6;
@@ -234,30 +241,64 @@ void fitHF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, s
     TH1D* h_csv_mc_b_temp0 = (TH1D*)file->Get( mc_b_hist_name[iHist] )->Clone( Form("h_%s_temp0",mc_b_hist_name[iHist].Data()) );
     TH1D* h_csv_mc_nonb_temp0 = (TH1D*)file->Get( mc_nonb_hist_name[iHist] )->Clone( Form("h_%s_temp0",mc_nonb_hist_name[iHist].Data()) );
 
-    TH1D* h_csv_data_temp0_rebin = (TH1D*)h_csv_data_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",data_hist_name[iHist].Data()),csvbins);
-    TH1D* h_csv_mc_b_temp0_rebin = (TH1D*)h_csv_mc_b_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_b_hist_name[iHist].Data()),csvbins);
-    TH1D* h_csv_mc_nonb_temp0_rebin = (TH1D*)h_csv_mc_nonb_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_nonb_hist_name[iHist].Data()),csvbins);
+    TH1D* h_csv_data_temp0_rebin ;
+    TH1D* h_csv_mc_b_temp0_rebin ;
+    TH1D* h_csv_mc_nonb_temp0_rebin ;
 
+    if(isCSV){
+     h_csv_data_temp0_rebin = (TH1D*)h_csv_data_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",data_hist_name[iHist].Data()),csvbins);
+     h_csv_mc_b_temp0_rebin = (TH1D*)h_csv_mc_b_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_b_hist_name[iHist].Data()),csvbins);
+     h_csv_mc_nonb_temp0_rebin = (TH1D*)h_csv_mc_nonb_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_nonb_hist_name[iHist].Data()),csvbins);
+    }
+    else{
+     h_csv_data_temp0_rebin = (TH1D*)h_csv_data_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",data_hist_name[iHist].Data()),cMVAbins);
+     h_csv_mc_b_temp0_rebin = (TH1D*)h_csv_mc_b_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_b_hist_name[iHist].Data()),cMVAbins);
+     h_csv_mc_nonb_temp0_rebin = (TH1D*)h_csv_mc_nonb_temp0->Rebin(ncsvbins,Form("h_%s_temp0_rebin",mc_nonb_hist_name[iHist].Data()),cMVAbins);
+    }
     // JES up/down
     TH1D* h_csv_mc_b_JESUp_temp0 = (TH1D*)file_JESUp->Get( mc_b_hist_name[iHist] )->Clone( Form("h_%s_JESUp_temp0",mc_b_hist_name[iHist].Data()) );
     TH1D* h_csv_mc_nonb_JESUp_temp0 = (TH1D*)file_JESUp->Get( mc_nonb_hist_name[iHist] )->Clone( Form("h_%s_JESUp_temp0",mc_nonb_hist_name[iHist].Data()) );
     TH1D* h_csv_mc_b_JESDown_temp0 = (TH1D*)file_JESDown->Get( mc_b_hist_name[iHist] )->Clone( Form("h_%s_JESDown_temp0",mc_b_hist_name[iHist].Data()) );
     TH1D* h_csv_mc_nonb_JESDown_temp0 = (TH1D*)file_JESDown->Get( mc_nonb_hist_name[iHist] )->Clone( Form("h_%s_JESDown_temp0",mc_nonb_hist_name[iHist].Data()) );
 
-    TH1D* h_csv_mc_b_JESUp_temp0_rebin = (TH1D*)h_csv_mc_b_JESUp_temp0->Rebin(ncsvbins,Form("h_%s_JESUp_temp0_rebin",mc_b_hist_name[iHist].Data()),csvbins);
-    TH1D* h_csv_mc_nonb_JESUp_temp0_rebin = (TH1D*)h_csv_mc_nonb_JESUp_temp0->Rebin(ncsvbins,Form("h_%s_JESUp_temp0_rebin",mc_nonb_hist_name[iHist].Data()),csvbins);
-    TH1D* h_csv_mc_b_JESDown_temp0_rebin = (TH1D*)h_csv_mc_b_JESDown_temp0->Rebin(ncsvbins,Form("h_%s_JESDown_temp0_rebin",mc_b_hist_name[iHist].Data()),csvbins);
-    TH1D* h_csv_mc_nonb_JESDown_temp0_rebin = (TH1D*)h_csv_mc_nonb_JESDown_temp0->Rebin(ncsvbins,Form("h_%s_JESDown_temp0_rebin",mc_nonb_hist_name[iHist].Data()),csvbins);
+    TH1D* h_csv_mc_b_JESUp_temp0_rebin ;
+    TH1D* h_csv_mc_nonb_JESUp_temp0_rebin ;
+    TH1D* h_csv_mc_b_JESDown_temp0_rebin ;
+    TH1D* h_csv_mc_nonb_JESDown_temp0_rebin ;
 
+    if(isCSV){
+     h_csv_mc_b_JESUp_temp0_rebin = (TH1D*)h_csv_mc_b_JESUp_temp0->Rebin(ncsvbins,Form("h_%s_JESUp_temp0_rebin",mc_b_hist_name[iHist].Data()),csvbins);
+     h_csv_mc_nonb_JESUp_temp0_rebin = (TH1D*)h_csv_mc_nonb_JESUp_temp0->Rebin(ncsvbins,Form("h_%s_JESUp_temp0_rebin",mc_nonb_hist_name[iHist].Data()),csvbins);
+     h_csv_mc_b_JESDown_temp0_rebin = (TH1D*)h_csv_mc_b_JESDown_temp0->Rebin(ncsvbins,Form("h_%s_JESDown_temp0_rebin",mc_b_hist_name[iHist].Data()),csvbins);
+     h_csv_mc_nonb_JESDown_temp0_rebin = (TH1D*)h_csv_mc_nonb_JESDown_temp0->Rebin(ncsvbins,Form("h_%s_JESDown_temp0_rebin",mc_nonb_hist_name[iHist].Data()),csvbins);
+    }
+    else{
+     h_csv_mc_b_JESUp_temp0_rebin = (TH1D*)h_csv_mc_b_JESUp_temp0->Rebin(ncsvbins,Form("h_%s_JESUp_temp0_rebin",mc_b_hist_name[iHist].Data()),cMVAbins);
+     h_csv_mc_nonb_JESUp_temp0_rebin = (TH1D*)h_csv_mc_nonb_JESUp_temp0->Rebin(ncsvbins,Form("h_%s_JESUp_temp0_rebin",mc_nonb_hist_name[iHist].Data()),cMVAbins);
+     h_csv_mc_b_JESDown_temp0_rebin = (TH1D*)h_csv_mc_b_JESDown_temp0->Rebin(ncsvbins,Form("h_%s_JESDown_temp0_rebin",mc_b_hist_name[iHist].Data()),cMVAbins);
+     h_csv_mc_nonb_JESDown_temp0_rebin = (TH1D*)h_csv_mc_nonb_JESDown_temp0->Rebin(ncsvbins,Form("h_%s_JESDown_temp0_rebin",mc_nonb_hist_name[iHist].Data()),cMVAbins);
+    }
 
-    h_csv_data[iHist] = new TH1D( Form("h_%s",data_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
-    h_csv_mc_b[iHist] = new TH1D( Form("h_%s",mc_b_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
-    h_csv_mc_nonb[iHist] = new TH1D( Form("h_%s",mc_nonb_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
-
-    h_csv_mc_b_JESUp[iHist] = new TH1D( Form("h_%s_JESUp",mc_b_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
-    h_csv_mc_nonb_JESUp[iHist] = new TH1D( Form("h_%s_JESUp",mc_nonb_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
-    h_csv_mc_b_JESDown[iHist] = new TH1D( Form("h_%s_JESDown",mc_b_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
-    h_csv_mc_nonb_JESDown[iHist] = new TH1D( Form("h_%s_JESDown",mc_nonb_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+    if(isCSV){
+      h_csv_data[iHist] = new TH1D( Form("h_%s",data_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+      h_csv_mc_b[iHist] = new TH1D( Form("h_%s",mc_b_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+      h_csv_mc_nonb[iHist] = new TH1D( Form("h_%s",mc_nonb_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+      
+      h_csv_mc_b_JESUp[iHist] = new TH1D( Form("h_%s_JESUp",mc_b_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+      h_csv_mc_nonb_JESUp[iHist] = new TH1D( Form("h_%s_JESUp",mc_nonb_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+      h_csv_mc_b_JESDown[iHist] = new TH1D( Form("h_%s_JESDown",mc_b_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+      h_csv_mc_nonb_JESDown[iHist] = new TH1D( Form("h_%s_JESDown",mc_nonb_hist_name[iHist].Data()), ";CSV", ncsvbins, csvbins_new );
+    }
+    else{
+      h_csv_data[iHist] = new TH1D( Form("h_%s",data_hist_name[iHist].Data()), ";cMVA", ncsvbins, cMVAbins_new );
+      h_csv_mc_b[iHist] = new TH1D( Form("h_%s",mc_b_hist_name[iHist].Data()), ";cMVA", ncsvbins, cMVAbins_new );
+      h_csv_mc_nonb[iHist] = new TH1D( Form("h_%s",mc_nonb_hist_name[iHist].Data()), ";cMVA", ncsvbins, cMVAbins_new );
+      
+      h_csv_mc_b_JESUp[iHist] = new TH1D( Form("h_%s_JESUp",mc_b_hist_name[iHist].Data()), ";cMVA", ncsvbins, cMVAbins_new );
+      h_csv_mc_nonb_JESUp[iHist] = new TH1D( Form("h_%s_JESUp",mc_nonb_hist_name[iHist].Data()), ";cMVA", ncsvbins, cMVAbins_new );
+      h_csv_mc_b_JESDown[iHist] = new TH1D( Form("h_%s_JESDown",mc_b_hist_name[iHist].Data()), ";cMVA", ncsvbins, cMVAbins_new );
+      h_csv_mc_nonb_JESDown[iHist] = new TH1D( Form("h_%s_JESDown",mc_nonb_hist_name[iHist].Data()), ";cMVA", ncsvbins, cMVAbins_new );
+    }
 
     for( int iBin=0; iBin<ncsvbins; iBin++ ){
       h_csv_data[iHist]->SetBinContent(iBin+1, h_csv_data_temp0_rebin->GetBinContent(iBin+1));
@@ -639,22 +680,23 @@ void fitHF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, s
 
   // myimg = dirprefix + "hfSF_cumulative.pdf";
   // c1->Print(myimg);
-
+  double xMin = csvbins_new[0];
+  if(!isCSV) xMin = cMVAbins_new[0];
   for( int iHist=0; iHist<numHists-1; iHist++ ){
     //continue;
-    h_csv_ratio_final[iHist] = new TH1D( Form("h_%s_final",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_JESUp[iHist] = new TH1D( Form("h_%s_final_JESUp",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_JESDown[iHist] = new TH1D( Form("h_%s_final_JESDown",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_LFUp[iHist] = new TH1D( Form("h_%s_final_LFUp",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_LFDown[iHist] = new TH1D( Form("h_%s_final_LFDown",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_Stats1Up[iHist] = new TH1D( Form("h_%s_final_Stats1Up",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_Stats1Down[iHist] = new TH1D( Form("h_%s_final_Stats1Down",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_Stats2Up[iHist] = new TH1D( Form("h_%s_final_Stats2Up",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    h_csv_ratio_final_Stats2Down[iHist] = new TH1D( Form("h_%s_final_Stats2Down",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
+    h_csv_ratio_final[iHist] = new TH1D( Form("h_%s_final",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_JESUp[iHist] = new TH1D( Form("h_%s_final_JESUp",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_JESDown[iHist] = new TH1D( Form("h_%s_final_JESDown",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_LFUp[iHist] = new TH1D( Form("h_%s_final_LFUp",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_LFDown[iHist] = new TH1D( Form("h_%s_final_LFDown",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_Stats1Up[iHist] = new TH1D( Form("h_%s_final_Stats1Up",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_Stats1Down[iHist] = new TH1D( Form("h_%s_final_Stats1Down",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_Stats2Up[iHist] = new TH1D( Form("h_%s_final_Stats2Up",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    h_csv_ratio_final_Stats2Down[iHist] = new TH1D( Form("h_%s_final_Stats2Down",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
 
-    c_csv_ratio_final[iHist] = new TH1D( Form("c_%s_final",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    c_csv_ratio_final_CUp[iHist] = new TH1D( Form("c_%s_final_CUp",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
-    c_csv_ratio_final_CDown[iHist] = new TH1D( Form("c_%s_final_CDown",hist_name[iHist].Data()), ";CSV", NumFinalBins, -0.04, 1.01 );
+    c_csv_ratio_final[iHist] = new TH1D( Form("c_%s_final",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    c_csv_ratio_final_CUp[iHist] = new TH1D( Form("c_%s_final_CUp",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
+    c_csv_ratio_final_CDown[iHist] = new TH1D( Form("c_%s_final_CDown",hist_name[iHist].Data()), ";"+taggerName, NumFinalBins, xMin, 1.01 );
 
     std::vector<double> x; x.clear();
     std::vector<double> y; y.clear();
@@ -669,7 +711,7 @@ void fitHF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, s
 
     for( int iBin=0; iBin<nBins; iBin++ ){
       double center = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
-      if( center<0 ) continue;
+      if( isCSV && center<0 ) continue;
       double sf = h_csv_ratio[iHist]->GetBinContent(iBin+1);
       double sf_JESUp = h_csv_ratio_JESUp[iHist]->GetBinContent(iBin+1);
       double sf_JESDown = h_csv_ratio_JESDown[iHist]->GetBinContent(iBin+1);
@@ -737,7 +779,7 @@ void fitHF_csvSF_13TeV( TString inputFileName  = "infile.root", int iterNum=0, s
     double lastPoint  = x[int(x.size())-1];
     for( int iBin=0; iBin<n; iBin++ ){
       double center = h_csv_ratio_final[iHist]->GetBinCenter(iBin+1);
-      if( center<0 ){
+      if( isCSV && center<0 ){
 	h_csv_ratio_final[iHist]->SetBinContent(iBin+1,h_csv_ratio[iHist]->GetBinContent(1));
 	h_csv_ratio_final_JESUp[iHist]->SetBinContent(iBin+1,h_csv_ratio_JESUp[iHist]->GetBinContent(1));
 	h_csv_ratio_final_JESDown[iHist]->SetBinContent(iBin+1,h_csv_ratio_JESDown[iHist]->GetBinContent(1));
