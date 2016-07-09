@@ -29,13 +29,18 @@
 #include <sys/stat.h>
 #include <sstream>
 
-void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = true, TString dirPostFix = "", bool compareIterations = false ) {
+void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = true, bool isCSV = true, TString dirPostFix = "", bool compareIterations = false ) {
+  compareIterations = true;
+
+  TString taggerName = "CSVv2";
+  if(!isCSV) taggerName = "cMVAv2";
+
   TH1::SetDefaultSumw2();
 
   TFile *histFile = TFile::Open(inputFileName);
 
-
-  TString dirprefix = "Images_2015_12_1_csvSF_13TeV" + dirPostFix + "/";
+  if( compareIterations ) dirPostFix = dirPostFix + "Comparison";
+  TString dirprefix = taggerName +"_SFPlots_2016_7_8_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -62,33 +67,81 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   int nCSVBins = 22; //Number of bins 
   // double xBins_hf[19] = {-10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
   double xBins_hf[23] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
+  double xBins_hf_cMVA[23] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
+
   if(!isHF) nCSVBins = 21;
   // double xBins_lf[22] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
   double xBins_lf[22] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.917, 0.944, 0.970, 0.975, 0.980, 0.985, 0.990, 0.995, 1.01};
+  double xBins_lf_cMVA[22] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.415, 0.645, 0.875, 0.8975, 0.92, 0.9425, 0.965, 0.9875, 1.01};
 
-  //TCanvas* c1 = new TCanvas("c1","c1",600,600);
-  TCanvas* c1 = new TCanvas("c1","c1",600,500);
+  //TCanvas* c1 = new TCanvas("c1","c1",600,500);
+  TCanvas* c1 = new TCanvas("c1","c1");
 
   c1->SetTopMargin(0.08);
   c1->SetRightMargin(0.08);
 
+  // gPad->SetTickx(1);
+  // gPad->SetTicky(1);
 
   TString flavor_file = flavor;
   flavor_file.ToLower();
 
+  ///
+  TString lumiinfo = "2.6 fb^{-1} (13 TeV, 25ns)";
+  TLatex LumiInfoLatex(0.65, 0.93, lumiinfo);
+  LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
+  LumiInfoLatex.SetTextSize(0.04);
 
+  //TString cmsinfo =   "CMS Preliminary";
+  TString cmsinfo =   "CMS";
+  // TLatex CMSInfoLatex(0.155, 0.93, cmsinfo);
+  TLatex CMSInfoLatex(0.155, 0.85, cmsinfo);
+  CMSInfoLatex.SetNDC(); CMSInfoLatex.SetTextFont(42);
+  CMSInfoLatex.SetTextFont(61);
+  CMSInfoLatex.SetTextSize(0.055); //SBOUTLE
+
+  std::string publishinfo =   "Preliminary"; //DPUIGH
+  // TLatex PublishInfoLatex(0.25, 0.93, publishinfo.c_str()); //SBOUTLE
+  TLatex PublishInfoLatex(0.155, 0.80, publishinfo.c_str()); //SBOUTLE
+  PublishInfoLatex.SetNDC();
+  PublishInfoLatex.SetTextFont(52);
+  PublishInfoLatex.SetTextSize(0.045); //SBOUTLE
+  ///
+
+  std::vector<TString> label_ptbin;
+  std::vector<TString> label_etabin;
 
   TString plotName;
 
   int iHist = -1;
-  for ( int iPt=0; iPt<nPt; iPt++){
+  int minPt = 1;
+  for ( int iPt=minPt; iPt<nPt; iPt++){
     for ( int iEta=0; iEta<nEta; iEta++){
       iHist++;
+      if(isHF){
+	if( iPt==0 )      label_ptbin.push_back("20 < p_{T} < 30 GeV");
+	else if( iPt==1 ) label_ptbin.push_back("30 < p_{T} < 40 GeV");
+	else if( iPt==2 ) label_ptbin.push_back("40 < p_{T} < 60 GeV");
+	else if( iPt==3 ) label_ptbin.push_back("60 < p_{T} < 100 GeV");
+	else if( iPt==4 ) label_ptbin.push_back("p_{T} > 100 GeV");
+	
+	label_etabin.push_back("|#eta| < 2.4");
+      }
+      else{
+	if( iPt==0 )      label_ptbin.push_back("20 < p_{T} < 30 GeV");
+	else if( iPt==1 ) label_ptbin.push_back("30 < p_{T} < 40 GeV");
+	else if( iPt==2 ) label_ptbin.push_back("40 < p_{T} < 60 GeV");
+	else if( iPt==3 ) label_ptbin.push_back("p_{T} > 60 GeV");
+	
+	if( iEta==0 ) label_etabin.push_back("|#eta| < 0.8");
+	else if( iEta==1 ) label_etabin.push_back("0.8 < |#eta| < 1.6");
+	else if( iEta==2 ) label_etabin.push_back("1.6 < |#eta| < 2.4");
+      }
 
     if(!compareIterations){
-      TString h_Data_Name = Form("csv_Data_Pt%i_Eta%i",iPt,iEta);
-      TString h_b_Name = Form("csv_MC_bjets_Pt%i_Eta%i",iPt,iEta);
-      TString h_nonb_Name = Form("csv_MC_nonbjets_Pt%i_Eta%i",iPt,iEta);
+      TString h_Data_Name = Form("h_csv_Data_Pt%i_Eta%i",iPt,iEta);
+      TString h_b_Name = Form("h_csv_MC_bjets_Pt%i_Eta%i",iPt,iEta);
+      TString h_nonb_Name = Form("h_csv_MC_nonbjets_Pt%i_Eta%i",iPt,iEta);
 
       
       h_Data_jet_csv[iPt][iEta] = (TH1D*)histFile->Get(h_Data_Name.Data());
@@ -99,62 +152,87 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
       TH1D* h_csv_data = NULL;
       TH1D* h_csv_mc_b = NULL;
       TH1D* h_csv_mc_nonb = NULL;
-      if( isHF ){
-	h_csv_data = (TH1D*)h_Data_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_hf );
-	h_csv_mc_b = (TH1D*)h_MC_b_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_hf );
-	h_csv_mc_nonb = (TH1D*)h_MC_nonb_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_hf );
-      }
-      else{
-	h_csv_data = (TH1D*)h_Data_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_lf );
-	h_csv_mc_b = (TH1D*)h_MC_b_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_lf );
-	h_csv_mc_nonb = (TH1D*)h_MC_nonb_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_lf );
-      }
 
-      //// first and last bin; underflow/overflow
-      h_csv_data->SetBinContent(1,h_Data_jet_csv[iPt][iEta]->GetBinContent(1));
-      h_csv_data->SetBinError(1,h_Data_jet_csv[iPt][iEta]->GetBinError(1));
+      h_csv_data = (TH1D*)h_Data_jet_csv[iPt][iEta];
+      h_csv_mc_b = (TH1D*)h_MC_b_jet_csv[iPt][iEta];
+      h_csv_mc_nonb = (TH1D*)h_MC_nonb_jet_csv[iPt][iEta];
 
-      h_csv_mc_b->SetBinContent(1,h_MC_b_jet_csv[iPt][iEta]->GetBinContent(1));
-      h_csv_mc_b->SetBinError(1,h_MC_b_jet_csv[iPt][iEta]->GetBinError(1));
+      // if( isHF ){
+      // 	h_csv_data = (TH1D*)h_Data_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_hf );
+      // 	h_csv_mc_b = (TH1D*)h_MC_b_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_hf );
+      // 	h_csv_mc_nonb = (TH1D*)h_MC_nonb_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_hf );
+      // }
+      // else{
+      // 	h_csv_data = (TH1D*)h_Data_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_lf );
+      // 	h_csv_mc_b = (TH1D*)h_MC_b_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_lf );
+      // 	h_csv_mc_nonb = (TH1D*)h_MC_nonb_jet_csv[iPt][iEta]->Rebin( nCSVBins, Form("csv_Data_Pt%i_Eta%i_temp",iPt,iEta), xBins_lf );
+      // }
 
-      h_csv_mc_nonb->SetBinContent(1,h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(1));
-      h_csv_mc_nonb->SetBinError(1,h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(1));
+      // //// first and last bin; underflow/overflow
+      // h_csv_data->SetBinContent(1,h_Data_jet_csv[iPt][iEta]->GetBinContent(1));
+      // h_csv_data->SetBinError(1,h_Data_jet_csv[iPt][iEta]->GetBinError(1));
 
-      h_csv_data->SetBinContent(nCSVBins,h_Data_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_Data_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
-      h_csv_data->SetBinError(nCSVBins,sqrt(pow(h_Data_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_Data_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+      // h_csv_mc_b->SetBinContent(1,h_MC_b_jet_csv[iPt][iEta]->GetBinContent(1));
+      // h_csv_mc_b->SetBinError(1,h_MC_b_jet_csv[iPt][iEta]->GetBinError(1));
 
-      h_csv_mc_b->SetBinContent(nCSVBins,h_MC_b_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_MC_b_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
-      h_csv_mc_b->SetBinError(nCSVBins,sqrt(pow(h_MC_b_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_MC_b_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+      // h_csv_mc_nonb->SetBinContent(1,h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(1));
+      // h_csv_mc_nonb->SetBinError(1,h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(1));
 
-      h_csv_mc_nonb->SetBinContent(nCSVBins,h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
-      h_csv_mc_nonb->SetBinError(nCSVBins,sqrt(pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+      // h_csv_data->SetBinContent(nCSVBins,h_Data_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_Data_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
+      // h_csv_data->SetBinError(nCSVBins,sqrt(pow(h_Data_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_Data_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
 
-      //// normalize MC to data
-      double norm_mc_b = h_csv_mc_b->Integral();
-      double norm_mc_nonb = h_csv_mc_nonb->Integral();
-      h_csv_mc_b->Scale(h_csv_data->Integral() / (norm_mc_b + norm_mc_nonb));
-      h_csv_mc_nonb->Scale(h_csv_data->Integral() / (norm_mc_b + norm_mc_nonb));
+      // h_csv_mc_b->SetBinContent(nCSVBins,h_MC_b_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_MC_b_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
+      // h_csv_mc_b->SetBinError(nCSVBins,sqrt(pow(h_MC_b_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_MC_b_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+
+      // h_csv_mc_nonb->SetBinContent(nCSVBins,h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(nCSVBins) + h_MC_nonb_jet_csv[iPt][iEta]->GetBinContent(nCSVBins+1));
+      // h_csv_mc_nonb->SetBinError(nCSVBins,sqrt(pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins),2) + pow(h_MC_nonb_jet_csv[iPt][iEta]->GetBinError(nCSVBins+1),2)));
+
+      // //// normalize MC to data
+      // double norm_mc_b = h_csv_mc_b->Integral();
+      // double norm_mc_nonb = h_csv_mc_nonb->Integral();
+      // h_csv_mc_b->Scale(h_csv_data->Integral() / (norm_mc_b + norm_mc_nonb));
+      // h_csv_mc_nonb->Scale(h_csv_data->Integral() / (norm_mc_b + norm_mc_nonb));
 
       ////
       h_csv_data->SetStats(0);
       //h_csv_data->GetXaxis()->SetRangeUser(0.0001, 1.001);
 
-      h_csv_data->SetTitle(";CSV");
+      h_csv_data->SetTitle(";"+taggerName+" Discriminator;Jets / bin");
+      //      h_csv_data->SetTitle(";"+taggerName);
 
       h_csv_data->SetMarkerStyle(20);
 
       h_csv_mc_b->SetFillColor(kRed);
-      h_csv_mc_nonb->SetFillColor(kGreen+1);
+      h_csv_mc_nonb->SetFillColor(kBlue);
+      // h_csv_mc_nonb->SetFillColor(kGreen+1);
 
       h_csv_mc_b->SetLineColor(kRed);
-      h_csv_mc_nonb->SetLineColor(kGreen+1);
+      h_csv_mc_nonb->SetLineColor(kBlue);
+      // h_csv_mc_nonb->SetLineColor(kGreen+1);
 
       h_csv_data->SetLineWidth(2);
       h_csv_mc_b->SetLineWidth(2);
       h_csv_mc_nonb->SetLineWidth(2);
 
 
-      TLegend *legend = new TLegend(0.14,0.93,0.9,0.98);
+      ///
+    TString ptselectioninfo = label_ptbin[iHist];
+
+    TLatex PTSELECTIONInfoLatex(0.57, 0.85, ptselectioninfo);
+    PTSELECTIONInfoLatex.SetNDC();
+    PTSELECTIONInfoLatex.SetTextFont(42);
+    PTSELECTIONInfoLatex.SetTextSize(0.04);
+
+    TString etaselectioninfo = label_etabin[iHist];
+
+    TLatex ETASELECTIONInfoLatex(0.57, 0.8, etaselectioninfo);
+    ETASELECTIONInfoLatex.SetNDC();
+    ETASELECTIONInfoLatex.SetTextFont(42);
+    ETASELECTIONInfoLatex.SetTextSize(0.04);
+
+      ///
+      // TLegend *legend = new TLegend(0.14,0.85,0.9,0.9);
+      TLegend *legend = new TLegend(0.57,0.57,0.87,0.77);
 
       legend->SetFillColor(kWhite);
       legend->SetLineColor(kWhite);
@@ -162,16 +240,16 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
       legend->SetTextFont(42);
       legend->SetTextSize(0.05);
 
-      legend->SetNColumns(3);
+      legend->SetNColumns(1);
 
-      legend->AddEntry(h_csv_data,"Data","pe");
+      legend->AddEntry(h_csv_data," Data","pe");
       if( isHF ){
-	legend->AddEntry(h_csv_mc_b,"b jets","l");
-	legend->AddEntry(h_csv_mc_nonb,"non-b jets","l");
+	legend->AddEntry(h_csv_mc_b," b","f");
+	legend->AddEntry(h_csv_mc_nonb," udsg + c","f");
       }
       else{
-	legend->AddEntry(h_csv_mc_b,"HF jets","l");
-	legend->AddEntry(h_csv_mc_nonb,"LF jets","l");
+	legend->AddEntry(h_csv_mc_b," b + c","f");
+	legend->AddEntry(h_csv_mc_nonb," udsg","f");
       }
 
       TH1D* h_diff = (TH1D*) h_csv_data->Clone( Form("csv_diff_Pt%i_Eta%i",iPt,iEta) );
@@ -197,81 +275,104 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
       TString title    = Form("%s SF Pt%i Eta%i",flavor.Data(),iPt,iEta);
 
-      TLatex BinInfoLatex(0.6, 0.86, title.Data());
+      TLatex BinInfoLatex(0.6, 0.81, title.Data());//(0.6, 0.86, title.Data());
 	
       BinInfoLatex.SetNDC();
       BinInfoLatex.SetTextFont(42);
       BinInfoLatex.SetTextSize(0.04);
 
+      h_csv_data->GetYaxis()->SetTitleOffset(1.2);
+      // h_csv_data->GetXaxis()->SetRangeUser(-0.041,0.9489);
+      h_csv_data->SetMaximum(1.3*TMath::Max(h_csv_data->GetMaximum(), hs->GetMaximum()));
       h_csv_data->Draw("pe1");
       hs->Draw("histsame");
       h_csv_data->Draw("pe1same");
       
       legend->Draw();
-      BinInfoLatex.Draw();
+      //      BinInfoLatex.Draw();
+
+      LumiInfoLatex.Draw();
+      CMSInfoLatex.Draw();
+      PublishInfoLatex.Draw();
+      ETASELECTIONInfoLatex.Draw();
+      PTSELECTIONInfoLatex.Draw();
 
       c1->RedrawAxis();
 
-      plotName = dirprefix + Form("csv_%s_SF_Pt%i_Eta%i_astack",flavor.Data(),iPt,iEta) + ".png";
+      plotName = dirprefix + Form("%s_%s_SF_Pt%i_Eta%i_astack",taggerName.Data(),flavor.Data(),iPt,iEta) + ".pdf";
 
       c1->Print(plotName.Data());
 
 
 
-      TLegend *legend_diff = new TLegend(0.14,0.93,0.9,0.98);
-
+      // TLegend *legend_diff = new TLegend(0.14,0.85,0.9,0.9);//new TLegend(0.14,0.93,0.9,0.98);
+      TLegend *legend_diff = new TLegend(0.57,0.57,0.87,0.77);
       legend_diff->SetFillColor(kWhite);
       legend_diff->SetLineColor(kWhite);
       legend_diff->SetShadowColor(kWhite);
       legend_diff->SetTextFont(42);
       legend_diff->SetTextSize(0.05);
 
-      legend_diff->SetNColumns(2);
+      legend_diff->SetNColumns(1);
 
       if( isHF ){
-	legend_diff->AddEntry(h_diff,"(Data - nonb)","pe");
-	legend_diff->AddEntry(h_csv_mc_b,"b jets","l");
+	legend_diff->AddEntry(h_diff,"(Data - c, udsg)","pe");
+	legend_diff->AddEntry(h_csv_mc_b,"b","l");
+	h_diff->SetMaximum(1.3*TMath::Max(h_diff->GetMaximum(), h_csv_mc_b->GetMaximum()));
       }
       else{
-	legend_diff->AddEntry(h_diff,"(Data - b)","pe");
-	legend_diff->AddEntry(h_csv_mc_nonb,"LF jets","l");
+	legend_diff->AddEntry(h_diff,"(Data - b, c)","pe");
+	legend_diff->AddEntry(h_csv_mc_nonb,"udsg","l");
+	h_diff->SetMaximum(1.3*TMath::Max(h_diff->GetMaximum(), h_csv_mc_nonb->GetMaximum()));
       }
 
-
-
+      h_diff->GetYaxis()->SetTitleOffset(1.2);
+      // h_diff->GetXaxis()->SetRangeUser(-0.041,0.9489);
       h_diff->Draw("pe1");
       if( isHF ) h_csv_mc_b->Draw("pe1same");
       else       h_csv_mc_nonb->Draw("pe1same");
       h_diff->Draw("pe1same");
 
       legend_diff->Draw();
-      BinInfoLatex.Draw();
+      //      BinInfoLatex.Draw();
 
       c1->RedrawAxis();
 
-      plotName = dirprefix + Form("csv_%s_SF_Pt%i_Eta%i_bdiff",flavor.Data(),iPt,iEta) + ".png";
+      LumiInfoLatex.Draw();
+      CMSInfoLatex.Draw();
+      PublishInfoLatex.Draw();
+      ETASELECTIONInfoLatex.Draw();
+      PTSELECTIONInfoLatex.Draw();
+
+      plotName = dirprefix + Form("%s_%s_SF_Pt%i_Eta%i_bdiff",taggerName.Data(),flavor.Data(),iPt,iEta) + ".pdf";
 
       c1->Print(plotName.Data());
 
 
 
       h_ratio->GetYaxis()->SetRangeUser(0.,2.);
-      h_ratio->SetTitle(";CSV;Data/MC SF");
+      h_ratio->SetTitle(";"+taggerName+" Discriminator;Data/MC SF");
       h_ratio->Draw("pe1");
 
-      BinInfoLatex.Draw();
+      //      BinInfoLatex.Draw();
 
       c1->RedrawAxis();
 
-      plotName = dirprefix + Form("csv_%s_SF_Pt%i_Eta%i_cratio",flavor.Data(),iPt,iEta) + ".png";
+      LumiInfoLatex.Draw();
+      CMSInfoLatex.Draw();
+      PublishInfoLatex.Draw();
+      ETASELECTIONInfoLatex.Draw();
+      PTSELECTIONInfoLatex.Draw();
+
+      plotName = dirprefix + Form("%s_%s_SF_Pt%i_Eta%i_cratio",taggerName.Data(),flavor.Data(),iPt,iEta) + ".png";
 
       c1->Print(plotName.Data());
 
     }
       if( compareIterations ){
-	TFile *fitFile_iter0 = TFile::Open("../data/15fb/csv_rwt_fit_" + flavor_file + "_v2.root");
-	TFile *fitFile_iter1 = TFile::Open("Nov20th_files/csv_rwt_fit_" + flavor_file + "_v2.root");
-	TFile *fitFile_iter2 = TFile::Open("Nov20th_files/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter0 = TFile::Open("../data/csvSFs/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter1 = TFile::Open("../data/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter2 = TFile::Open("../data/csvSFs/csv_rwt_fit_" + flavor_file + "_v2.root");
 
 
 
@@ -342,17 +443,17 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	h_fit_iter0->SetStats(0);
 	h_fit_iter0->GetYaxis()->SetRangeUser(0.,2.);
-	h_fit_iter0->GetXaxis()->SetRangeUser(0.605,1.01); /// change HF range
+	h_fit_iter0->GetXaxis()->SetRangeUser(-0.04,1.01); /// change HF range
 	// h_fit_iter0->GetXaxis()->SetRangeUser(0.890,1.01); /// change HF range
 
-	h_fit_iter0->SetTitle(";CSV;Data/MC CSV SF");
+	h_fit_iter0->SetTitle(";"+taggerName+";Data/MC SF");
 
 	h_fit_iter0->Draw("hist");
 	h_iter0->Draw("pe1same");
 	h_fit_iter1->Draw("histsame");
 	h_iter1->Draw("pe1same");
-	h_fit_iter2->Draw("histsame");
-	h_iter2->Draw("pe1same");
+	// h_fit_iter2->Draw("histsame");
+	// h_iter2->Draw("pe1same");
 
 	c1->RedrawAxis();
 
@@ -377,20 +478,20 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	legend_iter->SetNColumns(3);
 
-	// legend_iter->AddEntry(h_iter0,"emu","l");
-	// legend_iter->AddEntry(h_iter1,"ee","l");
-	// legend_iter->AddEntry(h_iter2,"mumu","l");
+	legend_iter->AddEntry(h_iter0,"jetPt20","f");
+	legend_iter->AddEntry(h_iter1,"jetPt30","f");
+	// legend_iter->AddEntry(h_iter2,"mumu","f");
 
-	legend_iter->AddEntry(h_iter0,"Iter0","l");
-	legend_iter->AddEntry(h_iter1,"Iter1","l");
-	legend_iter->AddEntry(h_iter2,"Iter2","l");
+	// legend_iter->AddEntry(h_iter0,"Iter0","f");
+	// legend_iter->AddEntry(h_iter1,"Iter1","f");
+	// legend_iter->AddEntry(h_iter2,"Iter2","f");
 
 	legend_iter->Draw();
 	BinInfoLatex.Draw();
 
 	c1->RedrawAxis();
 
-	plotName = dirprefix + Form("csv_%s_SF_Pt%i_Eta%i_diters",flavor.Data(),iPt,iEta) + ".png";
+	plotName = dirprefix + Form("%s_%s_SF_Pt%i_Eta%i_diters",taggerName.Data(),flavor.Data(),iPt,iEta) + ".png";
 
 	c1->Print(plotName.Data());
       }

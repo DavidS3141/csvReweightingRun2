@@ -30,11 +30,14 @@
 #include <sstream>
 
 //void checkVar( bool isHF = true, TString dirPostFix = "", TString varName = "first_jet_pt" ) {
-void checkVar( bool isHF = true, TString dirPostFix = "" ) {
+void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
+
+  TString BTagger = "csv";
+  if (!isCSV) BTagger = "cMVA";
+
   TH1::SetDefaultSumw2();
 
-
-  TString dirprefix = "varImages" + dirPostFix + "/";
+  TString dirprefix = "jet30_7thJuly_varImages_" + BTagger + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -49,13 +52,18 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   // double xBins_lf[22] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
   vector<TString> var_list;
   var_list.push_back("probe_jet_csv");
-  var_list.push_back("probe_jet_csv_noSF");
+  // var_list.push_back("probe_jet_csv_noSF");
+
   var_list.push_back("nJets");
-  var_list.push_back("nJets_noSF");
+  // var_list.push_back("nJets_noSF");
+
   var_list.push_back("nTags");
-  var_list.push_back("nTags_noSF");
+  // var_list.push_back("nTags_noSF");
+  var_list.push_back("all_jet_csv");
+  // var_list.push_back("all_jet_csv_noSF");
+
   var_list.push_back("nJets30");
-  var_list.push_back("nJets30_noSF");
+  // var_list.push_back("nJets30_noSF");
 
   var_list.push_back("probe_jet_pt");
 
@@ -65,19 +73,21 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   var_list.push_back("first_jet_eta");
   var_list.push_back("first_jet_csv");
   var_list.push_back("first_jet_flavour");
-  // var_list.push_back("first_jet_partonflavour");
+  // // var_list.push_back("first_jet_partonflavour");
 
 
   var_list.push_back("second_jet_pt");
   var_list.push_back("second_jet_eta");
   var_list.push_back("second_jet_csv");
   var_list.push_back("second_jet_flavour");
-  // var_list.push_back("second_jet_partonflavour");
+  // // var_list.push_back("second_jet_partonflavour");
 
   var_list.push_back("met_pt");
   var_list.push_back("mht_pt");
   var_list.push_back("dr_leplep");
   var_list.push_back("mass_leplep");
+
+
 
   // var_list.push_back("numPV");
 
@@ -87,29 +97,52 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   // c1->SetTopMargin(0.08);
   // c1->SetRightMargin(0.08);
 
-  TString dirStr = ""; /// directory change
+
+  TString dirStr = "";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
   TString flavor_file = (isHF) ? "hf" : "lf"; 
   flavor_file.ToLower();
-  TString end_str = "_v0_histo_ge2jNoTagCut.root"; //// file name change
-  TFile *fileTTJets = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_ttjets" + end_str);
-  TFile *fileZJets = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_zjets" + end_str);
-  TFile *filelowMassZJets = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_lowMasszjets" + end_str);
+  TString end_str = "_v0_histo_jet30CR.root"; //// file name change
+  TFile *fileTTJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_ttjets" + end_str);
+  TFile *fileZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_zjets" + end_str);  //// AMC or MLM
+  TFile *filelowMassZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_lowMasszjets" + end_str);
 
-  TFile *filetW = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_singletW" + end_str);
-  TFile *filetbarW = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_singletbarW" + end_str);
+  TFile *filetW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_singletW" + end_str);
+  TFile *filetbarW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_singletbarW" + end_str);
 
-  TFile *fileWW = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_WW" + end_str);
+  TFile *fileWW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_WW" + end_str);
 
-  TString end_str2 = "_v0_histo_ge2jNoTagCut.root"; //// file name change
-  TFile *fileData1 = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_DoubleEG" + end_str2);
-  TFile *fileData2 = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
-  TFile *fileData3 = TFile::Open(dirStr+"csv_rwt_" + flavor_file + "_MuonEG" + end_str2);
+  TString end_str2 = "_v0_histo_jet30CR.root"; //// file name change
+  TFile *fileData1 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleEG" + end_str2);
+  TFile *fileData2 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
+  TFile *fileData3 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_MuonEG" + end_str2);
+
+
+  ////
+  TString lumiinfo = "3.99 fb^{-1} (13 TeV)";
+  TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
+  LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
+  LumiInfoLatex.SetTextSize(0.04);
+
+  //TString cmsinfo =   "CMS Preliminary";
+  TString cmsinfo =   "CMS";
+  TLatex CMSInfoLatex(0.155, 0.91, cmsinfo);
+  CMSInfoLatex.SetNDC(); CMSInfoLatex.SetTextFont(42);
+  CMSInfoLatex.SetTextFont(61);
+  CMSInfoLatex.SetTextSize(0.055); //SBOUTLE
+
+  std::string publishinfo =   "Preliminary"; //DPUIGH
+  TLatex PublishInfoLatex(0.25, 0.91, publishinfo.c_str()); //SBOUTLE
+  PublishInfoLatex.SetNDC();
+  PublishInfoLatex.SetTextFont(52);
+  PublishInfoLatex.SetTextSize(0.045); //SBOUTLE
+  ///
 
   ///////
   for (int i=0; i< var_list.size(); i++){
     TString varName = var_list[i];
 
-  TString plotName = dirprefix + varName + flavor_file + ".png";
+  TString plotName = dirprefix + BTagger +"_"+ varName + flavor_file + ".png";
+  // TString plotName = dirprefix + BTagger +"_"+ varName + flavor_file + ".pdf";
 
   TString h_var_Name = Form("h_%s",varName.Data());
 
@@ -121,7 +154,6 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   double norm_lowMasszjets = h_var_lowMasszjets->Integral( 0, 1+nBins );
 
   TH1D* h_var_zjets = (TH1D*)fileZJets->Get(h_var_Name.Data())->Clone(h_var_Name+"_zjets");
-  // h_var_zjets->Add(h_var_lowMasszjets);
   double norm_zjets = h_var_zjets->Integral( 0, 1+nBins );
 
 
@@ -170,6 +202,14 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
     h_var_tW->Rebin(4);
     h_var_WW->Rebin(4);
 
+    if(varName.Contains ("csv") && !isCSV){
+      h_var_data->Rebin(2);
+      h_var_ttjets->Rebin(2);
+      h_var_zjets->Rebin(2);
+      h_var_lowMasszjets->Rebin(2);
+      h_var_tW->Rebin(2);
+      h_var_WW->Rebin(2);
+    }
   }
   h_var_data->SetStats(0);
 
@@ -213,7 +253,7 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   myRatio->Divide(h_var_mc);
 
   ////
-  TLegend *legend = new TLegend(0.14,0.93,0.9,0.98);
+  TLegend *legend = new TLegend(0.14,0.78,0.9,0.88);//new TLegend(0.14,0.93,0.9,0.98);
   
   legend->SetFillColor(kWhite);
   legend->SetLineColor(kWhite);
@@ -223,13 +263,13 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   
   legend->SetNColumns(3);
   
-  legend->AddEntry(h_var_ttjets,"ttjets","l");
-  legend->AddEntry(h_var_zjets,"zjets","l");
-  legend->AddEntry(h_var_lowMasszjets,"LMzjets","l");
-  legend->AddEntry(h_var_tW,"tW","l");
-  legend->AddEntry(h_var_WW,"WW","l");
+  legend->AddEntry(h_var_ttjets,"ttjets","f");
+  legend->AddEntry(h_var_zjets,"zjets","f");
+  legend->AddEntry(h_var_lowMasszjets,"lowM zjets","f");
+  legend->AddEntry(h_var_tW,"tW","f");
+  legend->AddEntry(h_var_WW,"WW","f");
 
-  legend->AddEntry(h_var_data,"data","l");
+  legend->AddEntry(h_var_data,"data","le");
   
 
   // TString title    = varName;
@@ -256,18 +296,25 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
     myC->GetPad(1)->Modified();
     myC->GetPad(2)->Modified();
     myC->cd(1);
+    if(varName.Contains ("csv") && !isCSV) gPad-> SetLogy();
     gPad->SetBottomMargin(small);
     gPad->Modified();
 
 
     myC->cd(1);
-    h_var_data->SetMaximum(1.03*TMath::Max(h_var_data->GetMaximum(), hs->GetMaximum()));
+    h_var_data->SetMaximum(1.3*TMath::Max(h_var_data->GetMaximum(), hs->GetMaximum()));
 
     h_var_data->Draw("pe1");
     hs->Draw("histsame");
     h_var_data->Draw("pe1same");
   
   legend->Draw();
+
+      LumiInfoLatex.Draw();
+      CMSInfoLatex.Draw();
+      PublishInfoLatex.Draw();
+
+  gPad->RedrawAxis();
   // BinInfoLatex.Draw();
   
   //-----------
@@ -305,7 +352,11 @@ void checkVar( bool isHF = true, TString dirPostFix = "" ) {
   myRatio->GetYaxis()->SetTitleSize(0.09);
   myRatio->GetYaxis()->SetTitleOffset(.55);
   myRatio->GetYaxis()->CenterTitle();
-
+  TString newXTitle = myRatio->GetXaxis()->GetTitle();
+  if(varName.Contains("csv"))   {
+    newXTitle += "v2";
+    myRatio->GetXaxis()->SetTitle(newXTitle);
+  }
   myRatio->Draw("pe1");
   
   
