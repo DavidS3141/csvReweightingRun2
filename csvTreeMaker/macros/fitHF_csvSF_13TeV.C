@@ -117,7 +117,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images_2016_2_3_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images_2016_7_7_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -176,6 +176,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
   int maxPt  = 5;//6;
   int maxEta = 1;
+  int minPt = 0; /// change this
   //----------------------
 
   std::vector<TString> hist_name;
@@ -186,7 +187,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
   TString prefix_hist = ( iterNum < 3 ) ? "" : "h_"; 
 
-  for( int iPt=0; iPt<maxPt; iPt++ ){
+  for( int iPt=minPt; iPt<maxPt; iPt++ ){
     for( int iEta=0; iEta<maxEta; iEta++ ){
       hist_name.push_back( Form("csv_ratio_Pt%d_Eta%d", iPt, iEta) );
 
@@ -777,7 +778,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     double firstPoint = x[0];
     double lastPoint  = x[int(x.size())-1];
-    for( int iBin=0; iBin<n; iBin++ ){
+    for( int iBin=0; iBin<NumFinalBins; iBin++ ){
       double center = h_csv_ratio_final[iHist]->GetBinCenter(iBin+1);
       if( isCSV && center<0 ){
 	h_csv_ratio_final[iHist]->SetBinContent(iBin+1,h_csv_ratio[iHist]->GetBinContent(1));
