@@ -1,50 +1,57 @@
 #!/bin/csh -f
 
+set isCSV = 1
+if ($isCSV != 1) then
+    set tagger = "cMVA"
+else 
+    set tagger = "csv"
+endif 
 
 ## run on Data samples
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1, 0, "", -100)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1, 0, "", -200)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1, 0, "", -300)'
+root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -100)'
+root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -200)'
+root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -300)'
 
-#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -100)'
-#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -200)'
-#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0, 0, "", -300)'
+root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -100)'
+root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -200)'
+root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -300)'
 
-set postFix = "" ### change
+set postFix = "_jet30CR" ### change
 ## Iterations (three seems to be sufficent)
-foreach jes ( "" )#"JESUp" "JESDown") 
+foreach jes ( "" )# "JESUp" "JESDown") 
     echo "----->start running for $jes ----------="
-    foreach iter ( 0 3 )#1 2 )
+    foreach iter ( 0 1 2 3 )
 	echo "   ----->start iteration version $iter ----------="
 
 	foreach sample( 2500 2300 2310 2514 2515 2600 )# 
+#	foreach sample( 2300 2310  )# 
 
-	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(1,'$iter', "'$jes'", '$sample')'
-#	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'(0,'$iter', "'$jes'", '$sample')'
+	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, '$iter', "'$jes'", '$sample')'
+	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, '$iter', "'$jes'", '$sample')'
 
 	end
 
-	if ($iter > 10) then ## change the argument
+	if ($iter < 3) then ## change the argument
 	    echo "   ----->start hadd all samples ----------="
 	    ## hadd all samples
 	    
 	    if ($iter == 0 && $jes == "") then
-		hadd -f macros/csv_rwt_hf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_hf_*_v{$iter}{$jes}_histo{$postFix}.root
-		hadd -f macros/csv_rwt_lf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_lf_*_v{$iter}{$jes}_histo{$postFix}.root
+		hadd -f macros/{$tagger}_rwt_hf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/{$tagger}_rwt_hf_*_v{$iter}{$jes}_histo{$postFix}.root
+		hadd -f macros/{$tagger}_rwt_lf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/{$tagger}_rwt_lf_*_v{$iter}{$jes}_histo{$postFix}.root
 	    else
-		    hadd -f macros/csv_rwt_hf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_hf_*_v{$iter}{$jes}_histo{$postFix}.root CSVHistoFiles/csv_rwt_hf_MuonEG_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_hf_DoubleEG_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_hf_DoubleMuon_v0_histo{$postFix}.root
-		    hadd -f macros/csv_rwt_lf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/csv_rwt_lf_*_v{$iter}{$jes}_histo{$postFix}.root CSVHistoFiles/csv_rwt_lf_DoubleEG_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_lf_DoubleMuon_v0_histo{$postFix}.root CSVHistoFiles/csv_rwt_lf_MuonEG_v0_histo{$postFix}.root
+		    hadd -f macros/{$tagger}_rwt_hf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/{$tagger}_rwt_hf_*_v{$iter}{$jes}_histo{$postFix}.root CSVHistoFiles/{$tagger}_rwt_hf_MuonEG_v0_histo{$postFix}.root CSVHistoFiles/{$tagger}_rwt_hf_DoubleEG_v0_histo{$postFix}.root CSVHistoFiles/{$tagger}_rwt_hf_DoubleMuon_v0_histo{$postFix}.root
+		    hadd -f macros/{$tagger}_rwt_lf_all_v{$iter}{$jes}{$postFix}.root CSVHistoFiles/{$tagger}_rwt_lf_*_v{$iter}{$jes}_histo{$postFix}.root CSVHistoFiles/{$tagger}_rwt_lf_DoubleEG_v0_histo{$postFix}.root CSVHistoFiles/{$tagger}_rwt_lf_DoubleMuon_v0_histo{$postFix}.root CSVHistoFiles/{$tagger}_rwt_lf_MuonEG_v0_histo{$postFix}.root
 	    endif
 	    
 	    ## Do LF and HF fitting
 	    echo "   ----->start fitting SFs ----------="
 	    cd macros/
-	    root -b -q head13TeV.C fitHF_csvSF_13TeV.C'("csv_rwt_hf_all_v'$iter''$jes''$postFix'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
-	    root -b -q head13TeV.C fitLF_csvSF_13TeV.C'("csv_rwt_lf_all_v'$iter''$jes''$postFix'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
+	    root -b -q head13TeV.C fitHF_csvSF_13TeV.C'('$isCSV', "'$tagger'_rwt_hf_all_v'$iter''$jes''$postFix'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
+	    root -b -q head13TeV.C fitLF_csvSF_13TeV.C'('$isCSV', "'$tagger'_rwt_lf_all_v'$iter''$jes''$postFix'.root", '$iter', "'$jes'", "v'$iter''$jes'")'
 	    
-#	    echo "   ----->copy SFs to data/----------="
-#	    cp csv_rwt_fit_hf_v{$iter}{$jes}.root  ../data/
-#	    cp csv_rwt_fit_lf_v{$iter}{$jes}.root  ../data/
+	    echo "   ----->copy SFs to data/----------="
+	    cp {$tagger}_rwt_fit_hf_v{$iter}{$jes}.root  ../data/
+	    cp {$tagger}_rwt_fit_lf_v{$iter}{$jes}.root  ../data/
 	    cd -
 	endif
     end
