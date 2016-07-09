@@ -1,0 +1,10 @@
+cp /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/PileUp/pileup_latest.txt .
+
+compareJSON.py --or ../test/crab_MuonEG_Run2015D_05Oct/results/lumiSummary.json ../test/crab_MuonEG_Run2015D_PromptRecoV4/results/lumiSummary.json myData.json
+ 
+pileupCalc.py -i myData.json --inputLumiJSON pileup_latest.txt --calcMode true --minBiasXsec 69000 --maxPileupBin 50 --numPileupBins 50 MyDataPileupHistogram.root
+
+cp /afs/cern.ch/work/p/puigh/public/ForRobin/ttHbb_data2mc_treeReader_ttbar_histo.root .
+
+root -l pileUp_SFs.C'()'
+
