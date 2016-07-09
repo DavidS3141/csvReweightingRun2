@@ -12,7 +12,7 @@
   gSystem->Load("libDataFormatsFWLite.so");
   gSystem->Load("libDataFormatsCommon.so");
   gSystem->Load("libMiniAODMiniAODHelper.so");
-  gSystem->Load("libttH-LeptonPlusJetsAnalysisCode.so");
+  //  gSystem->Load("libttH-LeptonPlusJetsAnalysisCode.so");
 
   TString path = gSystem->GetIncludePath();
   path.Append(" -I$ROOTSYS/include/root -I./include  ");
