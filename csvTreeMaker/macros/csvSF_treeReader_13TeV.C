@@ -67,8 +67,8 @@ TH1D* c_csv_wgt_hf[9][6];
 TH1D* h_csv_wgt_lf[9][4][3];
 
 //*****************************************************************************
-// old data 552.673 + 993.722 = 1546.395 ; new 887.308 + 1557.133 = 2444.441; latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329
-void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 3992.165) {
+// old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900
+void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 12900) {
   ///// jet Pt cut
   bool JetPtCut30 = false; //true;
 
@@ -156,7 +156,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   }
   else if( insample==2300 ){
     mySample_xSec_ = 3*2008.4;//*1.3; // SF = 1.15 for DY
-    mySample_nGen_ = 19223746;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
+    mySample_nGen_ = 19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
@@ -587,14 +587,14 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     double triggerWgt = 1;
     if(insample >= 0){
-      if(TwoMuon)           triggerWgt = (isHF) ? 0.723 : 0.84; ///
-      else if(TwoElectron)  triggerWgt = (isHF) ? 0.749 : 0.865;
-      else if(MuonElectron) triggerWgt = 0.7948;
+      if(TwoMuon)           triggerWgt = (isHF) ? 0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
+      else if(TwoElectron)  triggerWgt = (isHF) ? 0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
+      else if(MuonElectron) triggerWgt = 0.517857;//0.67727; //0.7948;
 
       if(JetPtCut30){
-	if(TwoMuon)           triggerWgt = (isHF) ? 0.7277 : 0.8035; ///
-	else if(TwoElectron)  triggerWgt = (isHF) ? 0.753 : 0.844;
-	else if(MuonElectron) triggerWgt = 0.7863;
+    	if(TwoMuon)           triggerWgt = (isHF) ? 0.7277 : 0.8035; ///
+    	else if(TwoElectron)  triggerWgt = (isHF) ? 0.753 : 0.844;
+    	else if(MuonElectron) triggerWgt = 0.7863;
       }
     }
     wgt *= triggerWgt;
@@ -759,9 +759,9 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     
 
     /// triggers 
-    bool isDoubleMuTriggerPass = eve->passDoubleMuonTrigger_;//1;
-    bool isDoubleElectronTriggerPass = eve->passDoubleElectronTrigger_;//1;
-    bool isMuEGTriggerPass = eve->passElectronMuonTrigger_;//1;
+    bool isDoubleMuTriggerPass = eve->passDoubleMuonTriggerNew_;//1;
+    bool isDoubleElectronTriggerPass = eve->passDoubleElectronTriggerNew_;//1;
+    bool isMuEGTriggerPass = eve->passElectronMuonTriggerNew_;//1;
 
     if ( insample>0 ) {
       isDoubleMuTriggerPass = 1;
