@@ -56,6 +56,10 @@ struct EventVars{
   int passDoubleMuonTrigger_;
   int passElectronMuonTrigger_;
 
+  int passDoubleElectronTriggerNew_;
+  int passDoubleMuonTriggerNew_;
+  int passElectronMuonTriggerNew_;
+
   //  vstring TriggerPaths_ ;
   //  vint TriggerAcceps_ ;
 
@@ -142,6 +146,10 @@ void EventVars::initialize(){
   passDoubleElectronTrigger_ = -99;
   passDoubleMuonTrigger_     = -99;
   passElectronMuonTrigger_   = -99;
+
+  passDoubleElectronTriggerNew_ = -99;
+  passDoubleMuonTriggerNew_     = -99;
+  passElectronMuonTriggerNew_   = -99;
   
   //  TriggerPaths_.clear();
   //  TriggerAcceps_.clear() ;

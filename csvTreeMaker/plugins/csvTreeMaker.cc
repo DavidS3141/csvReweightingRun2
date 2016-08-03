@@ -276,7 +276,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    eve->initialize();
 
 
-  double minTightLeptonPt = 20.;
+   double minTightLeptonPt = 25.;// increased due to trigger Pt threshold
   double looseLeptonPt = 15.;//20.;
 
   edm::Handle<reco::VertexCollection> vtxHandle;
@@ -347,6 +347,10 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   bool passDoubleMuonTrigger = false;
   bool passElectronMuonTrigger = false;
 
+  bool passDoubleElectronTriggerNew = false;
+  bool passDoubleMuonTriggerNew = false;
+  bool passElectronMuonTriggerNew = false;
+
   // vstring triggerPaths;
   // vint triggerAcceps;
   if( triggerResults.isValid() ){
@@ -371,6 +375,15 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
 	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ) passElectronMuonTrigger = true;
+
+	///1E34 menu
+	if( pathName.find("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passDoubleElectronTriggerNew = true;
+
+	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") !=std::string::npos ) passDoubleMuonTriggerNew = true;
+
+	if( pathName.find("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ) passElectronMuonTriggerNew = true;
 	
       }
     }
@@ -381,6 +394,10 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   eve->passDoubleElectronTrigger_ = ( passDoubleElectronTrigger ) ? 1 : 0;
   eve->passDoubleMuonTrigger_     = ( passDoubleMuonTrigger ) ? 1 : 0;
   eve->passElectronMuonTrigger_   = ( passElectronMuonTrigger ) ? 1 : 0;
+
+  eve->passDoubleElectronTriggerNew_ = ( passDoubleElectronTriggerNew ) ? 1 : 0;
+  eve->passDoubleMuonTriggerNew_     = ( passDoubleMuonTriggerNew ) ? 1 : 0;
+  eve->passElectronMuonTriggerNew_   = ( passElectronMuonTriggerNew ) ? 1 : 0;
 
 
   ////-------
