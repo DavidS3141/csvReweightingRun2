@@ -17,7 +17,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(5000)
+    input = cms.untracked.int32(-1)
     )
 
 from JetMETCorrections.Configuration.JetCorrectionServices_cff import *
@@ -40,6 +40,9 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 )
 
 ######## update JetCollection with the HIP mitigation
+process.load("Configuration.StandardSequences.MagneticField_cff")
+process.load("Configuration.Geometry.GeometryRecoDB_cff")
+
 jetSource = 'slimmedJets'
 jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
 bTagDiscriminators = ['pfCombinedInclusiveSecondaryVertexV2BJetTags', 'pfCombinedMVAV2BJetTags']
