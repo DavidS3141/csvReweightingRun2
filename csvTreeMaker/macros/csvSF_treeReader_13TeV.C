@@ -68,7 +68,7 @@ TH1D* h_csv_wgt_lf[9][4][3];
 
 //*****************************************************************************
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900
-void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 12900) {
+void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 7650) {
   ///// jet Pt cut
   bool JetPtCut30 = false; //true;
 
@@ -156,14 +156,14 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   }
   else if( insample==2300 ){
     mySample_xSec_ = 3*2008.4;//*1.3; // SF = 1.15 for DY
-    mySample_nGen_ = 19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
+    mySample_nGen_ = 19223736; //19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
   else if( insample==2310 ){
     mySample_xSec_ = 18610;//*1.3;//correctMe
-    mySample_nGen_ = 22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
+    mySample_nGen_ = 22494715; //22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
     mySample_sampleName_ = "lowMasszjets";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
@@ -256,7 +256,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   std::string treefilename = mySample_inputDir_ + mySample_sampleName_ + "*.root";
 
   // std::string treefilename = mySample_inputDir_ + "csv_treeMaker*.root";
-  // std::string treefilename = "test/csv_treeMaker*.root";
+  // std::string treefilename = "test/Data_on_csv_treeMaker.root";
   // std::string treefilename = "/afs/cern.ch/user/l/lwming/RunII/CMSSW_7_4_12/src/csvReweightingRun2/csvTreeMaker/test/MCcsv_treeMaker.root";
 
   std::string s_end = "_histo_" + str_jobN + ".root";
@@ -587,9 +587,9 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     double triggerWgt = 1;
     if(insample >= 0){
-      if(TwoMuon)           triggerWgt = (isHF) ? 0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
-      else if(TwoElectron)  triggerWgt = (isHF) ? 0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
-      else if(MuonElectron) triggerWgt = 0.517857;//0.67727; //0.7948;
+      if(TwoMuon)           triggerWgt = (isHF) ? 0.611261 : 0.732234; //0.740883 : 0.819794;//0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
+      else if(TwoElectron)  triggerWgt = (isHF) ? 0.640472 : 0.760513; // 0.75403 : 0.827811; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
+      else if(MuonElectron) triggerWgt = 0.677239; //0.772774;//0.517857;//0.67727; //0.7948;
 
       if(JetPtCut30){
     	if(TwoMuon)           triggerWgt = (isHF) ? 0.7277 : 0.8035; ///

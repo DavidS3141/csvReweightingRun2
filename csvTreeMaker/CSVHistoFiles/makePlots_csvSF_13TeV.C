@@ -40,7 +40,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TFile *histFile = TFile::Open(inputFileName);
 
   if( compareIterations ) dirPostFix = dirPostFix + "Comparison";
-  TString dirprefix = taggerName +"_SFPlots_2016_7_8_13TeV" + dirPostFix + "/";
+  TString dirprefix = taggerName +"_SFPlots_2016_8_13_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -64,15 +64,15 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   // // double xBins_hf[19] = {-0.04, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
   // double xBins_hf[19] = {-0.04, 0.0, 0.3025, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
 
-  int nCSVBins = 22; //Number of bins 
-  // double xBins_hf[19] = {-10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
-  double xBins_hf[23] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
-  double xBins_hf_cMVA[23] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
+  // int nCSVBins = 22; //Number of bins 
+  // // double xBins_hf[19] = {-10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
+  // double xBins_hf[23] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
+  // double xBins_hf_cMVA[23] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
 
-  if(!isHF) nCSVBins = 21;
-  // double xBins_lf[22] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
-  double xBins_lf[22] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.917, 0.944, 0.970, 0.975, 0.980, 0.985, 0.990, 0.995, 1.01};
-  double xBins_lf_cMVA[22] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.415, 0.645, 0.875, 0.8975, 0.92, 0.9425, 0.965, 0.9875, 1.01};
+  // if(!isHF) nCSVBins = 21;
+  // // double xBins_lf[22] = {-0.04, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
+  // double xBins_lf[22] = {-0.04, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.917, 0.944, 0.970, 0.975, 0.980, 0.985, 0.990, 0.995, 1.01};
+  // double xBins_lf_cMVA[22] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.415, 0.645, 0.875, 0.8975, 0.92, 0.9425, 0.965, 0.9875, 1.01};
 
   //TCanvas* c1 = new TCanvas("c1","c1",600,500);
   TCanvas* c1 = new TCanvas("c1","c1");
@@ -87,7 +87,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   flavor_file.ToLower();
 
   ///
-  TString lumiinfo = "2.6 fb^{-1} (13 TeV, 25ns)";
+  TString lumiinfo = "12.9 fb^{-1} (13 TeV, 25ns)";
   TLatex LumiInfoLatex(0.65, 0.93, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -114,7 +114,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TString plotName;
 
   int iHist = -1;
-  int minPt = 1;
+  int minPt = 0; ////
   for ( int iPt=minPt; iPt<nPt; iPt++){
     for ( int iEta=0; iEta<nEta; iEta++){
       iHist++;
@@ -370,9 +370,13 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
     }
       if( compareIterations ){
-	TFile *fitFile_iter0 = TFile::Open("../data/csvSFs/csv_rwt_fit_" + flavor_file + "_v2.root");
-	TFile *fitFile_iter1 = TFile::Open("../data/csv_rwt_fit_" + flavor_file + "_v2.root");
-	TFile *fitFile_iter2 = TFile::Open("../data/csvSFs/csv_rwt_fit_" + flavor_file + "_v2.root");
+	// TFile *fitFile_iter0 = TFile::Open("../macros/July15th_ICHEP_SF_Files/dir_CSV/csv_rwt_fit_" + flavor_file + "_v2.root");
+	// TFile *fitFile_iter1 = TFile::Open("../data/csv_rwt_fit_" + flavor_file + "_v2.root");
+	// TFile *fitFile_iter2 = TFile::Open("../macros/wrong_PUwgt/dir_CSV/csv_rwt_fit_" + flavor_file + "_v2.root");
+
+	TFile *fitFile_iter0 = TFile::Open("/afs/cern.ch/user/l/lwming/2016TTH/CMSSW_8_0_12/src/csvReweightingRun2/csvTreeMaker/macros/July15th_ICHEP_SF_Files/csv_rwt_fit_" + flavor_file + "_v2_final_2016_07_15test.root");
+	TFile *fitFile_iter1 = TFile::Open("../macros/csv_rwt_fit_" + flavor_file + "_v2_final_2016_08_13test.root");
+	TFile *fitFile_iter2 = TFile::Open("../macros/dir_CSV/csv_rwt_fit_" + flavor_file + "_v2.root");
 
 
 
@@ -443,8 +447,8 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	h_fit_iter0->SetStats(0);
 	h_fit_iter0->GetYaxis()->SetRangeUser(0.,2.);
-	h_fit_iter0->GetXaxis()->SetRangeUser(-0.04,1.01); /// change HF range
-	// h_fit_iter0->GetXaxis()->SetRangeUser(0.890,1.01); /// change HF range
+	// h_fit_iter0->GetXaxis()->SetRangeUser(-0.04,1.01); /// change HF range
+	h_fit_iter0->GetXaxis()->SetRangeUser(0.460,1.01); /// change HF range
 
 	h_fit_iter0->SetTitle(";"+taggerName+";Data/MC SF");
 
@@ -478,9 +482,9 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	legend_iter->SetNColumns(3);
 
-	legend_iter->AddEntry(h_iter0,"jetPt20","f");
-	legend_iter->AddEntry(h_iter1,"jetPt30","f");
-	// legend_iter->AddEntry(h_iter2,"mumu","f");
+	legend_iter->AddEntry(h_iter0,"no HIP","f");
+	legend_iter->AddEntry(h_iter1,"with HIP","f");
+	// legend_iter->AddEntry(h_iter2,"oldPU","f");
 
 	// legend_iter->AddEntry(h_iter0,"Iter0","f");
 	// legend_iter->AddEntry(h_iter1,"Iter1","f");

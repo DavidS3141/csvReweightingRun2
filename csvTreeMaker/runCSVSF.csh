@@ -1,6 +1,6 @@
 #!/bin/csh -f
 
-set isCSV = 1
+set isCSV = 0
 if ($isCSV != 1) then
     set tagger = "cMVA"
 else 
@@ -8,19 +8,19 @@ else
 endif 
 
 ## run on Data samples
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -100)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -200)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -300)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -100)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -200)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, 0, "", -300)'
+#
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -100)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -200)'
+#root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -300)'
 
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -100)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -200)'
-root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 0, 0, "", -300)'
-
-set postFix = "_jet30CR" ### change
+set postFix = "" ### change
 ## Iterations (three seems to be sufficent)
-foreach jes ( "" )# "JESUp" "JESDown") 
+foreach jes ( "" )#"JESUp" "JESDown") 
     echo "----->start running for $jes ----------="
-    foreach iter ( 0 1 2 3 )
+    foreach iter ( 3 )#0 1 2 )
 	echo "   ----->start iteration version $iter ----------="
 
 	foreach sample( 2500 2300 2310 2514 2515 2600 )# 

@@ -76,8 +76,8 @@ process.source = cms.Source("PoolSource",
 
 
 process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
-    inSample = cms.int32(2500),##
-    sampleName = cms.string("TTJets"),##
+#    inSample = cms.int32(2500),##
+#    sampleName = cms.string("TTJets"),##
 #    inSample = cms.int32(2300),##
 #    sampleName = cms.string("ZJets"),##
 #    inSample = cms.int32(2310),##
@@ -86,8 +86,8 @@ process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
 #    sampleName = cms.string("singletW"),##
 #    inSample = cms.int32(2515),##
 #    sampleName = cms.string("singletbarW"),##
-#    inSample = cms.int32(2600),##
-#    sampleName = cms.string("WW"),##
+    inSample = cms.int32(2600),##
+    sampleName = cms.string("WW"),##
     XS = cms.double(1.),
     nGen = cms.double(1.),
     lumi = cms.double(10000),

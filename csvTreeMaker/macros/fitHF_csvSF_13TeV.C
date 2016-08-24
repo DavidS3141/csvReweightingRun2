@@ -117,7 +117,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images_2016_7_7_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images_2016_8_12_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);

@@ -35,7 +35,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2016_07_15_fitLF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2016_08_13_fitLF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -48,13 +48,13 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   std::cout << " ###===> iteration version " << iterNum << std::endl;
 
 
-  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2016_07_15" + dirPostFix + ".root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2016_08_13" + dirPostFix + ".root",iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
 
 
-  TString lumiinfo = "7.65 fb^{-1} (13 TeV, 25 ns)";
+  TString lumiinfo = "12.9 fb^{-1} (13 TeV, 25 ns)";
   TLatex LumiInfoLatex(0.67, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -733,256 +733,256 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
     bool includeCorrectionFactor = !false;
     if( includeCorrectionFactor ){
       if( hist_name[iHist]=="csv_ratio_Pt0_Eta0" ){ 
-	h_csv_ratio_final[iHist]->Scale( 1.005288 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 1.006301 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 1.006652 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.995454 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 0.999367 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.001553 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.008862 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.001854 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.008620 ); 
+	h_csv_ratio_final[iHist]->Scale( 0.999101 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 0.998251 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.999332 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 0.991306 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 0.994179 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.997116 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.000967 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.997084 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.001033 ); 
      
-	h_csv_ratio[iHist]->Scale( 1.005288 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 1.006301 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 1.006652 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.995454 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 0.999367 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 1.001553 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 1.008862 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 1.001854 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 1.008620 ); 
+	h_csv_ratio[iHist]->Scale( 0.999101 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 0.998251 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.999332 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 0.991306 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 0.994179 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.997116 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.000967 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.997084 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.001033 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt0_Eta1" ){ 
-	h_csv_ratio_final[iHist]->Scale( 1.005242 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 1.003020 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 1.003679 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 1.003847 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 1.002792 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.001998 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.007974 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.002122 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.007886 ); 
+	h_csv_ratio_final[iHist]->Scale( 0.989640 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 0.987168 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.995360 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 0.989245 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 0.989543 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.988458 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.990474 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.988408 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.990527 ); 
      
-	h_csv_ratio[iHist]->Scale( 1.005242 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 1.003020 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 1.003679 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 1.003847 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 1.002792 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 1.001998 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 1.007974 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 1.002122 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 1.007886 ); 
+	h_csv_ratio[iHist]->Scale( 0.989640 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 0.987168 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.995360 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 0.989245 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 0.989543 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.988458 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 0.990474 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.988408 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 0.990527 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt0_Eta2" ){ 
-	h_csv_ratio_final[iHist]->Scale( 1.004890 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 1.001550 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 1.008094 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.999299 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 1.002691 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.999855 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.008852 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.001910 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.007457 ); 
+	h_csv_ratio_final[iHist]->Scale( 0.999822 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 0.992798 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 1.003709 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 0.996404 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 0.998747 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.998438 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.002587 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.998052 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.002969 ); 
      
-	h_csv_ratio[iHist]->Scale( 1.004890 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 1.001550 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 1.008094 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.999299 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 1.002691 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.999855 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 1.008852 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 1.001910 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 1.007457 ); 
+	h_csv_ratio[iHist]->Scale( 0.999822 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 0.992798 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 1.003709 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 0.996404 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 0.998747 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.998438 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.002587 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.998052 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.002969 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt1_Eta0" ){ 
-	h_csv_ratio_final[iHist]->Scale( 0.977222 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 0.980111 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 0.974824 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.974173 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 0.979383 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.971074 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.983218 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.971591 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.982854 ); 
+	h_csv_ratio_final[iHist]->Scale( 0.990953 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 0.990535 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.988008 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 0.990751 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 0.996286 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.986911 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.994521 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.988236 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.993506 ); 
      
-	h_csv_ratio[iHist]->Scale( 0.977222 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 0.980111 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 0.974824 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.974173 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 0.979383 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.971074 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 0.983218 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 0.971591 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 0.982854 ); 
+	h_csv_ratio[iHist]->Scale( 0.990953 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 0.990535 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.988008 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 0.990751 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 0.996286 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.986911 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 0.994521 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.988236 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 0.993506 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt1_Eta1" ){ 
-	h_csv_ratio_final[iHist]->Scale( 0.985579 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 0.987874 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 0.986640 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.982532 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 0.987654 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.977384 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.993771 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.979047 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.992158 ); 
+	h_csv_ratio_final[iHist]->Scale( 0.998825 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 1.000193 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.994876 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 0.996478 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 1.000443 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.994944 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.002690 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.995930 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.001717 ); 
      
-	h_csv_ratio[iHist]->Scale( 0.985579 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 0.987874 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 0.986640 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.982532 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 0.987654 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.977384 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 0.993771 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 0.979047 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 0.992158 ); 
+	h_csv_ratio[iHist]->Scale( 0.998825 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 1.000193 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.994876 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 0.996478 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 1.000443 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.994944 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.002690 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.995930 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.001717 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt1_Eta2" ){ 
-	h_csv_ratio_final[iHist]->Scale( 1.003197 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 1.011025 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 0.998454 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 1.003411 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 1.008195 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.994409 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.012117 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.996996 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.009475 ); 
+	h_csv_ratio_final[iHist]->Scale( 1.008941 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 1.015295 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.995892 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 1.009435 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 1.012201 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.001653 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.013924 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.003726 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.011822 ); 
      
-	h_csv_ratio[iHist]->Scale( 1.003197 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 1.011025 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 0.998454 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 1.003411 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 1.008195 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.994409 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 1.012117 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 0.996996 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 1.009475 ); 
+	h_csv_ratio[iHist]->Scale( 1.008941 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 1.015295 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.995892 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 1.009435 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 1.012201 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 1.001653 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.013924 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 1.003726 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.011822 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt2_Eta0" ){ 
-	h_csv_ratio_final[iHist]->Scale( 0.998770 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 0.993793 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 1.000876 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 1.006286 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 1.009319 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.992948 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.004615 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.994545 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.002998 ); 
+	h_csv_ratio_final[iHist]->Scale( 1.002194 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 0.999009 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 1.004526 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 1.011148 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 1.013159 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.000116 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.005776 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.001352 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.004546 ); 
      
-	h_csv_ratio[iHist]->Scale( 0.998770 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 0.993793 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 1.000876 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 1.006286 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 1.009319 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.992948 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 1.004615 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 0.994545 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 1.002998 ); 
+	h_csv_ratio[iHist]->Scale( 1.002194 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 0.999009 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 1.004526 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 1.011148 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 1.013159 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 1.000116 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.005776 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 1.001352 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.004546 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt2_Eta1" ){ 
-	h_csv_ratio_final[iHist]->Scale( 0.977572 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 0.979359 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 0.971814 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.985681 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 0.989068 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.969775 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.985475 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.971763 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.983436 ); 
+	h_csv_ratio_final[iHist]->Scale( 0.989998 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 0.995592 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.984919 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 0.998225 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 1.002817 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.984711 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.995355 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.986876 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.993130 ); 
      
-	h_csv_ratio[iHist]->Scale( 0.977572 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 0.979359 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 0.971814 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.985681 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 0.989068 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.969775 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 0.985475 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 0.971763 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 0.983436 ); 
+	h_csv_ratio[iHist]->Scale( 0.989998 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 0.995592 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.984919 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 0.998225 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 1.002817 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.984711 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 0.995355 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.986876 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 0.993130 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt2_Eta2" ){ 
-	h_csv_ratio_final[iHist]->Scale( 0.991749 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 0.992630 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 0.994912 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.995745 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 0.999847 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.980886 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.002870 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.983569 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.000055 ); 
+	h_csv_ratio_final[iHist]->Scale( 1.003181 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 1.001340 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 1.004810 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 1.008554 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 1.010785 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.996958 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.007545 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.999678 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.004789 ); 
      
-	h_csv_ratio[iHist]->Scale( 0.991749 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 0.992630 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 0.994912 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.995745 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 0.999847 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.980886 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 1.002870 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 0.983569 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 1.000055 ); 
+	h_csv_ratio[iHist]->Scale( 1.003181 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 1.001340 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 1.004810 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 1.008554 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 1.010785 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.996958 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.007545 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.999678 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.004789 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt3_Eta0" ){ 
-	h_csv_ratio_final[iHist]->Scale( 0.978467 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 0.984864 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 0.980760 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.981006 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 0.986419 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.014865 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.984408 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.016696 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.982799 ); 
+	h_csv_ratio_final[iHist]->Scale( 1.002362 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 1.007544 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.999897 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 1.006791 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 1.010902 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.999224 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.005489 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.001110 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.003612 ); 
      
-	h_csv_ratio[iHist]->Scale( 0.978467 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 0.984864 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 0.980760 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.981006 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 0.986419 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 1.014865 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 0.984408 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 1.016696 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 0.982799 ); 
+	h_csv_ratio[iHist]->Scale( 1.002362 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 1.007544 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.999897 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 1.006791 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 1.010902 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.999224 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.005489 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 1.001110 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.003612 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt3_Eta1" ){ 
-	h_csv_ratio_final[iHist]->Scale( 0.981560 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 0.979863 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 0.978399 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 0.986183 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 0.993624 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.972807 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.990416 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.974855 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.988355 ); 
+	h_csv_ratio_final[iHist]->Scale( 0.980407 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 0.983586 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 0.982147 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 0.986966 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 0.994355 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.010194 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.996543 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.012624 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.994247 ); 
      
-	h_csv_ratio[iHist]->Scale( 0.981560 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 0.979863 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 0.978399 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 0.986183 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 0.993624 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 0.972807 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 0.990416 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 0.974855 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 0.988355 ); 
+	h_csv_ratio[iHist]->Scale( 0.980407 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 0.983586 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 0.982147 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 0.986966 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 0.994355 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 1.010194 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 0.996543 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 1.012624 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 0.994247 ); 
       } 
       if( hist_name[iHist]=="csv_ratio_Pt3_Eta2" ){ 
-	h_csv_ratio_final[iHist]->Scale( 1.009936 ); 
-	h_csv_ratio_final_JESUp[iHist]->Scale( 1.003838 ); 
-	h_csv_ratio_final_JESDown[iHist]->Scale( 1.010653 ); 
-	h_csv_ratio_final_HFUp[iHist]->Scale( 1.017027 ); 
-	h_csv_ratio_final_HFDown[iHist]->Scale( 1.017756 ); 
-	h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.002711 ); 
-	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.017291 ); 
-	h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.006182 ); 
-	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.013698 ); 
+	h_csv_ratio_final[iHist]->Scale( 1.005258 ); 
+	h_csv_ratio_final_JESUp[iHist]->Scale( 1.003810 ); 
+	h_csv_ratio_final_JESDown[iHist]->Scale( 1.008781 ); 
+	h_csv_ratio_final_HFUp[iHist]->Scale( 1.011553 ); 
+	h_csv_ratio_final_HFDown[iHist]->Scale( 1.013766 ); 
+	h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.996638 ); 
+	h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.014016 ); 
+	h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.999349 ); 
+	h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.011221 ); 
      
-	h_csv_ratio[iHist]->Scale( 1.009936 ); 
-	h_csv_ratio_JESUp[iHist]->Scale( 1.003838 ); 
-	h_csv_ratio_JESDown[iHist]->Scale( 1.010653 ); 
-	h_csv_ratio_HFUp[iHist]->Scale( 1.017027 ); 
-	h_csv_ratio_HFDown[iHist]->Scale( 1.017756 ); 
-	h_csv_ratio_Stats1Up[iHist]->Scale( 1.002711 ); 
-	h_csv_ratio_Stats1Down[iHist]->Scale( 1.017291 ); 
-	h_csv_ratio_Stats2Up[iHist]->Scale( 1.006182 ); 
-	h_csv_ratio_Stats2Down[iHist]->Scale( 1.013698 ); 
+	h_csv_ratio[iHist]->Scale( 1.005258 ); 
+	h_csv_ratio_JESUp[iHist]->Scale( 1.003810 ); 
+	h_csv_ratio_JESDown[iHist]->Scale( 1.008781 ); 
+	h_csv_ratio_HFUp[iHist]->Scale( 1.011553 ); 
+	h_csv_ratio_HFDown[iHist]->Scale( 1.013766 ); 
+	h_csv_ratio_Stats1Up[iHist]->Scale( 0.996638 ); 
+	h_csv_ratio_Stats1Down[iHist]->Scale( 1.014016 ); 
+	h_csv_ratio_Stats2Up[iHist]->Scale( 0.999349 ); 
+	h_csv_ratio_Stats2Down[iHist]->Scale( 1.011221 ); 
       } 
     }
 
