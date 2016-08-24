@@ -37,7 +37,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "jet30_7thJuly_varImages_" + BTagger + dirPostFix + "/";
+  TString dirprefix = "aa_12thAug_varImages_" + BTagger + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -54,15 +54,15 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   var_list.push_back("probe_jet_csv");
   // var_list.push_back("probe_jet_csv_noSF");
 
-  var_list.push_back("nJets");
-  // var_list.push_back("nJets_noSF");
-
   var_list.push_back("nTags");
   // var_list.push_back("nTags_noSF");
   var_list.push_back("all_jet_csv");
   // var_list.push_back("all_jet_csv_noSF");
 
-  var_list.push_back("nJets30");
+  var_list.push_back("nJets");
+  // var_list.push_back("nJets_noSF");
+
+  // var_list.push_back("nJets30");
   // var_list.push_back("nJets30_noSF");
 
   var_list.push_back("probe_jet_pt");
@@ -98,10 +98,10 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   // c1->SetRightMargin(0.08);
 
 
-  TString dirStr = "";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
+  TString dirStr = "July15th_rootFiles/July15th_dil_category_files/";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
   TString flavor_file = (isHF) ? "hf" : "lf"; 
   flavor_file.ToLower();
-  TString end_str = "_v0_histo_jet30CR.root"; //// file name change
+  TString end_str = "_v0_histo_All.root"; //// file name change
   TFile *fileTTJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_ttjets" + end_str);
   TFile *fileZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_zjets" + end_str);  //// AMC or MLM
   TFile *filelowMassZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_lowMasszjets" + end_str);
@@ -111,14 +111,14 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   TFile *fileWW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_WW" + end_str);
 
-  TString end_str2 = "_v0_histo_jet30CR.root"; //// file name change
+  TString end_str2 = "_v0_histo_All.root"; //// file name change
   TFile *fileData1 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleEG" + end_str2);
   TFile *fileData2 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
   TFile *fileData3 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_MuonEG" + end_str2);
 
 
   ////
-  TString lumiinfo = "3.99 fb^{-1} (13 TeV)";
+  TString lumiinfo = "7.65 fb^{-1} (13 TeV)";
   TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -142,7 +142,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
     TString varName = var_list[i];
 
   TString plotName = dirprefix + BTagger +"_"+ varName + flavor_file + ".png";
-  // TString plotName = dirprefix + BTagger +"_"+ varName + flavor_file + ".pdf";
+  //  TString plotName1 = dirprefix + BTagger +"_"+ varName + flavor_file + ".pdf";
 
   TString h_var_Name = Form("h_%s",varName.Data());
 
@@ -174,7 +174,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   TH1D* h_var_data = (TH1D*)h_var_2->Clone(h_var_Name+"_data");
   h_var_data->Add(h_var_3);
   h_var_data->Add(h_var_4);
-  // TH1D* h_var_data = (TH1D*)h_var_4->Clone(h_var_Name+"_data");
+   // TH1D* h_var_data = (TH1D*)h_var_4->Clone(h_var_Name+"_data");
 
   double norm_data = h_var_data->Integral( 0, 1+nBins );
 
@@ -190,7 +190,8 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   std::cout << "---number of total MC: " << norm_mc << std::endl;
 
-  std::cout << "number of data: " << norm_data << "; Data/MC ratio is " << norm_data/norm_mc << std::endl;
+   std::cout << "number of data: " << norm_data << "; Data/MC ratio is " << norm_data/norm_mc << std::endl;
+  // std::cout << "number of data: " << norm_data << "; Data/MC ratio is " << norm_data/(norm_mc*12900/7650) << std::endl;
   std::cout << "---------------------------------: " << std::endl;
   }
   ////
@@ -370,6 +371,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
       // plotName = dirprefix + varName + ".png";
 
   myC->Print(plotName.Data());
+  //  myC->Print(plotName1.Data());
 
   ///
   delete myC;

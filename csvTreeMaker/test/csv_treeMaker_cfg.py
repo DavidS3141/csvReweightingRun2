@@ -8,7 +8,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2'  ##MC
+process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'  ##MC
 
 # Load the producer for MVA IDs. Make sure it is also added to the sequence!
 process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
@@ -41,9 +41,9 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-#        '/store/mc/RunIISpring16MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/60000/0005201C-D41B-E611-8E37-002481E0D398.root'
+        '/store/mc/RunIISpring16MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/60000/0005201C-D41B-E611-8E37-002481E0D398.root'
 #        '/store/mc/RunIISpring16MiniAODv1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/08F114C5-7A01-E611-B29D-0002C94D54FA.root'
-        '/store/mc/RunIISpring16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/00000/0251DBB7-201B-E611-8653-0CC47A4F1C2E.root'
+#        '/store/mc/RunIISpring16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/00000/0251DBB7-201B-E611-8653-0CC47A4F1C2E.root'
 
 #        '/store/mc/RunIISpring15MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/00087FEB-236E-E511-9ACB-003048FF86CA.root'
 #        '/store/mc/RunIISpring15DR74/ttHTobb_M125_13TeV_powheg_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/00000/141B9915-1F08-E511-B9FF-001E675A6AB3.root',
@@ -58,14 +58,14 @@ process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
 #    sampleName = cms.string("TTJets"),##
 #    inSample = cms.int32(2300),##
 #    sampleName = cms.string("ZJets"),##
-    inSample = cms.int32(2310),##
-    sampleName = cms.string("LowMassZJets"),##
+#    inSample = cms.int32(2310),##
+#    sampleName = cms.string("LowMassZJets"),##
 #    inSample = cms.int32(2514),##
 #    sampleName = cms.string("singletW"),##
 #    inSample = cms.int32(2515),##
 #    sampleName = cms.string("singletbarW"),##
-#    inSample = cms.int32(2600),##
-#    sampleName = cms.string("WW"),##
+    inSample = cms.int32(2600),##
+    sampleName = cms.string("WW"),##
     XS = cms.double(1.),
     nGen = cms.double(1.),
     lumi = cms.double(10000),

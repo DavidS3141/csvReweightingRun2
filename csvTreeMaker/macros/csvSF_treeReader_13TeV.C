@@ -587,9 +587,9 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     double triggerWgt = 1;
     if(insample >= 0){
-      if(TwoMuon)           triggerWgt = (isHF) ? 0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
-      else if(TwoElectron)  triggerWgt = (isHF) ? 0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
-      else if(MuonElectron) triggerWgt = 0.517857;//0.67727; //0.7948;
+      if(TwoMuon)           triggerWgt = (isHF) ? 0.740883 : 0.819794;//0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
+      else if(TwoElectron)  triggerWgt = (isHF) ? 0.75403 : 0.827811; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
+      else if(MuonElectron) triggerWgt = 0.772774;//0.517857;//0.67727; //0.7948;
 
       if(JetPtCut30){
     	if(TwoMuon)           triggerWgt = (isHF) ? 0.7277 : 0.8035; ///
@@ -789,7 +789,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       else   lepselection2 = (lepselection1a || lepselection1b);
     }
     // ///// different lepton flavor
-    // lepselection2 = lepselection1c;
+    // lepselection2 = lepselection1a;
 
     if ( insample == -200 ) lepselection2 = lepselection1a;
     if ( insample == -100 ) lepselection2 = lepselection1b;
