@@ -200,8 +200,8 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
   // electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
-  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets")));
-  //  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets")));
+  jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
   metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
   // metNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsNoHF")));
 
