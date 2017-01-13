@@ -8,10 +8,10 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0'  ##Data
+process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v6' ## '80X_dataRun2_Prompt_ICHEP16JEC_v0'  ##Data
 
 # Load the producer for MVA IDs. Make sure it is also added to the sequence!
-process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
+#process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 #process.options.allowUnscheduled = cms.untracked.bool(True)
@@ -66,8 +66,9 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
+        '/store/data/Run2016B/MuonEG/MINIAOD/23Sep2016-v3/00000/0EB8059C-1699-E611-9E17-0090FAA581F4.root'
 #        '/store/data/Run2015D/MuonEG/MINIAOD/05Oct2015-v2/60000/106398EB-C173-E511-8746-0025905A60B0.root'
-        '/store/data/Run2016B/MuonEG/MINIAOD/PromptReco-v2/000/273/158/00000/A2E8DB05-371A-E611-9B55-02163E01413C.root'
+#        '/store/data/Run2016B/MuonEG/MINIAOD/PromptReco-v2/000/273/158/00000/A2E8DB05-371A-E611-9B55-02163E01413C.root'
 #        '/store/data/Run2016B/MuonEG/MINIAOD/PromptReco-v1/000/273/017/00000/2E5181C8-5319-E611-88A2-02163E011ADA.root'
             )
 )
@@ -92,4 +93,5 @@ process.TFileService = cms.Service("TFileService",
 	fileName = cms.string('csv_treeMaker.root')
 )
 
-process.p = cms.Path(process.electronMVAValueMapProducer * process.ttHTreeMaker)
+#process.p = cms.Path(process.electronMVAValueMapProducer * process.ttHTreeMaker)
+process.p = cms.Path(process.ttHTreeMaker)

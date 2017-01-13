@@ -68,7 +68,7 @@ TH1D* h_csv_wgt_lf[9][4][3];
 
 //*****************************************************************************
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900
-void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 12900) {
+void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 36460) {
   ///// jet Pt cut
   bool JetPtCut30 = false; //true;
 
@@ -89,12 +89,12 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   TFile* f_PUwgt = new TFile ((string(getenv("CMSSW_BASE")) + "/src/csvReweightingRun2/csvTreeMaker/pileUp_wgts/PileUPReweighting.root").c_str());
   TH1D* h_PU = (TH1D*)f_PUwgt->Get("numPVs_PUratio")->Clone();
 
-  ///// csv WPs
-  double Mwp = 0.800;
-  double Lwp = 0.460;
+  ///// csv WPs // update to Moriond 2017 WPs
+  double Mwp = 0.8484; //0.800;
+  double Lwp = 0.5426; //0.460;
   if(!isCSV || diffCR){
-    Mwp =  0.185;// 0.725;
-    Lwp =  -0.715;// 0.545;
+    Mwp =  0.4432; //0.185;// 0.725;
+    Lwp =  -0.5884; //-0.715;// 0.545;
   }
 
   /// which btagger is used
@@ -116,6 +116,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     inputFileHF = Form("data/%s_rwt_fit_hf_v%i%s.root", taggerName.c_str(), verNum-1, JES.c_str());
     inputFileLF = Form("data/%s_rwt_fit_lf_v%i%s.root", taggerName.c_str(), verNum-1, JES.c_str());
 
+    /////// update file name
     if(verNum > 3){
       inputFileHF = "data/csv_rwt_fit_hf_v2_final_2016_06_30test.root";
       inputFileLF = "data/csv_rwt_fit_lf_v2_final_2016_06_30test.root";
@@ -148,7 +149,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   std::string mySample_inputDir_ = "";
   if( insample==2500 ){
     mySample_xSec_ = 87.31;//831.76;//https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
-    mySample_nGen_ = 30046510;//29222400;//29222400+51693000+45378000;//19757202+96834408; //19757190+96834559;//from DAS //19899500;
+    mySample_nGen_ = 38139240;//30046510;//29222400;//29222400+51693000+45378000;//19757202+96834408; //19757190+96834559;//from DAS //19899500;
     mySample_sampleName_ = "ttjets";//"TTJets";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150217_005136/0000/";
     //mySample_inputDir_ = "/uscms_data/d2/dpuigh/TTH/miniAOD/CMSSW_7_2_3/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/";
@@ -156,14 +157,14 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   }
   else if( insample==2300 ){
     mySample_xSec_ = 3*2008.4;//*1.3; // SF = 1.15 for DY
-    mySample_nGen_ = 19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
+    mySample_nGen_ = 49144252;//19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
   else if( insample==2310 ){
     mySample_xSec_ = 18610;//*1.3;//correctMe
-    mySample_nGen_ = 22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
+    mySample_nGen_ = 35079800;//22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
     mySample_sampleName_ = "lowMasszjets";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
@@ -211,19 +212,19 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   }
   else if( insample==2514 ){
     mySample_xSec_ = 35.6;  
-    mySample_nGen_ = 998400;//1000000;//995600;
+    mySample_nGen_ = 6952830;//998400;//1000000;//995600;
     mySample_sampleName_ = "singletW";//"T_tW_DR";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
   else if( insample==2515 ){
     mySample_xSec_ = 35.6;  
-    mySample_nGen_ = 985000;//999400;//988500;
+    mySample_nGen_ = 6933094;//985000;//999400;//988500;
     mySample_sampleName_ = "singletbarW";//"Tbar_tW_DR";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
   else if( insample==2600 ){
     mySample_xSec_ =  12.178; // correctMe???
-    mySample_nGen_ = 1996600;//1979988;//1999000;//1965200;
+    mySample_nGen_ = 1999000;//1996600;//1979988;//1999000;//1965200;
     mySample_sampleName_ = "WW";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
@@ -254,6 +255,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
 
   std::string treefilename = mySample_inputDir_ + mySample_sampleName_ + "*.root";
+  //  // std::string treefilename = mySample_inputDir_ + mySample_sampleName_ + "_RunH2_6thJan.root";
 
   // std::string treefilename = mySample_inputDir_ + "csv_treeMaker*.root";
   // std::string treefilename = "test/csv_treeMaker*.root";
@@ -261,7 +263,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
   std::string s_end = "_histo_" + str_jobN + ".root";
   // if( Njobs==1 ) s_end = "_histo.root";
-  if( Njobs==1 ) s_end = "_histo.root"; // tpj //change the output file name; checking different dilepton categories
+  if( Njobs==1 ) s_end = "_histo_All.root"; // tpj //change the output file name; checking different dilepton categories
 
 
   std::string histofilename = Form("CSVHistoFiles/%s_rwt_hf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
@@ -375,7 +377,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   // TH2D* h_second_jet_pt_eta = new TH2D("h_second_jet_pt_eta",";second jet #eta;second jet p_{T}", 70, -3.5, 3.5, 100, 0., 500. );
   // TH2D* h_second_jet_flavour_eta = new TH2D("h_second_jet_flavour_eta",";second jet #eta;second flavour", 70, -3.5, 3.5, 28, -6, 22 );
 
-  TH1D* h_numPV = new TH1D("h_numPV",";numPV", 50, 0, 50 );
+  TH1D* h_numPV = new TH1D("h_numPV",";numPV", 75, 0, 75 );
 
   int NumCutsHF = 10;
   TH1D* h_hf_event_selection  = new TH1D("h_hf_event_selection",";cut", NumCutsHF, 0, NumCutsHF );
@@ -440,17 +442,20 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   int nBins = 22; //Number of bins 
   // double xBins_hf[19] = {-10.0, 0.0, 0.122, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.7228, 0.7666, 0.8104, 0.8542, 0.898, 0.9184, 0.9388, 0.9592, 0.9796, 1.01};
   //  double xBins_hf[23] = {-10.0, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.906, 0.922, 0.938, 0.954, 0.970, 0.976, 0.982, 0.988, 0.994, 1.01};
-  double xBins_hf[23] = {-10.0, 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.827, 0.854, 0.881, 0.908, 0.935, 0.948, 0.961, 0.974, 0.987, 1.01};
+  // double xBins_hf[23] = {-10.0, 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.827, 0.854, 0.881, 0.908, 0.935, 0.948, 0.961, 0.974, 0.987, 1.01};
+  double xBins_hf[23] = {-10.0, 0.0, 0.0904, 0.1808, 0.2712, 0.3616, 0.452, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
   //  double xBins_hf_cMVA[23] = {-10.0, 0.0, 0.091, 0.182, 0.273, 0.364, 0.455, 0.545, 0.581, 0.617, 0.653, 0.689, 0.725, 0.751, 0.777, 0.803, 0.829, 0.855, 0.884, 0.913, 0.942, 0.971, 1.01};
-  double xBins_hf_cMVA[23] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
-
+  // double xBins_hf_cMVA[23] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.323, 0.461, 0.599, 0.737, 0.875, 0.902, 0.929, 0.956, 0.983, 1.01};
+  double xBins_hf_cMVA[23] = {-1.01, -0.9397, -0.8694, -0.7991, -0.7288, -0.6585, -0.5884, -0.4163, -0.2444, -0.0725, 0.0994, 0.2713, 0.4432, 0.5432, 0.6432, 0.7432, 0.8432, 0.9432, 0.9564, 0.9698, 0.9832, 0.9966, 1.01};
 
   if(!isHF) nBins = 21;
   // double xBins_lf[22] = {-10.0, 0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.244, 0.331, 0.418, 0.505, 0.592, 0.679, 0.752, 0.825, 0.898, 0.915, 0.932, 0.949, 0.966, 0.983, 1.01};
   // double xBins_lf[22] = {-10.0, 0.0, 0.101, 0.202, 0.303, 0.404, 0.505, 0.605, 0.662, 0.719, 0.776, 0.833, 0.890, 0.917, 0.944, 0.970, 0.975, 0.980, 0.985, 0.990, 0.995, 1.01};
-  double xBins_lf[22] = {-10.0, 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.845, 0.890, 0.935, 0.946, 0.957, 0.968, 0.979, 0.990, 1.01};
+  // double xBins_lf[22] = {-10.0, 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.845, 0.890, 0.935, 0.946, 0.957, 0.968, 0.979, 0.990, 1.01};
+  double xBins_lf[22] = {-10.0, 0.0, 0.0904, 0.1808, 0.2712, 0.3616, 0.452, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8834, 0.9184, 0.9535, 0.963, 0.9724, 0.9818, 0.9912, 1.0006, 1.01};
   //  double xBins_lf_cMVA[22] = {-10.0, 0.0, 0.091, 0.182, 0.273, 0.364, 0.455, 0.545, 0.581, 0.617, 0.653, 0.689, 0.725, 0.768, 0.811, 0.855, 0.879, 0.903, 0.927, 0.951, 0.975, 1.01};
-  double xBins_lf_cMVA[22] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.415, 0.645, 0.875, 0.8975, 0.92, 0.9425, 0.965, 0.9875, 1.01};
+  // double xBins_lf_cMVA[22] = {-1.01, -0.9525, -0.905, -0.8575, -0.81, -0.7625, -0.715, -0.565, -0.415, -0.265, -0.115, 0.035, 0.185, 0.415, 0.645, 0.875, 0.8975, 0.92, 0.9425, 0.965, 0.9875, 1.01};
+  double xBins_lf_cMVA[22] = {-1.01, -0.9397, -0.8694, -0.7991, -0.7288, -0.6585, -0.5884, -0.4163, -0.2444, -0.0725, 0.0994, 0.2713, 0.4432, 0.6098, 0.7765, 0.9432, 0.9545, 0.9656, 0.9767, 0.9878, 0.9989, 1.01};
 
 
   ////////
@@ -533,6 +538,20 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     //if( ievt==(maxNentries+1) ) break;
     if( ievt==(maxNentries+1) && ievt!=0 ) break;
 
+
+    //////// DoubleEG_RunH2_* file check
+    if(insample==-100){
+      if(eve->run_ == 283408 && (eve->lumi_ == 1157 || eve->lumi_ == 1156 || eve->lumi_ == 1129 || eve->lumi_ == 1130 || eve->lumi_ == 1128)) continue;
+    }
+    // if( int(double(ievt-firstEvent)/double(NeventsPerJob)*100) >= 65 && int(double(ievt-firstEvent)/double(NeventsPerJob)*100) < 66){
+    //   if(eve->run_ == 283408 && (eve->lumi_ == 1157 || eve->lumi_ == 1156 || eve->lumi_ == 1129 || eve->lumi_ == 1130 || eve->lumi_ == 1128)) {
+    // 	//	continue;
+    // 	std::cout<< "------run:event:lumi=" << eve->run_ << ":" << eve->evt_ << ":" << eve->lumi_ << std::endl;
+    //   }
+    // }
+    // else continue;
+
+
     chain->GetEntry(ievt);
     numEvents_all++;
     //--- check all trigger paths 
@@ -587,9 +606,9 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     double triggerWgt = 1;
     if(insample >= 0){
-      if(TwoMuon)           triggerWgt = (isHF) ? 0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
-      else if(TwoElectron)  triggerWgt = (isHF) ? 0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
-      else if(MuonElectron) triggerWgt = 0.517857;//0.67727; //0.7948;
+      if(TwoMuon)           triggerWgt = (isHF) ? 0.981907 : 1.06953; //0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
+      else if(TwoElectron)  triggerWgt = (isHF) ? 0.982675 : 0.93381; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
+      else if(MuonElectron) triggerWgt = 0.905494; //0.517857;//0.67727; //0.7948;
 
       if(JetPtCut30){
     	if(TwoMuon)           triggerWgt = (isHF) ? 0.7277 : 0.8035; ///
@@ -673,7 +692,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     if (tpj){
       if (numJets < 2) continue;
     }
-    else if (numJets != 2) continue; //// loosen nJets cut
+    else if (numJets < 2) continue; //// loosen nJets cut
     numEvents_2jets++;
 
     h_hf_event_selection->Fill(1.5, wgt);
@@ -763,11 +782,11 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     bool isDoubleElectronTriggerPass = eve->passDoubleElectronTriggerNew_;//1;
     bool isMuEGTriggerPass = eve->passElectronMuonTriggerNew_;//1;
 
-    if ( insample>0 ) {
-      isDoubleMuTriggerPass = 1;
-      isDoubleElectronTriggerPass = 1;
-      isMuEGTriggerPass = 1;
-    }
+    // if ( insample>0 ) {
+    //   isDoubleMuTriggerPass = 1;
+    //   isDoubleElectronTriggerPass = 1;
+    //   isMuEGTriggerPass = 1;
+    // }
 
     // for different datasets or sub-lep categories
     ///// replace PassZmask and MET cuts M_ll & MET>30
@@ -789,7 +808,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       else   lepselection2 = (lepselection1a || lepselection1b);
     }
     // ///// different lepton flavor
-    // lepselection2 = lepselection1c;
+    // lepselection2 = lepselection1b;
 
     if ( insample == -200 ) lepselection2 = lepselection1a;
     if ( insample == -100 ) lepselection2 = lepselection1b;
@@ -872,10 +891,10 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     if ( !exselection ) continue;
     numEvents_exselection++;
 
-    if(!tpj){
-      if(isHF && !passTightBtag) continue;
-      if(!isHF && !failLooseBtag) continue;
-    }
+    // if(!tpj){
+    //   if(isHF && !passTightBtag) continue;
+    //   if(!isHF && !failLooseBtag) continue;
+    // }
     nPass++;
 
     int nPV = eve->numPVs_;

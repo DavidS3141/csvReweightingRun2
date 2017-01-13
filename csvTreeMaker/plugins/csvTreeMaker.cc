@@ -97,18 +97,19 @@ class csvTreeMaker : public edm::EDAnalyzer {
       // ----------member data ---------------------------
   
   //----------
-  
+  edm::EDGetTokenT<reco::GenJetCollection> genJetsToken;
+
   edm::EDGetTokenT <edm::TriggerResults> triggerResultsToken;
   edm::EDGetTokenT <edm::TriggerResults> filterResultsToken;
 
   // new MVAelectron
-  edm::EDGetTokenT< edm::View<pat::Electron> > EDMElectronsToken;
+  // edm::EDGetTokenT< edm::View<pat::Electron> > EDMElectronsToken;
   // MVA values and categories
-  edm::EDGetTokenT<edm::ValueMap<float> > EDMeleMVAvaluesToken;
-  edm::EDGetTokenT<edm::ValueMap<int> > EDMeleMVAcategoriesToken;
+  // edm::EDGetTokenT<edm::ValueMap<float> > EDMeleMVAvaluesToken;
+  // edm::EDGetTokenT<edm::ValueMap<int> > EDMeleMVAcategoriesToken;
 
   edm::EDGetTokenT <reco::VertexCollection> vertexToken;
-  // edm::EDGetTokenT <pat::ElectronCollection> electronToken;
+  edm::EDGetTokenT <pat::ElectronCollection> electronToken;
   edm::EDGetTokenT <pat::MuonCollection> muonToken;
   edm::EDGetTokenT <pat::JetCollection> jetToken;
   edm::EDGetTokenT <pat::METCollection> metToken;
@@ -193,12 +194,12 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   filterResultsToken = consumes <edm::TriggerResults> (edm::InputTag(std::string("TriggerResults"), std::string(""), filterTag));
 
   // new MVAelectron
-  EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
-  EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring15Trig25nsV1Values",""));
-  EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring15Trig25nsV1Categories",""));
+  // EDMElectronsToken = consumes< edm::View<pat::Electron> >(edm::InputTag("slimmedElectrons","",""));
+  // EDMeleMVAvaluesToken           = consumes<edm::ValueMap<float> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values",""));
+  // EDMeleMVAcategoriesToken       = consumes<edm::ValueMap<int> >(edm::InputTag("electronMVAValueMapProducer","ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Categories",""));
 
   vertexToken = consumes <reco::VertexCollection> (edm::InputTag(std::string("offlineSlimmedPrimaryVertices")));
-  // electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
+  electronToken = consumes <pat::ElectronCollection> (edm::InputTag(std::string("slimmedElectrons")));
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
   // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets")));
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
@@ -216,6 +217,8 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   // EDMConversionCollectionToken = consumes <reco::ConversionCollection > (edm::InputTag("reducedEgamma","reducedConversions",""));
   genInfoProductToken = consumes <GenEventInfoProduct> (edm::InputTag(std::string("generator")));
   
+  genJetsToken = consumes <reco::GenJetCollection> (edm::InputTag(std::string("slimmedGenJets")) );
+
 
   ////
   edm::Service<TFileService> fs_;
@@ -248,7 +251,7 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
 
   miniAODhelper.SetUp(era, insample_, iAnalysisType, isData);
 
-  miniAODhelper.SetJetCorrectorUncertainty();
+  //  miniAODhelper.SetJetCorrectorUncertainty();
   // miniAODhelper.SetUpElectronMVA("MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB1_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EB2_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml","MiniAOD/MiniAODHelper/data/ElectronMVA/EIDmva_EE_10_oldTrigSpring15_25ns_data_1_VarD_TMVA412_Sig6BkgAll_MG_noSpec_BDT.weights.xml");
 
 }
@@ -285,17 +288,17 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   reco::VertexCollection vtxs = *vtxHandle;
 
   /// old electrons
-  // edm::Handle<pat::ElectronCollection> electrons;
-  // iEvent.getByToken(electronToken,electrons);
+  edm::Handle<pat::ElectronCollection> electrons;
+  iEvent.getByToken(electronToken,electrons);
   //// MVAelectrons
-  edm::Handle< edm::View<pat::Electron> > h_electrons;
-  iEvent.getByToken( EDMElectronsToken,h_electrons );
-  // add electron mva info to electrons
-  edm::Handle<edm::ValueMap<float> > h_mvaValues; 
-  edm::Handle<edm::ValueMap<int> > h_mvaCategories;
-  iEvent.getByToken(EDMeleMVAvaluesToken,h_mvaValues);
-  iEvent.getByToken(EDMeleMVAcategoriesToken,h_mvaCategories);  
-  std::vector<pat::Electron> electrons = miniAODhelper.GetElectronsWithMVAid(h_electrons,h_mvaValues,h_mvaCategories);
+  // edm::Handle< edm::View<pat::Electron> > h_electrons;
+  // iEvent.getByToken( EDMElectronsToken,h_electrons );
+  // // add electron mva info to electrons
+  // edm::Handle<edm::ValueMap<float> > h_mvaValues; 
+  // edm::Handle<edm::ValueMap<int> > h_mvaCategories;
+  // iEvent.getByToken(EDMeleMVAvaluesToken,h_mvaValues);
+  // iEvent.getByToken(EDMeleMVAcategoriesToken,h_mvaCategories);  
+  // std::vector<pat::Electron> electrons = miniAODhelper.GetElectronsWithMVAid(h_electrons,h_mvaValues,h_mvaCategories);
 
   ////
   edm::Handle<pat::MuonCollection> muons;
@@ -322,6 +325,9 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   edm::Handle<reco::GenParticleCollection> mcparticles;
   if ( !isData ) iEvent.getByToken(mcparicleToken,mcparticles);
+
+  edm::Handle<reco::GenJetCollection> genjetCollection;
+  if ( !isData ) iEvent.getByToken( genJetsToken , genjetCollection );
 
   edm::Handle<double> rhoHandle;
   iEvent.getByToken(rhoToken,rhoHandle);
@@ -381,10 +387,14 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	if( pathName.find("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passDoubleElectronTriggerNew = true;
 
 	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") !=std::string::npos ) passDoubleMuonTriggerNew = true;
+	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") !=std::string::npos ) passDoubleMuonTriggerNew = true;
 
 	if( pathName.find("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ) passElectronMuonTriggerNew = true;
+	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passElectronMuonTriggerNew = true;
 	
       }
     }
@@ -503,9 +513,13 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   ///
   ////////
   // miniAODhelper.SetElectronMVAinfo(h_conversioncollection, bsHandle);
-  /// Ele MVA ID 
-  std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( electrons, minTightLeptonPt, electronID::electronEndOf15MVA80iso0p15, 2.4 );
-  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( electrons, looseLeptonPt, electronID::electronEndOf15MVA80iso0p15, 2.4 );
+  // /// Ele MVA ID 
+  // std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( electrons, minTightLeptonPt, electronID::electronEndOf15MVA80iso0p15, 2.4 );
+  // std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( electrons, looseLeptonPt, electronID::electronEndOf15MVA80iso0p15, 2.4 );
+
+  /// Ele Cut Based ID 
+  std::vector<pat::Electron> selectedElectrons_tight = miniAODhelper.GetSelectedElectrons( *electrons, minTightLeptonPt, electronID::electron80XCutBasedM, 2.4 );
+  std::vector<pat::Electron> selectedElectrons_loose = miniAODhelper.GetSelectedElectrons( *electrons, looseLeptonPt, electronID::electron80XCutBasedM, 2.4 );
 
   int numTightElectrons = int(selectedElectrons_tight.size());
   int numLooseElectrons = int(selectedElectrons_loose.size());// - numTightElectrons;
@@ -661,7 +675,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_loose, selectedElectrons_loose, 0.4);
 
   std::vector<pat::Jet> unCorrectedJets = miniAODhelper.GetUncorrectedJets(pfJets_ID_clean);
-  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(unCorrectedJets, iEvent, iSetup);
+  std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(unCorrectedJets, iEvent, iSetup, genjetCollection);
   /// jet pt threshold, 20GeV for now
   std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 2.4, jetID::none, '-' );
   std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 2.4, jetID::none, 'M' );
@@ -681,6 +695,10 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   bool passingTwoJet = false;
   for( int iSys=0; iSys<3; iSys++ ){
 
+    //no sys for data, 
+    if( isData ){
+      if( iSys!=0 ) continue;
+    } 
 
     eve->wgt_[iSys] = totalWgt;
 
@@ -704,7 +722,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ///
     ////////
 
-    std::vector<pat::Jet> correctedJets = ( iSys==0 ) ? correctedJets_noSys : miniAODhelper.GetCorrectedJets(unCorrectedJets, iEvent, iSetup, iSysType);
+    std::vector<pat::Jet> correctedJets = ( iSys==0 ) ? correctedJets_noSys : miniAODhelper.GetCorrectedJets(unCorrectedJets, iEvent, iSetup, genjetCollection, iSysType);
     std::vector<pat::Jet> selectedJets_unsorted = ( iSys==0 ) ? selectedJets_noSys_unsorted : miniAODhelper.GetSelectedJets(correctedJets, 20., 2.4, jetID::none, '-' );
     std::vector<pat::Jet> selectedJets_tag_unsorted = ( iSys==0 ) ? selectedJets_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' );
 
@@ -721,7 +739,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Get Corrected MET (propagating JEC and JER)
     std::vector<pat::Jet> oldJetsForMET = miniAODhelper.GetSelectedJets(*pfjets, 0., 999, jetID::jetMETcorrection, '-' );
     std::vector<pat::Jet> oldJetsForMET_uncorr = miniAODhelper.GetUncorrectedJets(oldJetsForMET);
-    std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, iSysType);
+    std::vector<pat::Jet> newJetsForMET = miniAODhelper.GetCorrectedJets(oldJetsForMET_uncorr, iEvent, iSetup, genjetCollection, iSysType);
     std::vector<pat::MET> newMETs = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmet);
     // std::vector<pat::MET> newMETs_NoHF = miniAODhelper.CorrectMET(oldJetsForMET, newJetsForMET, *pfmetNoHF);
 
