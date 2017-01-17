@@ -1,5 +1,23 @@
 ### Prerequisite: the lepton and jet object selections are based on MiniAOD, check it out first
-  git clone https://github.com/cms-ttH/MiniAOD.git 
+
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+export SCRAM_ARCH=slc6_amd64_gcc530
+
+cmsrel CMSSW_8_0_24_patch1
+cd CMSSW_8_0_24_patch1/src/
+cmsenv
+
+git cms-merge-topic ikrav:egm_id_80X_v2
+scram b -j 10 
+
+git clone https://github.com/lwming/MiniAOD.git -b Moriond17_EleID_JER
+
+git clone https://github.com/cms-ttH/csvReweightingRun2.git
+
+git clone https://github.com/cms-ttH/TriggerRun2.git -b csvSF_correction
+
+scram b -j 10
+
 
 ### the SF calculations are done in 3 steps
 
