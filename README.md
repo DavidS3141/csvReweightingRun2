@@ -1,10 +1,13 @@
 ### Prerequisite: the lepton and jet object selections are based on MiniAOD, check it out first
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=slc6_amd64_gcc530
+
+setenv SCRAM_ARCH slc6_amd64_gcc530
 
 cmsrel CMSSW_8_0_24_patch1
+
 cd CMSSW_8_0_24_patch1/src/
+
 cmsenv
 
 git cms-merge-topic ikrav:egm_id_80X_v2
