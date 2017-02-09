@@ -69,6 +69,9 @@ TH1D* h_csv_wgt_lf[9][4][3];
 //*****************************************************************************
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900
 void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 36460) {
+  /// inclusive Selection or not
+  bool inclusiveSelection = true;//false;
+
   ///// jet Pt cut
   bool JetPtCut30 = false; //true;
 
@@ -118,8 +121,11 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     /////// update file name
     if(verNum > 3){
-      inputFileHF = "data/csv_rwt_fit_hf_v2_final_2016_06_30test.root";
-      inputFileLF = "data/csv_rwt_fit_lf_v2_final_2016_06_30test.root";
+      // inputFileHF = "data/csv_rwt_fit_hf_v2_final_2016_06_30test.root";
+      // inputFileLF = "data/csv_rwt_fit_lf_v2_final_2016_06_30test.root";
+      inputFileHF = "macros/GH/csv_rwt_fit_hf_v2_final_2017_1_25GH.root";
+      inputFileLF = "macros/GH/csv_rwt_fit_lf_v2_final_2017_1_25GH.root";
+
     }
 
     std::cout << "\t inputFileHF = " << inputFileHF << std::endl;
@@ -164,7 +170,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   }
   else if( insample==2310 ){
     mySample_xSec_ = 18610;//*1.3;//correctMe
-    mySample_nGen_ = 35079800;//22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
+    mySample_nGen_ = 35256264; //35079800;//Spring16 //22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
     mySample_sampleName_ = "lowMasszjets";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
   }
@@ -262,8 +268,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   // std::string treefilename = "/afs/cern.ch/user/l/lwming/RunII/CMSSW_7_4_12/src/csvReweightingRun2/csvTreeMaker/test/MCcsv_treeMaker.root";
 
   std::string s_end = "_histo_" + str_jobN + ".root";
-  // if( Njobs==1 ) s_end = "_histo.root";
-  if( Njobs==1 ) s_end = "_histo_All.root"; // tpj //change the output file name; checking different dilepton categories
+  if( Njobs==1 ) s_end = "_histo.root";
+  if( Njobs==1 && inclusiveSelection) s_end = "_histo_All_GH.root"; // tpj //change the output file name; checking different dilepton categories
 
 
   std::string histofilename = Form("CSVHistoFiles/%s_rwt_hf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
@@ -367,13 +373,18 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
 
   TH1D* h_dr_leplep  = new TH1D("h_dr_leplep",";dr leplep", 100, 0., 5 );
-  TH1D* h_mass_leplep  = new TH1D("h_mass_leplep",";mass leplep", 100, 0., 500 );
+  int massBin = 100;
+  double massMin = 0, massMax = 500;
+  if(!isHF) {massBin = 40; massMin = 70; massMax = 110;}; 
+  TH1D* h_mass_leplep  = new TH1D("h_mass_leplep",";mass leplep", massBin, massMin, massMax ); //100, 0., 500
   TH1D* h_met_pt  = new TH1D("h_met_pt",";MET", 100, 0., maxPt1 );
   TH1D* h_mht_pt  = new TH1D("h_mht_pt",";MHT", 100, 0., maxPt1 );
 
   TH2D* h_mll_vs_mht  = new TH2D("h_mll_vs_mht",";mass leplep;mht", 100, 0., 500, 100, 0., maxPt1 );
 
-
+  TH1D* h_1stlep_pt  = new TH1D("h_1stlep_pt",";lep1 p_{T}", 150, 0., 150 );
+  TH1D* h_2ndlep_pt  = new TH1D("h_2ndlep_pt",";lep2 p_{T}", 100, 0., 100 );
+  TH1D* h_lep_pt  = new TH1D("h_lep_pt",";lep p_{T}", 150, 0., 150 );
   // TH2D* h_second_jet_pt_eta = new TH2D("h_second_jet_pt_eta",";second jet #eta;second jet p_{T}", 70, -3.5, 3.5, 100, 0., 500. );
   // TH2D* h_second_jet_flavour_eta = new TH2D("h_second_jet_flavour_eta",";second jet #eta;second flavour", 70, -3.5, 3.5, 28, -6, 22 );
 
@@ -689,10 +700,12 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     //////------- exactly 2 jets -----
     int numJets = int(jet_vect_TLV.size()) ;
-    if (tpj){
+    if (tpj || inclusiveSelection){
       if (numJets < 2) continue;
     }
-    else if (numJets < 2) continue; //// loosen nJets cut
+    else{
+      if (numJets != 2) continue; //// loosen nJets cut
+    }
     numEvents_2jets++;
 
     h_hf_event_selection->Fill(1.5, wgt);
@@ -891,10 +904,10 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     if ( !exselection ) continue;
     numEvents_exselection++;
 
-    // if(!tpj){
-    //   if(isHF && !passTightBtag) continue;
-    //   if(!isHF && !failLooseBtag) continue;
-    // }
+    if(!tpj && !inclusiveSelection){
+      if(isHF && !passTightBtag) continue;
+      if(!isHF && !failLooseBtag) continue;
+    }
     nPass++;
 
     int nPV = eve->numPVs_;
@@ -1054,7 +1067,10 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     h_mll_vs_mht->Fill(mass_leplep, MHT, wgt);
     // h_second_jet_pt_eta->Fill(second_jet_eta,second_jet_pt);
     // h_second_jet_flavour_eta->Fill(second_jet_eta,second_jet_flavour);
-
+    h_1stlep_pt->Fill(lepton_vect_TLV[0].Pt(), wgt);
+    h_2ndlep_pt->Fill(lepton_vect_TLV[1].Pt(), wgt);
+    h_lep_pt->Fill(lepton_vect_TLV[0].Pt(), wgt);
+    h_lep_pt->Fill(lepton_vect_TLV[1].Pt(), wgt);
 
 
     ///// ------  tag and proble jet selections --------
