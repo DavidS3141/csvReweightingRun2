@@ -40,7 +40,7 @@ void final_fitLF_btagSF_13TeV( bool isCSV = true,
 
   TString btagger = ( isCSV ) ? "csv" : "cmva";
 
-  TString dirprefix = "Images/Images_2017_1_10_fitLF_" + btagger + "_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2017_2_10_fitLF_" + btagger + "_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -53,13 +53,13 @@ void final_fitLF_btagSF_13TeV( bool isCSV = true,
   std::cout << " ###===> iteration version " << iterNum << std::endl;
 
 
-  std::string histofilename = Form("%s_rwt_fit_lf_v%d_final_2017_1_10" + dirPostFix + ".root",btagger.Data(),iterNum) ;
+  std::string histofilename = Form("%s_rwt_fit_lf_v%d_final_2017_2_10" + dirPostFix + ".root",btagger.Data(),iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
 
 
-  TString lumiinfo = "36.46 fb^{-1} (13 TeV)";
+  TString lumiinfo = "36.8 fb^{-1} (13 TeV)";
   TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -551,7 +551,7 @@ void final_fitLF_btagSF_13TeV( bool isCSV = true,
   double xMin = 0;
   if(!isCSV) xMin = cMVAbins_new[0];
   double xMax = 0.95;
-  if(!isCSV) xMax = 0.95;
+  if(!isCSV) xMax = 0.7; ///
   TF1* f0 = new TF1("f0","[0] + x*([1] + x*([2] + x*([3] + x*([4] + x*([5] + x*[6])))))",xMin,xMax );//0.95
 
   //// pol7
@@ -758,9 +758,9 @@ void final_fitLF_btagSF_13TeV( bool isCSV = true,
 
     double firstPoint = 0.5*(csvbins_new[1] + csvbins_new[2]); //0;
     if( !isCSV ) firstPoint = cMVAbins_new[0];
-    double lastPoint  = 0.75;//0.9;
+    double lastPoint  = 0.7;//0.9;
     if( isCSV ) lastPoint  = 0.9;
-    else        lastPoint  = 0.75;
+    else        lastPoint  = 0.7;
     for( int iBin=0; iBin<NumFinalBins; iBin++ ){
       double center = h_csv_ratio_final[iHist]->GetBinCenter(iBin+1);
       if( isCSV && center<0 ){

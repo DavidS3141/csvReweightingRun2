@@ -123,7 +123,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
   TString btagger = ( isCSV ) ? "csv" : "cmva";
 
-  TString dirprefix = "Images/Images_2017_1_10_fitHF_" + btagger + "_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2017_2_10_fitHF_" + btagger + "_13TeV" + dirPostFix + "/";
 
   
   struct stat st;
@@ -140,13 +140,13 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
   bool makePlots = true;
 
 
-  std::string histofilename = Form("%s_rwt_fit_hf_v%d_final_2017_1_10" + dirPostFix + ".root",btagger.Data(),iterNum) ;
+  std::string histofilename = Form("%s_rwt_fit_hf_v%d_final_2017_2_10" + dirPostFix + ".root",btagger.Data(),iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
 
 
-  TString lumiinfo = "36.46 fb^{-1} (13 TeV)";
+  TString lumiinfo = "36.8 fb^{-1} (13 TeV)";
   TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
