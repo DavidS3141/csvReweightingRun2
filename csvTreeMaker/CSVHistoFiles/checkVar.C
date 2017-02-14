@@ -120,7 +120,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
 
   ////
-  TString lumiinfo = "36.8 fb^{-1} (13 TeV)"; //36.81
+  TString lumiinfo = "36 fb^{-1} (13 TeV)"; //36.81
   TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);

@@ -87,8 +87,10 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   flavor_file.ToLower();
 
   ///
-  TString lumiinfo = "36.8 fb^{-1} (13 TeV, 25ns)";
-  TLatex LumiInfoLatex(0.65, 0.93, lumiinfo);
+  // TString lumiinfo = "36.8 fb^{-1} (13 TeV, 25ns)";
+  // TLatex LumiInfoLatex(0.65, 0.93, lumiinfo);
+  TString lumiinfo = "36 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
+  TLatex LumiInfoLatex(0.62, 0.93, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
 

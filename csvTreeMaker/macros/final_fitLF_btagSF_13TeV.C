@@ -59,8 +59,10 @@ void final_fitLF_btagSF_13TeV( bool isCSV = true,
 
 
 
-  TString lumiinfo = "36.8 fb^{-1} (13 TeV)";
-  TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
+  // TString lumiinfo = "36.8 fb^{-1} (13 TeV)";
+  // TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
+  TString lumiinfo = "36 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
+  TLatex LumiInfoLatex(0.65, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
 
