@@ -11,6 +11,7 @@ cd CMSSW_8_0_26_patch1/src/
 cmsenv
 
 git cms-merge-topic ikrav:egm_id_80X_v2
+
 scram b -j 10 
 
 git clone https://github.com/lwming/MiniAOD.git -b Moriond17_EleID_JER
