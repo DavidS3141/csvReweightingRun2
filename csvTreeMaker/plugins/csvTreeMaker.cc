@@ -56,7 +56,7 @@
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/HLTReco/interface/TriggerEventWithRefs.h"
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
-
+#include "DataFormats/JetReco/interface/PileupJetIdentifier.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
@@ -112,6 +112,8 @@ class csvTreeMaker : public edm::EDAnalyzer {
   edm::EDGetTokenT <pat::ElectronCollection> electronToken;
   edm::EDGetTokenT <pat::MuonCollection> muonToken;
   edm::EDGetTokenT <pat::JetCollection> jetToken;
+  // edm::EDGetTokenT <edm::View<pat::Jet > > jetToken;
+
   edm::EDGetTokenT <pat::METCollection> metToken;
   // edm::EDGetTokenT <pat::METCollection> metNoHFToken;
 
@@ -203,6 +205,7 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   muonToken = consumes <pat::MuonCollection> (edm::InputTag(std::string("slimmedMuons")));
   // jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("selectedUpdatedPatJets")));
   jetToken = consumes <pat::JetCollection> (edm::InputTag(std::string("slimmedJets")));
+  // jetToken = consumes <edm::View<pat::Jet > > (edm::InputTag(std::string("slimmedJets")));
   metToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETs")));
   // metNoHFToken = consumes <pat::METCollection> (edm::InputTag(std::string("slimmedMETsNoHF")));
 
@@ -307,6 +310,19 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<pat::JetCollection> pfjets;
   iEvent.getByToken(jetToken,pfjets);
 
+  //////
+  /// updated PU jet ID if any
+  ////
+  // edm::Handle<edm::View<pat::Jet > > pfjets_noPUID;
+  // iEvent.getByToken(jetToken,pfjets_noPUID);
+
+  // Handle<ValueMap<float> > puJetIdMVA;
+  // iEvent.getByLabel("pileupJetIdUpdated:fullDiscriminant",puJetIdMVA); ///pileupJetIdUpdated
+
+  // Handle<ValueMap<int> > puJetIdFlag;
+  // iEvent.getByLabel("pileupJetIdUpdated:fullId",puJetIdFlag); ///
+
+  //----------
   edm::Handle<pat::METCollection> pfmet;
   iEvent.getByToken(metToken,pfmet);
 
@@ -670,6 +686,35 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   ///
   ////////
   // Do jets stuff
+
+  /// checking PU jet ID
+  // for ( unsigned int i=0; i<pfjets->size(); ++i ) {
+  //   const pat::Jet & patjet = pfjets->at(i);
+
+  //   if(!patjet.hasUserFloat("pileupJetId:fullDiscriminant") || !patjet.hasUserInt("pileupJetId:fullId")) {
+  // 	std::cout << "not mvaValue or idflag info for the jet ---" << std::endl;
+  // 	continue;
+  //   }
+
+  //   float mvaValue   = patjet.userFloat("pileupJetId:fullDiscriminant");
+  //   int    idflag = patjet.userInt("pileupJetId:fullId");
+
+  //   cout << "jet " << i << " pt " << patjet.pt() << " eta " << patjet.eta() << " PU JetID MVA " << mvaValue << " PU JetID flag " << idflag;
+  //   if( PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kLoose ) ){
+  //   	cout << " pass loose wp";
+  //   }
+  //   if( PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kMedium ) ){
+  //   	  cout << " pass medium wp";
+  //   }
+  //   if( PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kTight ) ){
+  //     cout << " pass tight wp";
+  //   }
+  //   cout << endl;
+
+  // }
+  // cout << endl;
+
+  //-------
   std::vector<pat::Jet> pfJets_ID = miniAODhelper.GetSelectedJets(*pfjets, 0., 999, jetID::jetLoose, '-');
   /// lepton-jet overlap cleanning, might change the input lepton collections in the future
   std::vector<pat::Jet> pfJets_ID_clean = miniAODhelper.GetDeltaRCleanedJets( pfJets_ID, selectedMuons_loose, selectedElectrons_loose, 0.4);
@@ -761,6 +806,11 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     vint jet_flavour_vect;
     vint jet_partonflavour_vect;
 
+    vdouble jet_PUID_mvaV;
+    vint jet_PUID_flagV;
+    vint jet_PUID_passWPLooseV;
+
+    // int jeti = 0;
     // Loop over selected jets
     for( std::vector<pat::Jet>::const_iterator iJet = selectedJets.begin(); iJet != selectedJets.end(); iJet++ ){ 
 
@@ -786,6 +836,23 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       double mycMVA = iJet->bDiscriminator("pfCombinedMVAV2BJetTags");
       cMVAV.push_back(mycMVA);
     
+      //PU jet ID
+      if(!iJet->hasUserFloat("pileupJetId:fullDiscriminant") || !iJet->hasUserInt("pileupJetId:fullId")) {
+	std::cout << "no mvaValue or idflag info for the jet ---" << std::endl;
+      }
+
+      float mvaValue   = iJet->userFloat("pileupJetId:fullDiscriminant");
+      int    idflag = iJet->userInt("pileupJetId:fullId");
+
+      // cout << "Sys " << iSys << ": jet " << jeti << " pt " << iJet->pt() << " eta " << iJet->eta() << " PU JetID MVA " << mvaValue << " PU JetID flag " << idflag << endl;;
+      // jeti++;
+      bool passPUIDLoose = PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kLoose ); 
+
+
+      jet_PUID_mvaV.push_back(mvaValue);
+      jet_PUID_flagV.push_back(idflag);
+      jet_PUID_passWPLooseV.push_back(passPUIDLoose);
+
     }// end loop over iJet
 
     ////
@@ -797,6 +864,10 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     eve->jet_flavour_[iSys]          = jet_flavour_vect;
     eve->jet_partonflavour_[iSys]          = jet_partonflavour_vect;
 
+    //PU jet ID
+    eve->jet_PUID_mva_[iSys] = jet_PUID_mvaV;
+    eve->jet_PUID_flag_[iSys] = jet_PUID_flagV;
+    eve->jet_PUID_passWPLoose_[iSys] = jet_PUID_passWPLooseV;
 
     // Add lepton 4Vector quantities to MHT
     mht_px += - sum_lepton_vect.Px();

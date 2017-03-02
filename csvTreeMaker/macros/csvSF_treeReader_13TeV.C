@@ -74,6 +74,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
   ///// jet Pt cut
   bool JetPtCut30 = false; //true;
+  /// remove PU jets
+  bool rmPUJet = true;
 
   /// tag and probe, jeremy's control region
   bool tpj =  false; //true;
@@ -269,7 +271,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
   std::string s_end = "_histo_" + str_jobN + ".root";
   if( Njobs==1 ) s_end = "_histo.root";
-  if( Njobs==1 && inclusiveSelection) s_end = "_histo_All_GH.root"; // tpj //change the output file name; checking different dilepton categories
+  if( Njobs==1 && inclusiveSelection) s_end = "_histo_All.root"; // tpj //change the output file name; checking different dilepton categories
 
 
   std::string histofilename = Form("CSVHistoFiles/%s_rwt_hf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
@@ -328,6 +330,9 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
   TH1D* h_probe_jet_pt = new TH1D("h_probe_jet_pt",";probe jet p_{T}", 100, 0, maxPt1 );
   TH1D* h_probe_jet_pt_noSF = new TH1D("h_probe_jet_pt_noSF",";probe jet p_{T}", 100, 0, maxPt1 );
+
+  TH1D* h_PU_jet_pt = new TH1D("h_PU_jet_pt","; PU jet p_{T}", 100, 0, maxPt1 );
+  TH1D* h_PU_jet_csv = new TH1D("h_PU_jet_csv",";PU jet "+btags, nBinsBTag, xMinBTag, 1.01 );
 
   TH1D* h_all_jet_pt = new TH1D("h_all_jet_pt","; all jet p_{T}", 100, 0, maxPt1 );
   TH1D* h_all_jet_csv = new TH1D("h_all_jet_csv",";all jet "+btags, nBinsBTag, xMinBTag, 1.01 );
@@ -648,6 +653,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     vint jet_flavour_tmp = eve->jet_flavour_[iSys];
     vint jet_partonflavour_tmp = eve->jet_partonflavour_[iSys];
 
+    vint jet_PUID_passWPLoose_tmp = eve->jet_PUID_passWPLoose_[iSys];
+
     ////
 
     vecTLorentzVector jet_vect_TLV;
@@ -655,6 +662,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     vdouble jet_CMVA;
     vint jet_flavour;
     vint jet_partonflavour;
+    vint jet_PUID_passWPLoose;
     for( int iJet=0; iJet<int(jet_vect_TLV_tmp.size()); iJet++ ){
       TLorentzVector myJet = jet_vect_TLV_tmp[iJet];
 
@@ -663,15 +671,18 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       double myJetPt = myJet.Pt();
       int myFlavor = jet_flavour_tmp[iJet];
       int mypartonFlavor = jet_partonflavour_tmp[iJet];
+      int myPUID = jet_PUID_passWPLoose_tmp[iJet];
 
       if(JetPtCut30 && myJetPt < 30) continue;
+      if(rmPUJet && !myPUID) continue;
 
       jet_vect_TLV.push_back(myJet);
       jet_CSV.push_back(myCSV);
       jet_CMVA.push_back(myCMVA);
       jet_flavour.push_back(myFlavor);
       jet_partonflavour.push_back(mypartonFlavor);
-      
+      jet_PUID_passWPLoose.push_back(myPUID);
+
     }
 
     /////
@@ -948,6 +959,13 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       //tpj
       if(myJetPt > 30) numJets30++;
       else if(tpj) continue;
+
+      /// PU jets
+      int passPUWPLoose = jet_PUID_passWPLoose[iJet];
+      if(!rmPUJet && !passPUWPLoose){
+	h_PU_jet_pt->Fill(myJetPt, wgt);
+	h_PU_jet_csv->Fill(myCSV, wgt);
+      }
 
       h_all_jet_pt->Fill(myJetPt, wgt);
       h_all_jet_csv->Fill(myCSV, wgt);

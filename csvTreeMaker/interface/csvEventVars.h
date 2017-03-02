@@ -119,6 +119,9 @@ struct EventVars{
   vdouble jet_pt_[rNumSys];
   vdouble jet_eta_[rNumSys];
 
+  vdouble jet_PUID_mva_[rNumSys];
+  vint jet_PUID_flag_[rNumSys];
+  vint jet_PUID_passWPLoose_[rNumSys];
 
   void initialize();
 
@@ -211,6 +214,9 @@ void EventVars::initialize(){
     jet_flavour_[iSys].clear();
     jet_partonflavour_[iSys].clear();
 
+    jet_PUID_mva_[iSys].clear();
+    jet_PUID_flag_[iSys].clear();
+    jet_PUID_passWPLoose_[iSys].clear();
 
   }
 
