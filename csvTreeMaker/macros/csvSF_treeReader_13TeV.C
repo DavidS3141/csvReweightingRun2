@@ -310,8 +310,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   //////////////////////////////////////////////////////////////////////////
 
   TH1::SetDefaultSumw2();
-  double maxPt1 = 300. , maxPt2 = 200.;
-  if (!isHF) {maxPt1 = 200. ; maxPt2 = 100. ;}
+  double maxPt1 = 240. , maxPt2 = 160.;
+  if (!isHF) {maxPt1 = 160. ; maxPt2 = 80. ;}
   TH1D* h_nJets_noSF  = new TH1D("h_nJets_noSF",";numJet", 10, 0, 10 );
   TH1D* h_nJets  = new TH1D("h_nJets",";numJet", 10, 0, 10 );
   TH1D* h_nJets30_noSF  = new TH1D("h_nJets30_noSF",";numJet", 10, 0, 10 );
@@ -331,17 +331,17 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   TH1D* h_probe_jet_csv = new TH1D("h_probe_jet_csv",";probe jet "+btags, nBinsBTag, xMinBTag, 1.01 );
   TH1D* h_probe_jet_csv_noSF = new TH1D("h_probe_jet_csv_noSF",";probe jet "+btags, nBinsBTag, xMinBTag, 1.01 );
 
-  TH1D* h_probe_jet_pt = new TH1D("h_probe_jet_pt",";probe jet p_{T}", 100, 0, maxPt1 );
-  TH1D* h_probe_jet_pt_noSF = new TH1D("h_probe_jet_pt_noSF",";probe jet p_{T}", 100, 0, maxPt1 );
+  TH1D* h_probe_jet_pt = new TH1D("h_probe_jet_pt",";probe jet p_{T}", maxPt1, 0., maxPt1 );
+  TH1D* h_probe_jet_pt_noSF = new TH1D("h_probe_jet_pt_noSF",";probe jet p_{T}", maxPt1, 0., maxPt1 );
 
-  TH1D* h_PU_jet_pt = new TH1D("h_PU_jet_pt","; PU jet p_{T}", 100, 0, maxPt1 );
+  TH1D* h_PU_jet_pt = new TH1D("h_PU_jet_pt","; PU jet p_{T}", 80, 0., 80 );
   TH1D* h_PU_jet_csv = new TH1D("h_PU_jet_csv",";PU jet "+btags, nBinsBTag, xMinBTag, 1.01 );
 
-  TH1D* h_all_jet_pt = new TH1D("h_all_jet_pt","; all jet p_{T}", 100, 0, maxPt1 );
+  TH1D* h_all_jet_pt = new TH1D("h_all_jet_pt","; all jet p_{T}", maxPt1, 0., maxPt1 );
   TH1D* h_all_jet_csv = new TH1D("h_all_jet_csv",";all jet "+btags, nBinsBTag, xMinBTag, 1.01 );
   TH1D* h_all_jet_csv_noSF = new TH1D("h_all_jet_csv_noSF",";all jet "+btags, nBinsBTag, xMinBTag, 1.01 );
 
-  TH1D* h_first_jet_pt  = new TH1D("h_first_jet_pt",";first jet p_{T}", 100, 0., maxPt1 );
+  TH1D* h_first_jet_pt  = new TH1D("h_first_jet_pt",";first jet p_{T}", maxPt1, 0., maxPt1 );
   TH1D* h_first_jet_eta = new TH1D("h_first_jet_eta",";first jet #eta", 70, -3.5, 3.5 );
   TH1D* h_first_jet_csv = new TH1D("h_first_jet_csv",";first jet "+btags, nBinsBTag, xMinBTag, 1.01 );
   TH1D* h_first_jet_csv_lowPU = new TH1D("h_first_jet_csv_lowPU",";first jet "+btags, nBinsBTag, xMinBTag, 1.01 );
@@ -360,7 +360,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   TH1D* h_first_jet_partonflavour = new TH1D("h_first_jet_partonflavour",";first jet parton flavour", 28, -6, 22 );
   TH2D* h_first_jet_flavour_hadron_vs_parton = new TH2D("h_first_jet_flavour_hadron_vs_parton",";hadron flavour;parton flavour", 28, -6, 22, 28, -6, 22 );
 
-  TH1D* h_second_jet_pt  = new TH1D("h_second_jet_pt",";second jet p_{T}", 100, 0., maxPt2 );
+  TH1D* h_second_jet_pt  = new TH1D("h_second_jet_pt",";second jet p_{T}", maxPt2, 0., maxPt2 );
   TH1D* h_second_jet_eta = new TH1D("h_second_jet_eta",";second jet #eta", 70, -3.5, 3.5 );
   TH1D* h_second_jet_csv = new TH1D("h_second_jet_csv",";second jet "+btags, nBinsBTag, xMinBTag, 1.01 );
   TH1D* h_second_jet_flavour = new TH1D("h_second_jet_flavour",";second jet flavour", 28, -6, 22 );
@@ -382,13 +382,13 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
   TH1D* h_dr_leplep  = new TH1D("h_dr_leplep",";dr leplep", 100, 0., 5 );
   int massBin = 100;
-  double massMin = 0, massMax = 500;
+  double massMin = 0, massMax = 400;
   if(!isHF) {massBin = 40; massMin = 70; massMax = 110;}; 
   TH1D* h_mass_leplep  = new TH1D("h_mass_leplep",";mass leplep", massBin, massMin, massMax ); //100, 0., 500
-  TH1D* h_met_pt  = new TH1D("h_met_pt",";MET", 100, 0., maxPt1 );
-  TH1D* h_mht_pt  = new TH1D("h_mht_pt",";MHT", 100, 0., maxPt1 );
+  TH1D* h_met_pt  = new TH1D("h_met_pt",";MET", maxPt1, 0., maxPt1 );
+  TH1D* h_mht_pt  = new TH1D("h_mht_pt",";MHT", maxPt1, 0., maxPt1 );
 
-  TH2D* h_mll_vs_mht  = new TH2D("h_mll_vs_mht",";mass leplep;mht", 100, 0., 500, 100, 0., maxPt1 );
+  TH2D* h_mll_vs_mht  = new TH2D("h_mll_vs_mht",";mass leplep;mht", 100, 0., 500, maxPt1, 0., maxPt1 );
 
   TH1D* h_1stlep_pt  = new TH1D("h_1stlep_pt",";lep1 p_{T}", 150, 0., 150 );
   TH1D* h_2ndlep_pt  = new TH1D("h_2ndlep_pt",";lep2 p_{T}", 100, 0., 100 );
@@ -625,17 +625,17 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     int MuonElectron = eve->MuonElectron_ ;
 
     double triggerWgt = 1;
-    // if(insample >= 0){
-    //   if(TwoMuon)           triggerWgt = (isHF) ? 0.981907 : 1.06953; //0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
-    //   else if(TwoElectron)  triggerWgt = (isHF) ? 0.982675 : 0.93381; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
-    //   else if(MuonElectron) triggerWgt = 0.905494; //0.517857;//0.67727; //0.7948;
+    if(insample >= 0){
+      if(TwoMuon)           triggerWgt = (isHF) ? 0.962157 : 1.08586; //0.981907 : 1.06953; //0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
+      else if(TwoElectron)  triggerWgt = (isHF) ? 0.939806 : 1.05302; //0.982675 : 0.93381; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
+      else if(MuonElectron) triggerWgt = 0.916678; //0.905494; //0.517857;//0.67727; //0.7948;
 
-    //   if(JetPtCut30){
-    // 	if(TwoMuon)           triggerWgt = (isHF) ? 0.7277 : 0.8035; ///
-    // 	else if(TwoElectron)  triggerWgt = (isHF) ? 0.753 : 0.844;
-    // 	else if(MuonElectron) triggerWgt = 0.7863;
-    //   }
-    // }
+      if(!rmPUJet){
+    	if(TwoMuon)           triggerWgt = (isHF) ? 0.965642 : 1.06555; //0.7277 : 0.8035; ///
+    	else if(TwoElectron)  triggerWgt = (isHF) ? 0.939641 : 1.03338; //0.753 : 0.844;
+    	else if(MuonElectron) triggerWgt = 0.919479; //0.7863;
+      }
+    }
     wgt *= triggerWgt;
 
     ///// PU wgt
@@ -818,32 +818,36 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     // for different datasets or sub-lep categories
     ///// replace PassZmask and MET cuts M_ll & MET>30
-    bool lepselection1a = ( TwoMuon && isDoubleMuTriggerPass && abs(mass_leplep-91)>10 && (met_pt>30) ); //Selection for TwoMuon data events
-    bool lepselection1b = ( TwoElectron && isDoubleElectronTriggerPass && abs(mass_leplep-91)>10 && (met_pt>30) ); //Selection for TwoEle data events
+    bool lepselection1b = ( TwoMuon && isDoubleMuTriggerPass && abs(mass_leplep-91)>10 && (met_pt>30) ); //Selection for TwoMuon data events
+    bool lepselection1a = ( TwoElectron && isDoubleElectronTriggerPass && abs(mass_leplep-91)>10 && (met_pt>30) ); //Selection for TwoEle data events
 
-    // bool lepselection1a = ( TwoMuon && isDoubleMuTriggerPass && (PassZmask==1) && (met_pt>50) ); //Selection for TwoMuon data events
-    // bool lepselection1b = ( TwoElectron && isDoubleElectronTriggerPass && (PassZmask==1) && (met_pt>50) ); //Selection for TwoEle data events
+    // bool lepselection1b = ( TwoMuon && isDoubleMuTriggerPass && (PassZmask==1) && (met_pt>50) ); //Selection for TwoMuon data events
+    // bool lepselection1a = ( TwoElectron && isDoubleElectronTriggerPass && (PassZmask==1) && (met_pt>50) ); //Selection for TwoEle data events
     bool lepselection1c = ( MuonElectron && isMuEGTriggerPass ); //Selection for MuonEle data events
     if (!isHF){
-      lepselection1a = ( TwoMuon && isDoubleMuTriggerPass && (PassZmask==0) && (met_pt<30) && abs(mass_leplep-91)<10 ); //Selection for TwoMuon data events
-      lepselection1b = ( TwoElectron && isDoubleElectronTriggerPass && (PassZmask==0) && (met_pt<30) && abs(mass_leplep-91)<10 ); //Selection for TwoEle data events
+      lepselection1b = ( TwoMuon && isDoubleMuTriggerPass && (PassZmask==0) && (met_pt<30) && abs(mass_leplep-91)<10 ); //Selection for TwoMuon data events
+      lepselection1a = ( TwoElectron && isDoubleElectronTriggerPass && (PassZmask==0) && (met_pt<30) && abs(mass_leplep-91)<10 ); //Selection for TwoEle data events
       lepselection1c = 0; // ( MuonElectron && isMuEGTriggerPass ); //Selection for MuonEle data events
+    }
+    if ( isHF && emuOnlyHF ) {
+      lepselection1a = 0;
+      lepselection1b = 0;
     }
     // for MC events
     bool lepselection2 = ( lepselection1a || lepselection1b || lepselection1c ) ;
-    if (tpj || emuOnlyHF) {
+    if (tpj) {
       if(isHF) lepselection2 = lepselection1c; // tpj, checking different dilepton categories
       else   lepselection2 = (lepselection1a || lepselection1b);
     }
     // ///// different lepton flavor
     // lepselection2 = lepselection1b;
 
-    if ( insample == -200 ) lepselection2 = lepselection1a;
-    if ( insample == -100 ) lepselection2 = lepselection1b;
+    if ( insample == -100 ) lepselection2 = lepselection1a;
+    if ( insample == -200 ) lepselection2 = lepselection1b;
     if ( insample == -300 ) lepselection2 = lepselection1c;
 
-    // if (DataSet.find ("DoubleMuon") !=std::string::npos ) lepselection2 = lepselection1a;
-    // if (DataSet.find ("DoubleEG") !=std::string::npos ) lepselection2 = lepselection1b;
+    // if (DataSet.find ("DoubleMuon") !=std::string::npos ) lepselection2 = lepselection1b;
+    // if (DataSet.find ("DoubleEG") !=std::string::npos ) lepselection2 = lepselection1a;
     // if (DataSet.find ("MuonEG") !=std::string::npos )lepselection2 = lepselection1c;
 
     if( lepselection1a ) numEvents_lepselection1a++;
