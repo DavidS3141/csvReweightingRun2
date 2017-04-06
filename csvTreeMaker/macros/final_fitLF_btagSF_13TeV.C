@@ -33,7 +33,7 @@ void final_fitLF_btagSF_13TeV( bool isCSV = true,
 			       TString inputFileName_JESUp  = "infile.root", 
 			       TString inputFileName_JESDown  = "infile.root", 
 			       int iterNum=0,
-			       bool includeCorrectionFactor_ = !false,
+			       bool includeCorrectionFactor = !false,
 			       TString dirPostFix = "" ){
 
   TH1::SetDefaultSumw2();
@@ -815,7 +815,6 @@ void final_fitLF_btagSF_13TeV( bool isCSV = true,
     //////////////
     //////////////
 
-    bool includeCorrectionFactor = includeCorrectionFactor_;
     if( includeCorrectionFactor ){
       if( isCSV ){
 	if( hist_name[iHist]=="csv_ratio_Pt0_Eta0" ){ 

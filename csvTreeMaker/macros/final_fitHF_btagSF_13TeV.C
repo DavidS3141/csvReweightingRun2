@@ -114,8 +114,8 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 			       TString inputFileName_JESUp  = "infile.root", 
 			       TString inputFileName_JESDown  = "infile.root", 
 			       int iterNum=0,
-			       bool includeCorrectionFactor_ = !false,
-			       bool includeCharmCorrectionFactor_ = !false,
+			       bool includeCorrectionFactor = !false,
+			       bool includeCharmCorrectionFactor = !false,
 			       TString dirPostFix = "" ){
 
 
@@ -1008,7 +1008,6 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
     /////////
 
-    bool includeCorrectionFactor = includeCorrectionFactor_;
     if( includeCorrectionFactor ){
       if( isCSV ){
 	if( hist_name[iHist]=="csv_ratio_Pt0_Eta0" ){ 
@@ -2024,7 +2023,6 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
       // h_cErr2Up->Scale(0.9454488);
       // h_cErr2Down->Scale(1.061163);
 
-    bool includeCharmCorrectionFactor = includeCharmCorrectionFactor_;
     if( includeCharmCorrectionFactor ){
       if( isCSV ){
 	if( iHist==0 ){
