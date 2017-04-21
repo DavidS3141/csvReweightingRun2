@@ -2077,8 +2077,8 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
         ptMax = "10000";
       }
 
-      int firstPointBin = h_csv_ratio_final[iHist]->GetXaxis()->FindBin(firstPoint)-1;
-      int lastPointBin = h_csv_ratio_final[iHist]->GetXaxis()->FindBin(lastPoint)-1;
+      int firstPointBin = h_csv_ratio[iHist]->GetXaxis()->FindBin(firstPoint);
+      int lastPointBin = h_csv_ratio[iHist]->GetXaxis()->FindBin(lastPoint);
 
       // central
       fit_result_file[iHist] << "3, iterativefit, central, 0, " 
@@ -2115,13 +2115,13 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_JESUp[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_JESUp[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, up_jes, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_JESUp[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_JESUp[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2138,20 +2138,20 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_JESUp[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_JESUp[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
       // JESDown
       fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_JESDown[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_JESDown[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_JESDown[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_JESDown[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2168,7 +2168,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_JESDown[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_JESDown[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
 
       // LFUp
@@ -2176,13 +2176,13 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_LFUp[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_LFUp[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, up_lf, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_LFUp[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_LFUp[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2199,20 +2199,20 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_LFUp[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_LFUp[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
       // LFDown
       fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_LFDown[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_LFDown[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_LFDown[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_LFDown[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2229,7 +2229,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_LFDown[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_LFDown[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
 
       // Stats1Up
@@ -2237,13 +2237,13 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats1Up[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats1Up[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, up_hfstats1, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_Stats1Up[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats1Up[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2260,20 +2260,20 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats1Up[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats1Up[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
       // Stats1Down
       fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats1Down[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats1Down[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_Stats1Down[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats1Down[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2290,7 +2290,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats1Down[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats1Down[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
 
 
@@ -2300,13 +2300,13 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats2Up[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats2Up[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, up_hfstats2, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_Stats2Up[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats2Up[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2323,20 +2323,20 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats2Up[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats2Up[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
       // Stats2Down
       fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "-15" << ", " << "0" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats2Down[iHist]->GetBinContent(1) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats2Down[iHist]->GetBinContent(1) << "\"" << "\n";
 
       fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << "0" << ", " << firstPoint << ", " 
-                             << "\"" << h_csv_ratio_final_Stats2Down[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats2Down[iHist]->GetBinContent( firstPointBin ) << "\"" << "\n";
 
       for( int iBin=1; iBin<Nbins-1; iBin++ ){
         double x1 = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
@@ -2353,7 +2353,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                              << etaMin << ", " << etaMax << ", " 
                              << ptMin << ", " << ptMax << ", " 
                              << lastPoint << ", " << "1.1" << ", " 
-                             << "\"" << h_csv_ratio_final_Stats2Down[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
+                             << "\"" << h_csv_ratio_Stats2Down[iHist]->GetBinContent( lastPointBin ) << "\"" << "\n";
 
 
       // Charm uncertainties
