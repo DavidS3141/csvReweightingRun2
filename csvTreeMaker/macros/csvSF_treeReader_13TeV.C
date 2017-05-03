@@ -70,7 +70,7 @@ TH1D* h_csv_wgt_lf[9][4][3];
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900
 void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 35867) {
   /// inclusive Selection or not
-  bool inclusiveSelection = true;//false;
+  bool inclusiveSelection = !true;//false;
 
   /// using MuonEG events only for HF?
   bool emuOnlyHF = !true;
@@ -98,6 +98,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   TH1D* h_PU = (TH1D*)f_PUwgt->Get("numPVs_PUratio")->Clone();
 
   ///// csv WPs // update to Moriond 2017 WPs
+  double Twp = 0.9535; //0.800;
   double Mwp = 0.8484; //0.800;
   double Lwp = 0.5426; //0.460;
   if(!isCSV || diffCR){
@@ -128,8 +129,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     if(verNum > 3){
       // inputFileHF = "data/csv_rwt_fit_hf_v2_final_2016_06_30test.root";
       // inputFileLF = "data/csv_rwt_fit_lf_v2_final_2016_06_30test.root";
-      inputFileHF = "macros/GH/csv_rwt_fit_hf_v2_final_2017_1_25GH.root";
-      inputFileLF = "macros/GH/csv_rwt_fit_lf_v2_final_2017_1_25GH.root";
+      inputFileHF = "macros/csv_rwt_fit_hf_v2_final_2017_3_29test.root";
+      inputFileLF = "macros/csv_rwt_fit_lf_v2_final_2017_3_29test.root";
 
     }
 
@@ -333,6 +334,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
   TH1D* h_probe_jet_pt = new TH1D("h_probe_jet_pt",";probe jet p_{T}", maxPt1, 0., maxPt1 );
   TH1D* h_probe_jet_pt_noSF = new TH1D("h_probe_jet_pt_noSF",";probe jet p_{T}", maxPt1, 0., maxPt1 );
+  TH1D* h_probe_jet_flavour = new TH1D("h_probe_jet_flavour",";probe jet flavour", 28, -6, 22 );
+  TH1D* h_tag_jet_flavour = new TH1D("h_tag_jet_flavour",";tag jet flavour", 28, -6, 22 );
 
   TH1D* h_PU_jet_pt = new TH1D("h_PU_jet_pt","; PU jet p_{T}", 80, 0., 80 );
   TH1D* h_PU_jet_csv = new TH1D("h_PU_jet_csv",";PU jet "+btags, nBinsBTag, xMinBTag, 1.01 );
@@ -355,7 +358,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   TH1D* h_first_otherjet_csv_ee = new TH1D("h_first_otherjet_csv_ee",";first jet "+btags, nBinsBTag, xMinBTag, 1.01 );
   TH1D* h_first_otherjet_csv_mm = new TH1D("h_first_otherjet_csv_mm",";first jet "+btags, nBinsBTag, xMinBTag, 1.01 );
 
-
+  TH2D* h_jet_flavour_first_vs_second = new TH2D("h_jet_flavour_first_vs_second",";1st jet flavour;2nd jet flavour", 28, -6, 22, 28, -6, 22 );
   TH1D* h_first_jet_flavour = new TH1D("h_first_jet_flavour",";first jet flavour", 28, -6, 22 );
   TH1D* h_first_jet_partonflavour = new TH1D("h_first_jet_partonflavour",";first jet parton flavour", 28, -6, 22 );
   TH2D* h_first_jet_flavour_hadron_vs_parton = new TH2D("h_first_jet_flavour_hadron_vs_parton",";hadron flavour;parton flavour", 28, -6, 22, 28, -6, 22 );
@@ -736,6 +739,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     bool failLooseBtag = false;
     if( jet1_btag>Mwp || jet2_btag>Mwp ) passTightBtag = true;
     if( jet1_btag<Lwp || jet2_btag<Lwp ) failLooseBtag = true;
+    // if( jet1_btag<Lwp || jet2_btag<Lwp ) passTightBtag = true;
+    // if( jet1_btag>Twp && jet2_btag>Twp ) failLooseBtag = true;
 
     double MHT = eve->MHT_[iSys];
     double met_pt = eve->MET_[iSys];
@@ -1040,7 +1045,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     // h_all_jet_pt->Fill(first_jet_pt, wgt);
     // h_all_jet_pt->Fill(second_jet_pt, wgt);
-
+    h_jet_flavour_first_vs_second->Fill(first_jet_flavour, second_jet_flavour, wgt);
     h_first_jet_pt->Fill(first_jet_pt, wgt);
     h_first_jet_eta->Fill(first_jet_eta, wgt);
     h_first_jet_csv->Fill(first_jet_csv, wgt);
@@ -1127,6 +1132,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       h_probe_jet_pt->Fill(first_jet_pt, wgt);
       h_probe_jet_pt_noSF->Fill(first_jet_pt, wgt/newCSVwgt);
 
+      h_probe_jet_flavour->Fill(first_jet_flavour, wgt);
+      h_tag_jet_flavour->Fill(second_jet_flavour, wgt);
     }
     if (tpj || (!tpj && jetselection2b)) {
       h_probe_jet_csv->Fill(second_jet_csv, wgt);
@@ -1135,6 +1142,8 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       h_probe_jet_pt->Fill(second_jet_pt, wgt);
       h_probe_jet_pt_noSF->Fill(second_jet_pt, wgt/newCSVwgt);
 
+      h_probe_jet_flavour->Fill(second_jet_flavour, wgt);
+      h_tag_jet_flavour->Fill(first_jet_flavour, wgt);
     }
 
     bool twoTagJet = ( (tag2ndjet > Mwp) && (tag1stjet > Mwp) );
@@ -1171,7 +1180,17 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       else if (jetPt >=60 && jetPt<100) iPt = 3;
       else if (jetPt >=100 && jetPt<160) iPt = 4;
       else if (jetPt >=160 && jetPt<10000) iPt = 5;
-      
+
+      ////
+      if(isHF){
+	if (jetPt >=19.99 && jetPt<30) iPt = 0;
+	else if (jetPt >=30 && jetPt<50) iPt = 1;
+	else if (jetPt >=50 && jetPt<70) iPt = 2;
+	else if (jetPt >=70 && jetPt<100) iPt = 3;
+	else if (jetPt >=100 && jetPt<160) iPt = 4;
+	else if (jetPt >=160 && jetPt<10000) iPt = 5;
+      }
+
       if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
       else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
       else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
@@ -1206,6 +1225,16 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       else if (jetPt >=100 && jetPt<160) iPt = 4;
       else if (jetPt >=160 && jetPt<10000) iPt = 5;
       
+      ////
+      if(isHF){
+	if (jetPt >=19.99 && jetPt<30) iPt = 0;
+	else if (jetPt >=30 && jetPt<50) iPt = 1;
+	else if (jetPt >=50 && jetPt<70) iPt = 2;
+	else if (jetPt >=70 && jetPt<100) iPt = 3;
+	else if (jetPt >=100 && jetPt<160) iPt = 4;
+	else if (jetPt >=160 && jetPt<10000) iPt = 5;
+      }
+
       if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
       else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
       else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
@@ -1242,6 +1271,16 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
       else if (jetPt >=100 && jetPt<160) iPt = 4;
       else if (jetPt >=160 && jetPt<10000) iPt = 5;
       
+      ////
+      if(isHF){
+	if (jetPt >=19.99 && jetPt<30) iPt = 0;
+	else if (jetPt >=30 && jetPt<50) iPt = 1;
+	else if (jetPt >=50 && jetPt<70) iPt = 2;
+	else if (jetPt >=70 && jetPt<100) iPt = 3;
+	else if (jetPt >=100 && jetPt<160) iPt = 4;
+	else if (jetPt >=160 && jetPt<10000) iPt = 5;
+      }
+
       if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
       else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;
       else if ( jetAbsEta>=1.6 && jetAbsEta<2.41 ) iEta = 2;
@@ -1427,6 +1466,16 @@ double get_csv_wgt( bool TaggerisCSV, vecTLorentzVector jets, vdouble jetCSV, vi
     else if (jetPt >=60 && jetPt<100) iPt = 3;
     else if (jetPt >=100 && jetPt<160) iPt = 4;
     else if (jetPt >=160 && jetPt<10000) iPt = 4;  //5; low stats. combine with Pt bin 4
+
+      ////
+      if(abs(flavor) == 5 || abs(flavor) == 4){
+	if (jetPt >=19.99 && jetPt<30) iPt = 0;
+	else if (jetPt >=30 && jetPt<50) iPt = 1;
+	else if (jetPt >=50 && jetPt<70) iPt = 2;
+	else if (jetPt >=70 && jetPt<100) iPt = 3;
+	else if (jetPt >=100 && jetPt<160) iPt = 4;
+	else if (jetPt >=160 && jetPt<10000) iPt = 4; //4
+      }
 
     if (jetAbsEta >=0 &&  jetAbsEta<0.8 ) iEta = 0;
     else if ( jetAbsEta>=0.8 && jetAbsEta<1.6 )  iEta = 1;

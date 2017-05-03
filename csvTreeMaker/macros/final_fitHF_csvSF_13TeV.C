@@ -222,9 +222,9 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
       mc_nonb_hist_name.push_back( Form("%scsv_MC_nonbjets_Pt%d_Eta%d", prefix_hist.Data(), iPt, iEta) );
 
       if( iPt==0 )      label_ptbin.push_back("20 < p_{T} < 30 GeV");
-      else if( iPt==1 ) label_ptbin.push_back("30 < p_{T} < 40 GeV");
-      else if( iPt==2 ) label_ptbin.push_back("40 < p_{T} < 60 GeV");
-      else if( iPt==3 ) label_ptbin.push_back("60 < p_{T} < 100 GeV");
+      else if( iPt==1 ) label_ptbin.push_back("30 < p_{T} < 50 GeV");
+      else if( iPt==2 ) label_ptbin.push_back("50 < p_{T} < 70 GeV");
+      else if( iPt==3 ) label_ptbin.push_back("70 < p_{T} < 100 GeV");
       else if( iPt==4 ) label_ptbin.push_back("p_{T} > 100 GeV");
 
       if( true ) label_etabin.push_back("|#eta| < 2.4");
@@ -2062,14 +2062,14 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
       }
       else if( hist_name[iHist].Contains("Pt1") ){
         ptMin = "30";
-        ptMax = "40";
+        ptMax = "50";
       }
       else if( hist_name[iHist].Contains("Pt2") ){
-        ptMin = "40";
-        ptMax = "60";
+        ptMin = "50";
+        ptMax = "70";
       }
       else if( hist_name[iHist].Contains("Pt3") ){
-        ptMin = "60";
+        ptMin = "70";
         ptMax = "100";
       }
       else if( hist_name[iHist].Contains("Pt4") ){
