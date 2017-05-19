@@ -28,7 +28,7 @@ typedef std::vector< TLorentzVector > vecTLorentzVector;
 // Utility Class for Handling Event Variables
 //
 
-const Int_t rNumSys = 3;
+const Int_t rNumSys = 25;
 
 struct EventVars{
 
@@ -98,12 +98,12 @@ struct EventVars{
   Float_t numJets_float_[rNumSys];
   Float_t numTags_float_[rNumSys];
 
-  int numJets_[rNumSys];
-  int numTags_[rNumSys];
+  /* int numJets_[rNumSys]; */
+  /* int numTags_[rNumSys]; */
 
 
-  Float_t first_jet_pt_[rNumSys];
-  Float_t second_jet_pt_[rNumSys];
+  /* Float_t first_jet_pt_[rNumSys]; */
+  /* Float_t second_jet_pt_[rNumSys]; */
 
   Float_t MET_[rNumSys];
   Float_t MET_phi_[rNumSys];
@@ -193,11 +193,11 @@ void EventVars::initialize(){
     numJets_float_[iSys] = -99.9;
     numTags_float_[iSys] = -99.9;
 
-    numJets_[iSys] = -99;
-    numTags_[iSys] = -99;
+    /* numJets_[iSys] = -99; */
+    /* numTags_[iSys] = -99; */
 
-    first_jet_pt_[iSys]                   = -99.9;
-    second_jet_pt_[iSys]                  = -99.9;
+    /* first_jet_pt_[iSys]                   = -99.9; */
+    /* second_jet_pt_[iSys]                  = -99.9; */
 
     MET_[iSys]                            = -99.9;
     MET_phi_[iSys]                        = -99.9;

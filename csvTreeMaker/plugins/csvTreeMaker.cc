@@ -738,7 +738,7 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Loop over systematics: nominal, JESUp, JESDown
   ///////
   bool passingTwoJet = false;
-  for( int iSys=0; iSys<3; iSys++ ){
+  for( int iSys=0; iSys<rNumSys; iSys++ ){
 
     //no sys for data, 
     if( isData ){
@@ -751,6 +751,40 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     switch( iSys ){
     case 1 : iSysType = sysType::JESup;    break;
     case 2 : iSysType = sysType::JESdown;  break;
+
+    case 3 : iSysType = sysType::JESFlavorQCDup;    break;
+    case 4 : iSysType = sysType::JESFlavorQCDdown;  break;
+
+    case 5 : iSysType = sysType::JESSinglePionHCALup;    break;
+    case 6 : iSysType = sysType::JESSinglePionHCALdown;  break;
+
+    case 7 : iSysType = sysType::JESAbsoluteScaleup;    break;
+    case 8 : iSysType = sysType::JESAbsoluteScaledown;  break;
+
+    case 9 : iSysType = sysType::JESAbsoluteMPFBiasup;    break;
+    case 10 : iSysType = sysType::JESAbsoluteMPFBiasdown;  break;
+
+    case 11 : iSysType = sysType::JESPileUpPtRefup;    break;
+    case 12 : iSysType = sysType::JESPileUpPtRefdown;  break;
+      ////////
+    case 13 : iSysType = sysType::JESSinglePionECALup;    break;
+    case 14 : iSysType = sysType::JESSinglePionECALdown;  break;
+
+    case 15 : iSysType = sysType::JESPileUpPtBBup;    break;
+    case 16 : iSysType = sysType::JESPileUpPtBBdown;  break;
+
+    case 17 : iSysType = sysType::JESPileUpPtEC1up;    break;
+    case 18 : iSysType = sysType::JESPileUpPtEC1down;  break;
+
+    case 19 : iSysType = sysType::JESPileUpDataMCup;    break;
+    case 20 : iSysType = sysType::JESPileUpDataMCdown;  break;
+
+    case 21 : iSysType = sysType::JESRelativeFSRup;    break;
+    case 22 : iSysType = sysType::JESRelativeFSRdown;  break;
+
+    case 23 : iSysType = sysType::JESTimePtEtaup;    break;
+    case 24 : iSysType = sysType::JESTimePtEtadown;  break;
+
     default: iSysType = sysType::NA;       break;
     }
 
