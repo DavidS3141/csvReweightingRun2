@@ -116,6 +116,31 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   int iSys = 0;
   if (JES=="JESup" || JES=="JESUp")  iSys = 1;
   if (JES=="JESdown" || JES=="JESDown") iSys = 2;
+
+  if (JES=="JESFlavorQCDup" )  iSys = 3;
+  if (JES=="JESFlavorQCDdown" ) iSys = 4;
+  if (JES=="JESSinglePionHCALup" )  iSys = 5;
+  if (JES=="JESSinglePionHCALdown" ) iSys = 6;
+  if (JES=="JESAbsoluteScaleup" )  iSys = 7;
+  if (JES=="JESAbsoluteScaledown" ) iSys = 8;
+  if (JES=="JESAbsoluteMPFBiasup" )  iSys = 9;
+  if (JES=="JESAbsoluteMPFBiasdown" ) iSys = 10;
+  if (JES=="JESPileUpPtRefup" )  iSys = 11;
+  if (JES=="JESPileUpPtRefdown" ) iSys = 12;
+
+  if (JES=="JESSinglePionECALup" )  iSys = 13;
+  if (JES=="JESSinglePionECALdown" ) iSys = 14;
+  if (JES=="JESPileUpPtBBup" )  iSys = 15;
+  if (JES=="JESPileUpPtBBdown" ) iSys = 16;
+  if (JES=="JESPileUpPtEC1up" )  iSys = 17;
+  if (JES=="JESPileUpPtEC1down" ) iSys = 18;
+  if (JES=="JESPileUpDataMCup" )  iSys = 19;
+  if (JES=="JESPileUpDataMCdown" ) iSys = 20;
+  if (JES=="JESRelativeFSRup" )  iSys = 21;
+  if (JES=="JESRelativeFSRdown" ) iSys = 22;
+  if (JES=="JESTimePtEtaup" )  iSys = 23;
+  if (JES=="JESTimePtEtadown" ) iSys = 24;
+
   
   ////////
   std::string inputFileHF = "data/csv_rwt_hf_IT.root";
@@ -161,24 +186,24 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   std::string mySample_inputDir_ = "";
   if( insample==2500 ){
     mySample_xSec_ = 87.31;//831.76;//https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO
-    mySample_nGen_ = 38139240;//30046510;//29222400;//29222400+51693000+45378000;//19757202+96834408; //19757190+96834559;//from DAS //19899500;
+    mySample_nGen_ = 27562320; //38139240;(700)//30046510;//29222400;//29222400+51693000+45378000;//19757202+96834408; //19757190+96834559;//from DAS //19899500;
     mySample_sampleName_ = "ttjets";//"TTJets";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150217_005136/0000/";
     //mySample_inputDir_ = "/uscms_data/d2/dpuigh/TTH/miniAOD/CMSSW_7_2_3/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
   else if( insample==2300 ){
     mySample_xSec_ = 3*2008.4;//*1.3; // SF = 1.15 for DY
     mySample_nGen_ = 96658928; //49144252;//19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
   else if( insample==2310 ){
     mySample_xSec_ = 18610;//*1.3;//correctMe
     mySample_nGen_ = 35291552; //35256264; //35079800;//Spring16 //22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
     mySample_sampleName_ = "lowMasszjets";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
   else if( insample==2400 ){
     mySample_xSec_ = 20508.9;  
@@ -226,19 +251,19 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     mySample_xSec_ = 35.6;  
     mySample_nGen_ = 992024; //6952830;//998400;//1000000;//995600;
     mySample_sampleName_ = "singletW";//"T_tW_DR";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
   else if( insample==2515 ){
     mySample_xSec_ = 35.6;  
     mySample_nGen_ = 998276; //6933094;//985000;//999400;//988500;
     mySample_sampleName_ = "singletbarW";//"Tbar_tW_DR";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
   else if( insample==2600 ){
     mySample_xSec_ =  12.178; // correctMe???
     mySample_nGen_ = 1999000;//1996600;//1979988;//1999000;//1965200;
     mySample_sampleName_ = "WW";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/csvRWT13TeV/";
+    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
   else if( insample==9125 ){
     mySample_xSec_ = 0.5085 * 1.0;// YR3 * BR(all)  
@@ -694,7 +719,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     /////
     double csvWgtHF, csvWgtLF, csvWgtCF;
-    double newCSVwgt = ( insample<0 || verNum==0 ) ? 1 : get_csv_wgt(isCSV, jet_vect_TLV, jet_CSV, jet_flavour,iSys, csvWgtHF, csvWgtLF, csvWgtCF);
+    double newCSVwgt = ( insample<0 || verNum==0 ) ? 1 : get_csv_wgt(isCSV, jet_vect_TLV, jet_CSV, jet_flavour, 0, csvWgtHF, csvWgtLF, csvWgtCF);
     double wgtfakeData = wgt*newCSVwgt; // 1 for data
     if( verbose ) std::cout << " HF/LF csv wgts are: " << csvWgtHF << "/"<< csvWgtLF << "\t new CSV wgt = " << newCSVwgt << std::endl; 
     ///// for iteration
