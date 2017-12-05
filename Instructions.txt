@@ -1,0 +1,372 @@
+csvSF can be used to calculate CSV and trigger weights
+-Run trigger weights to get the ee/mumu/emu weights, put them in, then you can get CSV weights
+
+Quick outline:
+-Get release of csv code
+-Run test jobs, then crab jobs to generate files
+-hadd root files together
+
+-Put samples in /afs/cern.ch/work/a/alefeld/public (your own workspace... public so other can access)
+-Calculate and replace luminosity in csvSF (L71)
+-Calculate pileup weights, update path in csv_SF
+-Change nGen, xSec, path, name for samples in csv_SF
+
+-Get trigger weights for each individual lep selection with runCSV
+-checkVar for all the plots
+-Run trigger weights again but with all three combined, to check normalization is still 1
+-checkVar for those plots
+-runCSV for all iterations calculating CSV using new trigger weights
+-checkVar the final iteration
+-
+
+----------------------------
+
+
+Get release of csv code:
+    -from github. Instructions should be there.
+    -You will need csv.., TriggerRun2, and MiniAOD packages (should be in instructions)
+
+Run crab jobs for data && MC:
+-One of my guides talks about getting set up with crab:
+    http://barista.mps.ohio-state.edu/lefeld/28
+-In /test
+-First run a test job to check that the crab jobs will succeed
+    -In the _cfg.py files, set maxEvents to something like 2000
+    -Run with:
+    cmsRun <cfg file>
+-If it worked, reset maxEvents to -1 to run over all events
+    -If not, you might not have your grid certificates set up correctly
+    -The above guide discusses this
+-Configure running the full jobs with crab
+    -MC: crab3_yggdrasil_treeMaker_ttjets_13TeV.py  &  csv_treemaker_cfg.py
+    -Data: crab3_treeMaker_newdata_13TeV.py  &  data_csv_treeMaker_cfg.py
+    -Change "outLFNDirBase" to your area (e.g. /store/user/<username>)
+        -If you're not using LPC, change the storage site too
+    -Pick desired requestName AND inputDataset in crab file
+        -requestName is just your unique name for the request, and the output files' directory
+        -There's 8 for MC, 3*No. of run periods for data
+            -zjets is broken into high/low mass, tree/loop level, so 4 altogether
+        -If ttbar (ttjets), use the totalunits option (ignore inputDBS change)
+    -Change the cfg files to match (sampleName & inSample)
+        -This is metadata that goes into the Ntuple
+-Run crab job:
+    crab submit <crab submission file>
+    -Repeat for all MC and data samples
+-Monitor jobs with the online crab dashboard:
+    http://dashb-cms-job.cern.ch/dashboard/templates/task-analysis/
+-It's inevitable jobs will fail
+    -Resubmit batches with failed jobs with crab resubmit <directory>
+    -If they don't all finish after a few resubmissions, seek advice
+
+-Also run the test then crab file in TriggerRun2
+    -This will be used when making final scale factors
+
+
+
+
+
+
+Move files back to lxplus:
+-hadd each batch of jobs before moving
+    -When hadding, know that hadd is release dependent!
+    -Checkout and build all the same code on the server that you are hadding in
+    -hadd does require a cmsenv
+-Don't hadd all the data files into one, to be safe.
+-Whenever you do move them over, put all these files in their own subdirectory
+    -Future steps/scripts use a wildcard, and we don't want to run over old files
+
+
+
+
+
+
+Calculating Lumi per Run:
+-Use brilcalc
+    https://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html
+-Must use bash shell ("bash" will change shells)
+-Install from webpage (Most of the following instructions can be found there)
+    -If permission is denied, use '--user' flag
+    -To upgrade, do:
+        pip install --upgrade brilws
+    -To check version:
+        pip show brilws
+-On lxplus, must source brilcalc:
+    export PATH=$HOME/.local/bin:/afs/cern.ch/cms/lumi/brilconda-1.1.7/bin:$PATH
+-Get json file with lumisections from hypernews
+    -Or here-ish: https://gitlab.cern.ch/ttH/reference/blob/master/definitions/Moriond17.md#14-important-files-and-values
+-Run lumi calculation:
+    brilcalc lumi -b "STABLE BEAMS" --normtag /afs/cern.ch/user/l/lumipro/public/normtag_file/normtag_DATACERT.json -i Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt -u /pb
+    -Replace .txt file with new JSON file with just the lumisections needed
+-Add together all json files to get full json
+    -There are cms python scripts to manipulate json files:
+        https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideGoodLumiSectionsJSONFile
+    -mergJSON.py section
+
+2016 Results:
+    BtoF:  20.236 /fb
+    GH:    16.578 /fb
+    Total: 36.814 /fb
+
+2016 03Feb17 Results:
+    Total: 35867.060 /pb
+
+
+
+
+Calculate pileup weights:
+https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJSONFileforData
+-Run in pileUP_wgts folder
+    -Log file has instructions, but they're likely very outdated
+-Copy pileup file to here
+    -The pileup file (e.g. pileup_latest.txt) comes from hypernews/the above twiki (also possibly updated on tth gitlab)
+-Get data pileup. This command is found in the twiki. Recently:
+    pileupCalc.py -i <MyAnalysisJSON>.txt --inputLumiJSON pileup_latest.txt  --calcMode true --minBiasXsec 69200 --maxPileupBin 50 --numPileupBins 50  MyDataPileupHistogram.root
+    -Analysis json is the json for all the data ran through crab (likely matches golden json)
+    -We used 75 bins up to maxbin of 75
+    -Output is MyDataPileupHistogram.root file
+-Edit .C file and update MC PU vector
+    -These should be official numbers coming from the central production people
+    -If unable to find it, ask others. I don't know where to find it at the time of writing this
+-Then run pileup reweighting:
+    root -l pileUp_SFs.C'()'
+    -Output is PileUPReweighting.root
+-Update csv_SF (in macros) with location of this new PU reweighting file
+
+
+
+
+
+Update sample information in csv_SF:
+-Get nGen:
+    -Only for MC samples (not data)
+    -Get the bin content of the "All" bin in nEvent of the root tree
+        -One way to do this is:
+            root -l <file>   (or: TFile::Open("<file>")
+            ttHTreeMaker->cd()
+            int(nEvents->GetBinContent(1))
+            -This assumes the TDirectory is named ttHTreeMaker still. Check this yourself
+        -Could also open TBrowser, turn on View->Tooltip Info, hover over hist for "binc"
+            -This doesn't give full integer for large numbers, though
+    -Update this in nGen variables of csv_SF (in macros)
+-Change path to samples (MC and data)
+-Change sampleName to match the a unique prefix string in sample file names (or change the .root file names themselves)
+-xSec only changes when changing CoM energies
+    -Theory calculation
+    -Should be posted on the yellowpage twiki
+
+
+
+
+
+For making new trigger weights:
+csvSF_treeReader_13TeV.C:
+-Comment out trigger weights (L628 block)
+-Run over each lep selection separately
+    -Change L839 to the current sample (a,b,c)
+-Change output filename (L277) (e.g. add "_ee")
+-Turn on inclusiveSelection flag
+    -The following is controlled by the inclusiveSelection flag now:
+        -Change selection to inclusive (L718) (numjet !=2 -> <2  )
+        -Comment if(!tpj) block (L922) (don't do ntag cuts)
+runCSVSF.csh:
+-Only do 0 iteration (L23)
+-Set iter > 3 (L34)
+    -This is so that you only run on data, not MC
+-(Un)Comment input datasets (at top) to match csvSF
+
+-Then run runCSVSF.csh
+    -(Once for each lep selection)
+    -This takes awhile (20ish minutes)
+    -Output is in CSVHistoFiles directory
+
+
+
+
+
+Trigger Weights:
+BtoF:
+0.86995 : 0.998091
+0.884096 : 0.976916
+0.867338
+GH:
+1.0833 : 1.13304
+0.808642 : 0.859617
+0.931729
+
+2016 03Feb:
+0.962157 : 1.08586
+0.939806 : 1.05302
+0.916678
+
+
+
+
+Make plots with checkVar:
+-This produces plots from the root files made from reweighting
+    -Note that the weights are calculated at the end of each iteration, but the plots are made at the beginning of the iteration
+    -So if you want plots with v0 SFs, you need to run the first part of v1 and run checkVar on that
+-Change output directory prefix (L40)
+-Make dirstr point to the directory of files to run on (L103)
+-Change input file suffix for MC and data (e.g. v0 or v3, maybe _ee!) (L106 & L116)
+-Only run on desired data samples (L117 & L172)
+-If running over one of 3 datasets, comment out adding together and just use the desired one (L176-L179)
+-Run with:
+    root -l checkVar.C'(cMVA(0)/csv(1), LF(0)/HF(1), "<suffix>")'
+    -You probably are just doing csv
+    -Run both LF and HF (they can both go to the same output dir)
+        -MuonEG only has HF though!
+    -suffix example: _eeTest
+-You probably made these plots to post them, so use osupostPlots.py (someone will have this)
+    python ~/osupostPlots.py ./<dir>/*<lf/hf>*
+    -Post lf and hf seperately
+    -In text of post, add a printout of the "number of..." block
+        -Use a variable that will have one entry per event (e.g. second_jet_etahf)
+        -There we always be at least 2 jets because of our cuts
+    -Of course change the title of the post, too
+
+
+Add Trigger Weights:
+-In csvSF (L629)
+-There are 5 numbers, for LF/HF in the three lepton categories
+    -Replace numbers with Data/MC ratio
+    -These at the last part of the "number of" blocks I said to post into elog
+    -Again, it's important it comes from a variable with exactly one entry per event
+
+
+
+
+
+After getting all the trigger weights, check that things look good:
+csvSF...:
+-Uncomment trigger weights (L628)
+-Change .root file suffix (L277)
+-Use all samples, so comment out override in L839
+runCSV...:
+-Uncomment all 3 data sets (L11)
+checkVar:
+-Change .root file suffix (L104 & L114)
+-Uncomment all fileData (L115 & L170)
+-Make it uses all 3 added together (L174-L178)
+
+-Then make lf & hf plots and post
+    root -l checkVar.C'(cMVA(0)/csv(1), LF(0)/HF(1), "<suffix>")'
+
+
+
+For CSV:
+(now inclusiveFlag=0) -Change selection (L697) (numjet <2 -> !=2)
+(now inclusiveFlag=0) -Uncomment if(!tpj) block (L897) (do ntag cuts)
+(now inclusiveFlag=0) -Change suffix on root file (histo.root is mandatory) (L266)
+-Do iterations 0,1,2, and set iter < 3 (runCSV)
+-Run over all data (runCSV at top)
+-The way this works is:
+    -Takes data/mc as input
+    -Applies (or doesn't) selection cuts
+    -Applies previous iteration scale factors (so v0 has none)
+    -Calculates scale factors (remember, these aren't applied until next iteration)
+
+
+
+
+Validate CSV scale factors:
+-Validation of CSV SFs is v2 SFs (calculated with selection cuts) applied to inclusive selection
+-Don't do selections cuts (inclusiveSelection==1 flag in csvSF)
+-Only do iteration 3 instead of 0 or 012, but don't hadd (iter < 3 or > 3 works, then) (runCSV L23, 34)
+-Keep the new trigger weights turned on (csvSF L608)
+-Optional: change suffix in csvSF for end of root files.
+-Only run on MC; comment out data (data only has v0) (in runCSV)
+-Then run checkVar
+    -Enable the four "_noSF" plots toward the top for easy before/after comparison
+    -Use v3 inclusive MC files (so after csv SFs), and v0 inclusive data files (after trigger reweight)
+    root -l checkVar.C'(cMVA(0)/csv(1), LF(0)/HF(1), "<suffix>")'
+    -This means v2 selection-calculated SFs aplied to inclusive MC, with inclusive data to compare
+    -Data/MC should be ~1 now, but the CSV reweighting will have altered it a bit
+
+JES Up/Down:
+-If the scale factors look reasonable, no problems, then repeat reweighting with JESUp and JESDown (in runcsv)
+    -Use csv reweighting settings
+    -Use JESUp/JESDown (L21 runCSV)
+    -Change output name so that you don't overwrite nominal JES files (csvSF L277)
+    -Can comment out data in runCSV since there is no JES Up/Down for data, and already made v0 selection files for data
+
+
+
+
+Post plots:
+python ~/osupostPlots.py ./<dir>/*{hf/lf}*
+
+
+
+
+
+Make Final fit scale factors (final_v2):
+-In macros/final_fit*
+    -btag for cMVA (and HF csv now)
+    -csv for csv
+-Change date of output folder
+-Change output filenames
+-Set correction factor flag to false, since this is what we are calculating
+-Run with:
+        root -b -q head13TeV.C final_fitHF_btagSF_13TeV.C+'(0, "cMVA_rwt_hf_all_v2.root","cMVA_rwt_hf_all_v2JESUp.root","cMVA_rwt_hf_all_v2JESDown.root",2)'
+        root -b -q head13TeV.C final_fitLF_btagSF_13TeV.C+'(0, "cMVA_rwt_lf_all_v2.root","cMVA_rwt_lf_all_v2JESUp.root","cMVA_rwt_lf_all_v2JESDown.root",2)'
+        root -b -q head13TeV.C final_fitHF_csvSF_13TeV.C+'("csv_rwt_hf_all_v2.root","csv_rwt_hf_all_v2JESUp.root","csv_rwt_hf_all_v2JESDown.root",2,"test")'
+        root -b -q head13TeV.C final_fitLF_csvSF_13TeV.C+'("csv_rwt_lf_all_v2.root","csv_rwt_lf_all_v2JESUp.root","csv_rwt_lf_all_v2JESDown.root",2,"test")'
+
+-This calculates uncertainties for the SFs
+-For tests, it's probably much faster to ignore running the JESUp/Down and just using the nominal JES at each inputs
+
+root -b -q head13TeV.C final_fitHF_csvSF_13TeV.C+'("csv_rwt_hf_all_v2.root","csv_rwt_hf_all_v2JESFlavorQCDup.root","csv_rwt_hf_all_v2JESFlavorQCDdown.root",2,"")'
+
+root -b -q head13TeV.C final_fitLF_csvSF_13TeV.C+'("csv_rwt_lf_all_v2.root","csv_rwt_lf_all_v2JESFlavorQCDup.root","csv_rwt_lf_all_v2JESFlavorQCDdown.root",2,"")'
+
+
+
+
+
+
+
+Fix Normalization:
+-On LPC, use nobackup directory or else you might get seg faults like I do
+-Migrate *final*.root files to LPC in TriggerRun2/TriggerAnalyzer/Data
+-In TriggerRun2/TriggerAnalyzer/macros:
+    -Edit csv_normFix_treeReader.C
+        -Change input file names to match what you just moved over
+        -Remember different for csv and cmva
+        -Change ttbar directory/files ("inputDirs") to files made from TriggerRun2 when other samples were made
+            -This requires keeping the "//" before 'store'!
+    -Run a test job to compile and check that things work (from TriggerAnalyzer):
+        root -b -q macros/head.C macros/csv_normFix_treeReader.C+'(2500, 50000)'
+    -Run batch jobs to make normalization corrections and final uncertainties (from macros):
+        -Change working directory to yours
+        -Change input file names to match what was moved over (and what's in csv_normfix)
+        -If this errors out right away, you maybe forgot to cmsenv
+        -scram
+        -Run with:
+            perl condor_ttHbb_data2mc_treeReader.pl
+    -When they finish, hadd together, e.g.:
+        hadd -f <era>_round<round>_ttHbb_data2mc_treeReader_ttbar_powheg_histo.root ttHbb*root
+    -Get correction factors printout with:
+        root -l -q dump_CSV_correction_factors.C'("<era>_round<round>_ttHbb_data2mc_treeReader_ttbar_powheg_histo.root")'
+        root -l -q dump_CMVA_correction_factors.C'("<era>_round<round>_ttHbb_data2mc_treeReader_ttbar_powheg_histo.root")'
+        -Obviously change name if yours is different
+-Then, copy those correction factors back into *final_fit* scripts on lxplus
+
+
+-Turn correction factors flags on and run through everything (final_fit onward) again
+    -This is to get the charm SFs
+-Add charm SFs to *final_fit*.C scripts and run them one more time to get the final SFs
+    -You can run once more on LPC to check check that charm SFs are correct
+-Also make full .csv files for BTV group:
+    cat head_ttH_BTV_CSVv2_13TeV.csv *csvSF* > ttH_BTV_CSVv2_13TeV_2016BtoF_2017_2_2.csv
+    cat head_ttH_BTV_cMVAv2_13TeV.csv *cmvaSF* > ttH_BTV_cMVAv2_13TeV_2016BtoF_2017_2_2.csv
+-Now you can save backups: .C files, the 4 .root files, the BTV folder, and Images folder
+
+
+
+
+
+When ready to start a new run of CSV weights:
+-Move .root files in CSV.../
+-Move .root files in data/
+-Move .root files, .txt, and images folders in macros/
+-Move around the correct data sets in the /data/ directory
