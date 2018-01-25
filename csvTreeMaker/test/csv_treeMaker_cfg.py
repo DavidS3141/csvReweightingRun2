@@ -8,7 +8,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8' ## '80X_mcRun2_asymptotic_2016_miniAODv2_v1'  ##MC
+process.GlobalTag.globaltag = '94X_mc2017_realistic_v10' ## '80X_mcRun2_asymptotic_2016_TrancheIV_v8' ## '80X_mcRun2_asymptotic_2016_miniAODv2_v1'  ##MC
 
 # Load the producer for MVA IDs. Make sure it is also added to the sequence!
 #process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
@@ -63,10 +63,9 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
+        '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/0E935780-64F2-E711-83A9-B083FED406AC.root',
 #        '/store/mc/RunIISummer16MiniAODv2/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/0030B9D6-72C1-E611-AE49-02163E00E602.root'
-        '/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/120000/02A210D6-F5C3-E611-B570-008CFA197BD4.root',
-        '/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/120000/0EA60289-18C4-E611-8A8F-008CFA110AB4.root',
-        '/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/120000/101D622A-85C4-E611-A7C2-C4346BC80410.root'
+#        '/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/120000/02A210D6-F5C3-E611-B570-008CFA197BD4.root',
 #        '/store/mc/RunIISpring16MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/60000/0005201C-D41B-E611-8E37-002481E0D398.root'
 #        '/store/mc/RunIISpring16MiniAODv1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/08F114C5-7A01-E611-B29D-0002C94D54FA.root'
 #        '/store/mc/RunIISpring16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/00000/0251DBB7-201B-E611-8653-0CC47A4F1C2E.root'
@@ -82,12 +81,12 @@ process.source = cms.Source("PoolSource",
 process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
 #    inSample = cms.int32(2500),##
 #    sampleName = cms.string("TTJets"),##
-    inSample = cms.int32(2300),##
-    sampleName = cms.string("ZJets"),##
+#    inSample = cms.int32(2300),##
+#    sampleName = cms.string("ZJets"),##
 #    inSample = cms.int32(2310),##
 #    sampleName = cms.string("LowMassZJets"),##
-#    inSample = cms.int32(2514),##
-#    sampleName = cms.string("singletW"),##
+    inSample = cms.int32(2514),##
+    sampleName = cms.string("singletW"),##
 #    inSample = cms.int32(2515),##
 #    sampleName = cms.string("singletbarW"),##
 #    inSample = cms.int32(2600),##

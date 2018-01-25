@@ -28,7 +28,7 @@ typedef std::vector< TLorentzVector > vecTLorentzVector;
 // Utility Class for Handling Event Variables
 //
 
-const Int_t rNumSys = 25;
+const Int_t rNumSys = 3; //25;
 
 struct EventVars{
 
@@ -52,9 +52,9 @@ struct EventVars{
   Int_t  PassZmask_;
   Int_t  PassZmaskMET_;
 
-  int passDoubleElectronTrigger_;
+  /* int passDoubleElectronTrigger_; */
   int passDoubleMuonTrigger_;
-  int passElectronMuonTrigger_;
+  /* int passElectronMuonTrigger_; */
 
   int passDoubleElectronTriggerNew_;
   int passDoubleMuonTriggerNew_;
@@ -146,9 +146,9 @@ void EventVars::initialize(){
   PassZmask_ = -99;
   PassZmaskMET_ = -99;
   
-  passDoubleElectronTrigger_ = -99;
+  /* passDoubleElectronTrigger_ = -99; */
   passDoubleMuonTrigger_     = -99;
-  passElectronMuonTrigger_   = -99;
+  /* passElectronMuonTrigger_   = -99; */
 
   passDoubleElectronTriggerNew_ = -99;
   passDoubleMuonTriggerNew_     = -99;

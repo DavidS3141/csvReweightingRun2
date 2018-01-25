@@ -366,9 +366,9 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<edm::TriggerResults> triggerResults;
   iEvent.getByToken(triggerResultsToken, triggerResults);
 
-  bool passDoubleElectronTrigger = false;
+  // bool passDoubleElectronTrigger = false;
   bool passDoubleMuonTrigger = false;
-  bool passElectronMuonTrigger = false;
+  // bool passElectronMuonTrigger = false;
 
   bool passDoubleElectronTriggerNew = false;
   bool passDoubleMuonTriggerNew = false;
@@ -391,24 +391,22 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       // triggerAcceps.push_back(accept);
 
       if( accept ){
-	if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passDoubleElectronTrigger = true;
+	// if( pathName.find("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passDoubleElectronTrigger = true;
 
-	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") !=std::string::npos ) passDoubleMuonTrigger = true;
+	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") !=std::string::npos ) passDoubleMuonTrigger = true;
 
-	if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ) passElectronMuonTrigger = true;
+	// if( pathName.find("HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
+	//     pathName.find("HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ) passElectronMuonTrigger = true;
 
 	///1E34 menu
-	if( pathName.find("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passDoubleElectronTriggerNew = true;
+	if( pathName.find("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ||
+	    pathName.find("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ) passDoubleElectronTriggerNew = true;
 
-	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v") !=std::string::npos ) passDoubleMuonTriggerNew = true;
+	if( pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v") !=std::string::npos ) passDoubleMuonTriggerNew = true;
 
 	if( pathName.find("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
-	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v") !=std::string::npos ||
+	    pathName.find("HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ||
 	    pathName.find("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ||
 	    pathName.find("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v") !=std::string::npos ) passElectronMuonTriggerNew = true;
 	
@@ -418,9 +416,9 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // eve->TriggerPaths_ = triggerPaths;
   // eve->TriggerAcceps_ = triggerAcceps;
-  eve->passDoubleElectronTrigger_ = ( passDoubleElectronTrigger ) ? 1 : 0;
+  // eve->passDoubleElectronTrigger_ = ( passDoubleElectronTrigger ) ? 1 : 0;
   eve->passDoubleMuonTrigger_     = ( passDoubleMuonTrigger ) ? 1 : 0;
-  eve->passElectronMuonTrigger_   = ( passElectronMuonTrigger ) ? 1 : 0;
+  // eve->passElectronMuonTrigger_   = ( passElectronMuonTrigger ) ? 1 : 0;
 
   eve->passDoubleElectronTriggerNew_ = ( passDoubleElectronTriggerNew ) ? 1 : 0;
   eve->passDoubleMuonTriggerNew_     = ( passDoubleMuonTriggerNew ) ? 1 : 0;
@@ -722,8 +720,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::vector<pat::Jet> unCorrectedJets = miniAODhelper.GetUncorrectedJets(pfJets_ID_clean);
   std::vector<pat::Jet> correctedJets_noSys = miniAODhelper.GetCorrectedJets(unCorrectedJets, iEvent, iSetup, genjetCollection);
   /// jet pt threshold, 20GeV for now
-  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 2.4, jetID::none, '-' );
-  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 2.4, jetID::none, 'M' );
+  std::vector<pat::Jet> selectedJets_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 2.5, jetID::none, '-' );
+  std::vector<pat::Jet> selectedJets_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 2.5, jetID::none, 'M' );
 
   // std::vector<pat::Jet> selectedJets_loose_noSys_unsorted = miniAODhelper.GetSelectedJets(correctedJets_noSys, 20., 3.0, jetID::none, '-' );
   // std::vector<pat::Jet> selectedJets_loose_tag_noSys_unsorted = miniAODhelper.GetSelectedJets( correctedJets_noSys, 20., 3.0, jetID::none, 'M' );
@@ -802,8 +800,8 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ////////
 
     std::vector<pat::Jet> correctedJets = ( iSys==0 ) ? correctedJets_noSys : miniAODhelper.GetCorrectedJets(unCorrectedJets, iEvent, iSetup, genjetCollection, iSysType);
-    std::vector<pat::Jet> selectedJets_unsorted = ( iSys==0 ) ? selectedJets_noSys_unsorted : miniAODhelper.GetSelectedJets(correctedJets, 20., 2.4, jetID::none, '-' );
-    std::vector<pat::Jet> selectedJets_tag_unsorted = ( iSys==0 ) ? selectedJets_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 2.4, jetID::none, 'M' );
+    std::vector<pat::Jet> selectedJets_unsorted = ( iSys==0 ) ? selectedJets_noSys_unsorted : miniAODhelper.GetSelectedJets(correctedJets, 20., 2.5, jetID::none, '-' );
+    std::vector<pat::Jet> selectedJets_tag_unsorted = ( iSys==0 ) ? selectedJets_tag_noSys_unsorted : miniAODhelper.GetSelectedJets( correctedJets, 20., 2.5, jetID::none, 'M' );
 
     // Sort jet collections by pT
     std::vector<pat::Jet> selectedJets       = miniAODhelper.GetSortedByPt( selectedJets_unsorted );
@@ -863,11 +861,11 @@ csvTreeMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       mht_py += - iJet->py();
 
       //      double myCSV = miniAODhelper.GetJetCSV(*iJet, "pfCombinedInclusiveSecondaryVertexV2BJetTags");
-      double myCSV = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+      double myCSV = iJet->bDiscriminator("pfDeepCSVJetTags:probb") + iJet->bDiscriminator("pfDeepCSVJetTags:probbb");
       csvV.push_back(myCSV);
 
       //      double mycMVA = miniAODhelper.GetJetCSV(*iJet, "pfCombinedMVABJetTags");
-      double mycMVA = iJet->bDiscriminator("pfCombinedMVAV2BJetTags");
+      double mycMVA = iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
       cMVAV.push_back(mycMVA);
     
       //PU jet ID

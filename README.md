@@ -2,21 +2,18 @@
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
-setenv SCRAM_ARCH slc6_amd64_gcc530
+setenv SCRAM_ARCH slc6_amd64_gcc630
 
-cmsrel CMSSW_8_0_26_patch1
+cmsrel CMSSW_9_4_0
 
-cd CMSSW_8_0_26_patch1/src/
+cd CMSSW_9_4_0/src/
 
 cmsenv
 
-git cms-merge-topic ikrav:egm_id_80X_v2
 
-scram b -j 10 
+git clone https://github.com/lwming/MiniAOD.git -b Moriond18_btagSFs
 
-git clone https://github.com/lwming/MiniAOD.git -b Moriond17_EleID_JER
-
-git clone https://github.com/cms-ttH/csvReweightingRun2.git
+git clone https://github.com/cms-ttH/csvReweightingRun2.git -b Moriond18_CMSSW9XY
 
 git clone https://github.com/cms-ttH/TriggerRun2.git -b csvSF_correction
 

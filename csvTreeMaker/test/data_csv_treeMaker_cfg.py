@@ -8,7 +8,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 #### caution: use the correct global tag for MC or Data 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7' ## '80X_dataRun2_Prompt_ICHEP16JEC_v0'  ##Data
+process.GlobalTag.globaltag =  '94X_dataRun2_ReReco_EOY17_v2'## '80X_dataRun2_2016SeptRepro_v7' ## '80X_dataRun2_Prompt_ICHEP16JEC_v0'  ##Data
 
 # Load the producer for MVA IDs. Make sure it is also added to the sequence!
 #process.load("RecoEgamma.ElectronIdentification.ElectronMVAValueMapProducer_cfi")
@@ -66,11 +66,15 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/0005AD9F-64ED-E611-A952-0CC47A78A42C.root',
-        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/00415FAC-B5EC-E611-A1C9-00266CF3E130.root',
-        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/00763EB4-7FED-E611-AE1F-0CC47A7FC74A.root',
-        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/009E15D2-E0EC-E611-B01B-0025904B5F8C.root',
-        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/00A0D9E5-0BED-E611-A89F-0CC47A7E6A4C.root'
+        '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/009DC3A2-A7DE-E711-99F7-02163E013717.root',
+        '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/00FB06B4-0DDF-E711-9291-02163E012A3F.root',
+        '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/029276DB-60DE-E711-B66E-001E67792650.root',
+
+#        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/0005AD9F-64ED-E611-A952-0CC47A78A42C.root',
+#        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/00415FAC-B5EC-E611-A1C9-00266CF3E130.root',
+#        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/00763EB4-7FED-E611-AE1F-0CC47A7FC74A.root',
+#        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/009E15D2-E0EC-E611-B01B-0025904B5F8C.root',
+#        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/00A0D9E5-0BED-E611-A89F-0CC47A7E6A4C.root'
 #        '/store/data/Run2016B/MuonEG/MINIAOD/23Sep2016-v3/00000/0EB8059C-1699-E611-9E17-0090FAA581F4.root'
 #        '/store/data/Run2015D/MuonEG/MINIAOD/05Oct2015-v2/60000/106398EB-C173-E511-8746-0025905A60B0.root'
 #        '/store/data/Run2016B/MuonEG/MINIAOD/PromptReco-v2/000/273/158/00000/A2E8DB05-371A-E611-9B55-02163E01413C.root'
