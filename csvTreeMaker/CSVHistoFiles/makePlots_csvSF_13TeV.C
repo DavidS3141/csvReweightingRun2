@@ -32,7 +32,7 @@
 void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = true, bool isCSV = true, TString dirPostFix = "", bool compareIterations = false ) {
   compareIterations = true;
 
-  TString taggerName = "CSVv2";
+  TString taggerName = "DeepCSV";
   if(!isCSV) taggerName = "cMVAv2";
 
   TH1::SetDefaultSumw2();
@@ -40,7 +40,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TFile *histFile = TFile::Open(inputFileName);
 
   if( compareIterations ) dirPostFix = dirPostFix + "Comparison";
-  TString dirprefix = taggerName +"_SFPlots_2017_3_30_13TeV" + dirPostFix + "/";
+  TString dirprefix = taggerName +"_SFPlots_2018_1_31_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -89,7 +89,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   ///
   // TString lumiinfo = "36.8 fb^{-1} (13 TeV, 25ns)";
   // TLatex LumiInfoLatex(0.65, 0.93, lumiinfo);
-  TString lumiinfo = "36 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
+  TString lumiinfo = "41.86 fb^{-1}, #sqrt{s} = 13 TeV, 2017";
   TLatex LumiInfoLatex(0.62, 0.93, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -372,9 +372,9 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
     }
       if( compareIterations ){
-	TFile *fitFile_iter0 = TFile::Open("../macros/csv_rwt_fit_" + flavor_file + "_v2_final_2017_3_15alt.root");
-	TFile *fitFile_iter1 = TFile::Open("../macros/csv_rwt_fit_" + flavor_file + "_v2_final_2017_3_15default.root");
-	TFile *fitFile_iter2 = TFile::Open("../macros/csv_rwt_fit_" + flavor_file + "_v2_final_2017_3_29test.root");
+	TFile *fitFile_iter0 = TFile::Open("../macros/dir_CSV/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter1 = TFile::Open("../macros/dir_runCtoE/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter2 = TFile::Open("../macros/dir_runEtoF/csv_rwt_fit_" + flavor_file + "_v2.root");
 
 	// TFile *fitFile_iter0 = TFile::Open("../data/csv_rwt_fit_" + flavor_file + "_v2.root");
 	// TFile *fitFile_iter1 = TFile::Open("../macros/BCDF/csv_rwt_fit_" + flavor_file + "_v2.root");
@@ -468,15 +468,15 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	h_fit_iter0->SetStats(0);
 	h_fit_iter0->GetYaxis()->SetRangeUser(0.,2.);
-	h_fit_iter0->GetXaxis()->SetRangeUser(-0.04,0.9535); /// change HF range
-	if(isHF) h_fit_iter0->GetXaxis()->SetRangeUser(0.5426,1.01); /// change HF range
+	h_fit_iter0->GetXaxis()->SetRangeUser(-0.04,0.5); /// change HF range
+	if(isHF) h_fit_iter0->GetXaxis()->SetRangeUser(-0.04,1.01); /// change HF range
 
 	h_fit_iter0->SetTitle(";"+taggerName+";Data/MC SF");
 
 	h_fit_iter0->Draw("hist");
 	h_iter0->Draw("pe1same");
-	// h_fit_iter1->Draw("histsame");
-	// h_iter1->Draw("pe1same");
+	h_fit_iter1->Draw("histsame");
+	h_iter1->Draw("pe1same");
 	h_fit_iter2->Draw("histsame");
 	h_iter2->Draw("pe1same");
 
@@ -506,10 +506,10 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	legend_iter->SetNColumns(3);
 
-	legend_iter->AddEntry(h_iter0,"alt","f");
+	legend_iter->AddEntry(h_iter0,"incl","f");
 	// legend_iter->AddEntry(h_iter1_tmp,"lumi weighted","f");
-	// legend_iter->AddEntry(h_iter1,"default","f");
-	legend_iter->AddEntry(h_iter2,"test","f");
+	legend_iter->AddEntry(h_iter1,"CtoE","f");
+	legend_iter->AddEntry(h_iter2,"EtoF","f");
 
 	// legend_iter->AddEntry(h_iter0,"Iter0","f");
 	// legend_iter->AddEntry(h_iter1,"Iter1","f");

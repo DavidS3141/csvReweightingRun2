@@ -37,7 +37,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "17thJan_varImages_" + BTagger + dirPostFix + "/";
+  TString dirprefix = "31thJan_varImages_" + BTagger + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -56,10 +56,10 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   var_list.push_back("nTags");
   var_list.push_back("all_jet_csv");
 
-   var_list.push_back("probe_jet_csv_noSF");
-   var_list.push_back("nJets_noSF");
-   var_list.push_back("nTags_noSF");
-   var_list.push_back("all_jet_csv_noSF");
+   // var_list.push_back("probe_jet_csv_noSF");
+   // var_list.push_back("nJets_noSF");
+   // var_list.push_back("nTags_noSF");
+   // var_list.push_back("all_jet_csv_noSF");
 
   // // var_list.push_back("nJets30");
   // // var_list.push_back("nJets30_noSF");
@@ -100,13 +100,13 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   // c1->SetRightMargin(0.08);
 
 
-  TString dirStr = "dil_category_files/";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
+  TString dirStr = "";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
   TString flavor_file = (isHF) ? "hf" : "lf"; 
   flavor_file.ToLower();
-  TString end_str = "_v3_histo_All.root"; //// file name change
+  TString end_str = "_v0_histo_All.root"; //// file name change
   TFile *fileTTJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_ttjets" + end_str);
   TFile *fileZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_zjets" + end_str);  //// AMC or MLM
-  // TFile *filelowMassZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_lowMasszjets" + end_str);
+  TFile *filelowMassZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_lowMasszjets" + end_str);
 
   TFile *filetW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_singletW" + end_str);
   TFile *filetbarW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_singletbarW" + end_str);
@@ -152,9 +152,8 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   int nBins = h_var_ttjets->GetNbinsX();
   double norm_ttjets = h_var_ttjets->Integral( 0, 1+nBins );
 
-  // TH1D* h_var_lowMasszjets = (TH1D*)filelowMassZJets->Get(h_var_Name.Data())->Clone(h_var_Name+"_lowMasszjets");
-  // double norm_lowMasszjets = h_var_lowMasszjets->Integral( 0, 1+nBins );
-  double norm_lowMasszjets = 0;
+  TH1D* h_var_lowMasszjets = (TH1D*)filelowMassZJets->Get(h_var_Name.Data())->Clone(h_var_Name+"_lowMasszjets");
+  double norm_lowMasszjets = h_var_lowMasszjets->Integral( 0, 1+nBins );
 
   TH1D* h_var_zjets = (TH1D*)fileZJets->Get(h_var_Name.Data())->Clone(h_var_Name+"_zjets");
   double norm_zjets = h_var_zjets->Integral( 0, 1+nBins );
@@ -202,7 +201,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
     h_var_data->Rebin(4);
     h_var_ttjets->Rebin(4);
     h_var_zjets->Rebin(4);
-    // h_var_lowMasszjets->Rebin(4);
+    h_var_lowMasszjets->Rebin(4);
     h_var_tW->Rebin(4);
     h_var_WW->Rebin(4);
 
@@ -210,7 +209,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
       h_var_data->Rebin(2);
       h_var_ttjets->Rebin(2);
       h_var_zjets->Rebin(2);
-      // h_var_lowMasszjets->Rebin(2);
+      h_var_lowMasszjets->Rebin(2);
       h_var_tW->Rebin(2);
       h_var_WW->Rebin(2);
     }
@@ -221,20 +220,20 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   
   h_var_ttjets->SetFillColor(kRed);
   h_var_zjets->SetFillColor(kGreen+3);
-  // h_var_lowMasszjets->SetFillColor(kGreen-3);
+  h_var_lowMasszjets->SetFillColor(kGreen-3);
   h_var_tW->SetFillColor(kPink+1);
   h_var_WW->SetFillColor(kBlue+1);
   
   h_var_ttjets->SetLineColor(kRed);
   h_var_zjets->SetLineColor(kGreen+3);
-  // h_var_lowMasszjets->SetLineColor(kGreen-3);
+  h_var_lowMasszjets->SetLineColor(kGreen-3);
   h_var_tW->SetLineColor(kPink+1);
   h_var_WW->SetLineColor(kBlue+1);
   
   h_var_data->SetLineWidth(2);
   h_var_ttjets->SetLineWidth(2);
   h_var_zjets->SetLineWidth(2);
-  // h_var_lowMasszjets->SetLineWidth(2);
+  h_var_lowMasszjets->SetLineWidth(2);
   h_var_tW->SetLineWidth(2);
   h_var_WW->SetLineWidth(2);
 
@@ -242,14 +241,14 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   THStack *hs = new THStack("hs","");
   hs->Add(h_var_ttjets);
   hs->Add(h_var_zjets);
-  // hs->Add(h_var_lowMasszjets);
+  hs->Add(h_var_lowMasszjets);
   hs->Add(h_var_tW);
   hs->Add(h_var_WW);
 
   
   TH1D* h_var_mc = (TH1D*)h_var_ttjets->Clone(h_var_Name+"_mc");
   h_var_mc->Add(h_var_zjets);
-  // h_var_mc->Add(h_var_lowMasszjets);
+  h_var_mc->Add(h_var_lowMasszjets);
   h_var_mc->Add(h_var_tW);
   h_var_mc->Add(h_var_WW);
 
@@ -269,7 +268,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   
   legend->AddEntry(h_var_ttjets,"ttjets","f");
   legend->AddEntry(h_var_zjets,"zjets","f");
-  // legend->AddEntry(h_var_lowMasszjets,"lowM zjets","f");
+  legend->AddEntry(h_var_lowMasszjets,"lowM zjets","f");
   legend->AddEntry(h_var_tW,"tW","f");
   legend->AddEntry(h_var_WW,"WW","f");
 

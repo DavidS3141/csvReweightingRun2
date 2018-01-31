@@ -68,9 +68,18 @@ TH1D* h_csv_wgt_lf[9][4][3];
 
 //*****************************************************************************
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900 //35867
+// 2017 total lumi = 41860, B = 4764, CtoE = 22005, EtoF = 15187,
 void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 41860) {
   /// inclusive Selection or not
-  bool inclusiveSelection = true;//false;
+  bool inclusiveSelection = !true;//false;
+
+  //// speicify the runEras
+  string runEra = "full"; // blank means full data, "B", "CtoE", "EtoF"
+  if(runEra == "B") intLumi = 4764;
+  if(runEra == "CtoE") intLumi = 22005;
+  if(runEra == "EtoF") intLumi = 15187;
+  std::cout << "Using data of Run "<< runEra << "; total lumi is "<< intLumi << << std::endl;
+  std::cout << "======== make sure you are using the corresponding datafiles for different run Eras ========" << std::endl;
 
   /// using MuonEG events only for HF?
   bool emuOnlyHF = !true;
@@ -194,14 +203,14 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   }
   else if( insample==2300 ){
     mySample_xSec_ = 3*2008.4;//*1.3; // SF = 1.15 for DY
-    mySample_nGen_ = 18181997; //96658928; //49144252;//19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
+    mySample_nGen_ = 85121526; //18181997; //96658928; //49144252;//19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
   else if( insample==2310 ){
     mySample_xSec_ = 18610;//*1.3;//correctMe
-    mySample_nGen_ = 35291552; //35256264; //35079800;//Spring16 //22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
+    mySample_nGen_ = 21006092; //35291552; //35256264; //35079800;//Spring16 //22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
     mySample_sampleName_ = "lowMasszjets";
     mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
   }
@@ -621,6 +630,15 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     // }
 
+    // Divide run E from run 304671
+    if(runEra == "CtoE") {
+      if( insample < 0 && eve->run_ > 304671 ) continue;
+    }
+    if(runEra == "EtoF") {
+      if( insample < 0 && eve->run_ <= 304671 ) continue;
+    }
+
+
     //skipping runs/lumis for data
     if(doSkip && insample < 0){
       int runNumber = eve->run_;
@@ -654,9 +672,9 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
 
     double triggerWgt = 1;
     if(insample >= 0){
-      if(TwoMuon)           triggerWgt = (isHF) ? 0.938895 : 0.878761; // 0.962157 : 1.08586; //0.981907 : 1.06953; //0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
-      else if(TwoElectron)  triggerWgt = (isHF) ? 0.847295 : 0.78991; // 0.939806 : 1.05302; //0.982675 : 0.93381; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
-      else if(MuonElectron) triggerWgt = 0.887031; //0.916678; //0.905494; //0.517857;//0.67727; //0.7948;
+      if(TwoMuon)           triggerWgt = (isHF) ? 0.983314 : 0.881084; //0.938895 : 0.878761; // 0.962157 : 1.08586; //0.981907 : 1.06953; //0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
+      else if(TwoElectron)  triggerWgt = (isHF) ? 0.882536 : 0.791254; //0.847295 : 0.78991; // 0.939806 : 1.05302; //0.982675 : 0.93381; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
+      else if(MuonElectron) triggerWgt = 0.901382; //0.887031; //0.916678; //0.905494; //0.517857;//0.67727; //0.7948;
 
       if(!rmPUJet){
     	if(TwoMuon)           triggerWgt = (isHF) ? 0.965642 : 1.06555; //0.7277 : 0.8035; ///
@@ -888,7 +906,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     bool isCleanEvent = 1;
     bool firstGoodPV = eve->GoodFirstPV_;
     bool exselection = ((firstGoodPV) && (dR_leplep > 0.2) && (mass_leplep > 12) && (isCleanEvent == 1) && (oppositeLepCharge == 1)); //General dilepton selection   
-    if( inclusiveSelection )  exselection = ((firstGoodPV) && (dR_leplep > 0.2) && (mass_leplep > 50) && (isCleanEvent == 1) && (oppositeLepCharge == 1)); 
+    // if( inclusiveSelection )  exselection = ((firstGoodPV) && (dR_leplep > 0.2) && (mass_leplep > 50) && (isCleanEvent == 1) && (oppositeLepCharge == 1)); 
 
 
     // trigger

@@ -20,11 +20,10 @@ set postFix = "" ### change
 ## Iterations (three seems to be sufficent)
 foreach jes ( "" )#"JESUp" "JESDown") 
     echo "----->start running for $jes ----------="
-    foreach iter ( 0 )#1 2 )#3 )
+    foreach iter ( 0 1 2 )#3 )
 	echo "   ----->start iteration version $iter ----------="
 
-	foreach sample( 2500 2300 2514 2515 2600 )# 
-#	foreach sample( 2500 2300 2310 2514 2515 2600 )# 
+	foreach sample( 2500 2300 2310 2514 2515 2600 )# 
 #	foreach sample( 2300 2310  )# 
 
 	    root -b -q macros/head13TeV.C macros/csvSF_treeReader_13TeV.C+'('$isCSV', 1, '$iter', "'$jes'", '$sample')'

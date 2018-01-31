@@ -233,7 +233,7 @@ csvTreeMaker::csvTreeMaker(const edm::ParameterSet& iConfig):
   h_nEvents->GetXaxis()->SetBinLabel(2,"Pos");
   h_nEvents->GetXaxis()->SetBinLabel(3,"Neg");
 
-  h_numPV = fs_->make<TH1F>("numPVs", "numPVs", 50, 0, 50);
+  h_numPV = fs_->make<TH1F>("numPVs", "numPVs", 100, 0, 100);
 
   nevents=0;
   nevents_wgt=0;
