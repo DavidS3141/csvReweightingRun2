@@ -78,9 +78,10 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   if(runEra == "B") intLumi = 4764;
   if(runEra == "CtoE") intLumi = 22005;
   if(runEra == "EtoF") intLumi = 15187;
-  std::cout << "Using data of Run "<< runEra << "; total lumi is "<< intLumi << << std::endl;
-  std::cout << "======== make sure you are using the corresponding datafiles for different run Eras ========" << std::endl;
-
+  if( insample < 0 ){
+    std::cout << "Using data of Run "<< runEra << "; total lumi is "<< intLumi << std::endl;
+    std::cout << "======== make sure you are using the corresponding datafiles for different run Eras ========" << std::endl;
+  }
   /// using MuonEG events only for HF?
   bool emuOnlyHF = !true;
 

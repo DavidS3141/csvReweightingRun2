@@ -114,12 +114,12 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
                               TString inputFileName_JESDown  = "infile.root", 
                               int iterNum=0,
                               TString dirPostFix = "",
-                              bool includeCorrectionFactor = !false,
-                              bool includeCharmCorrectionFactor = !false){
+                              bool includeCorrectionFactor = false,
+                              bool includeCharmCorrectionFactor = false){
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2017_3_22_fitHF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2018_2_1_fitHF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -134,7 +134,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   bool verbose = false;
   bool makePlots = true;
 
-  std::string histofilename = Form("csv_rwt_fit_hf_v%d_final_2017_3_22" + dirPostFix + ".root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_hf_v%d_final_2018_2_1" + dirPostFix + ".root",iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -142,7 +142,7 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   // TString lumiinfo = "36.8 fb^{-1} (13 TeV, 25 ns)";
   // TLatex LumiInfoLatex(0.67, 0.91, lumiinfo);
-  TString lumiinfo = "36 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
+  TString lumiinfo = "41.86 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
   TLatex LumiInfoLatex(0.65, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -191,10 +191,15 @@ void final_fitHF_csvSF_13TeV( TString inputFileName  = "infile.root",
   // double csvbins_new[] = {-0.04, 0.0, 0.24, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.827, 0.854, 0.881, 0.908, 0.935, 0.948, 0.961, 0.974, 0.987, 1.01};
 
   /// ---------13TeV 2017 Moriond
-  int ncsvbins = 18;
-  double csvbins[] = {-10.0, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
-  double csvbins_new[] = {-0.04, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
+  // int ncsvbins = 18;
+  // double csvbins[] = {-10.0, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
+  // double csvbins_new[] = {-0.04, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
 
+
+  /// ---------13TeV 2018 Moriond
+  int ncsvbins = 17;
+  double csvbins[] = {-2.01, 0.0, 0.1522, 0.2205, 0.2889, 0.3573, 0.4257, 0.4941, 0.5553, 0.6165, 0.6777, 0.7389, 0.8001, 0.842, 0.884, 0.926, 0.968, 1.01};
+  double csvbins_new[] = {-0.04, 0.0, 0.1522, 0.2205, 0.2889, 0.3573, 0.4257, 0.4941, 0.5553, 0.6165, 0.6777, 0.7389, 0.8001, 0.842, 0.884, 0.926, 0.968, 1.01};
 
   std::vector<TString> bin_name;
   std::vector<TString> hist_name;

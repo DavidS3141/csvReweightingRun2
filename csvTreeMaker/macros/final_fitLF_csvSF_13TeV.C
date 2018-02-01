@@ -33,11 +33,11 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
                               TString inputFileName_JESDown  = "infile.root", 
                               int iterNum=0,
                               TString dirPostFix = "",
-                              bool includeCorrectionFactor = !false ){
+                              bool includeCorrectionFactor = false ){
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images/Images_2017_3_22_fitLF_csvSF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2018_2_1_fitLF_csvSF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -50,7 +50,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   std::cout << " ###===> iteration version " << iterNum << std::endl;
 
 
-  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2017_3_22" + dirPostFix + ".root",iterNum) ;
+  std::string histofilename = Form("csv_rwt_fit_lf_v%d_final_2018_2_1" + dirPostFix + ".root",iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -58,7 +58,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   // TString lumiinfo = "36.8 fb^{-1} (13 TeV, 25 ns)";
   // TLatex LumiInfoLatex(0.67, 0.91, lumiinfo);
-  TString lumiinfo = "36 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
+  TString lumiinfo = "41.86 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
   TLatex LumiInfoLatex(0.65, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -108,9 +108,15 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
   // double csvbins_new[] = {-0.04, 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.460, 0.528, 0.596, 0.664, 0.732, 0.800, 0.845, 0.890, 0.935, 0.968, 1.01};
 
   ///////// ----- 2017 Moriond
-  int ncsvbins = 17;
-  double csvbins[] = {-10.0, 0.0, 0.0904, 0.1808, 0.2712, 0.3616, 0.452, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8834, 0.9184, 0.9535, 0.9818, 1.01};
-  double csvbins_new[] = {-0.04, 0.0, 0.0904, 0.1808, 0.2712, 0.3616, 0.452, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8834, 0.9184, 0.9535, 0.9818, 1.01};
+  // int ncsvbins = 17;
+  // double csvbins[] = {-10.0, 0.0, 0.0904, 0.1808, 0.2712, 0.3616, 0.452, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8834, 0.9184, 0.9535, 0.9818, 1.01};
+  // double csvbins_new[] = {-0.04, 0.0, 0.0904, 0.1808, 0.2712, 0.3616, 0.452, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8834, 0.9184, 0.9535, 0.9818, 1.01};
+
+  ///////// ----- 2018 Moriond
+  int ncsvbins = 13;
+  double csvbins[] = {-2.01, 0.0, 0.0254, 0.0508, 0.0762, 0.1016, 0.127, 0.1522, 0.2205, 0.2889, 0.3573, 0.4257, 0.4941, 1.01};
+  double csvbins_new[] = {-0.04, 0.0, 0.0254, 0.0508, 0.0762, 0.1016, 0.127, 0.1522, 0.2205, 0.2889, 0.3573, 0.4257, 0.4941, 1.01};
+
 
   std::vector<TString> bin_name;
   std::vector<TString> hist_name;
@@ -482,7 +488,8 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
   //// pol6
   //TF1* f0 = new TF1("f0","[0] + [1]*x + [2]*x*x + [3]*x*x*x + [4]*x*x*x*x + [5]*x*x*x*x*x + [6]*x*x*x*x*x*x",0,0.95 );
-  TF1* f0 = new TF1("f0","[0] + x*([1] + x*([2] + x*([3] + x*([4] + x*([5] + x*[6])))))",0,0.95 );
+  double xMax = 0.5;
+  TF1* f0 = new TF1("f0","[0] + x*([1] + x*([2] + x*([3] + x*([4] + x*([5] + x*[6])))))", 0, xMax );
 
   //// pol7
   //TF1* f0 = new TF1("f0","[0] + [1]*x + [2]*x*x + [3]*x*x*x + [4]*x*x*x*x + [5]*x*x*x*x*x + [6]*x*x*x*x*x*x + [7]*x*x*x*x*x*x",0,0.95 );
@@ -684,7 +691,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
 
 
     double firstPoint = 0.5*(csvbins_new[1] + csvbins_new[2]); //0;
-    double lastPoint  = 0.9;
+    double lastPoint  = 0.46; // change?
     for( int iBin=0; iBin<NumFinalBins; iBin++ ){
       double center = h_csv_ratio_final[iHist]->GetBinCenter(iBin+1);
       if( center<0 ){
@@ -1349,7 +1356,7 @@ void final_fitLF_csvSF_13TeV( TString inputFileName  = "infile.root",
     h_csv_ratio_final_Stats2Up[iHist]->Write(Form("%s_final_Stats2Up",hist_name[iHist].Data()));
     h_csv_ratio_final_Stats2Down[iHist]->Write(Form("%s_final_Stats2Down",hist_name[iHist].Data()));
 
-    TF1* f0_renorm = new TF1("f0_renorm","[0] + x*([1] + x*([2] + x*([3] + x*([4] + x*([5] + x*[6])))))",0,0.95 );//0.95
+    TF1* f0_renorm = new TF1("f0_renorm","[0] + x*([1] + x*([2] + x*([3] + x*([4] + x*([5] + x*[6])))))", 0, xMax );//0.95
     int nPars_new = f0_renorm->GetNpar();
     for( int iPar=0; iPar<nPars_new; iPar++ ) f0_renorm->SetParameter(iPar,1.);
 
