@@ -114,15 +114,15 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                TString inputFileName_JESUp  = "infile.root", 
                                TString inputFileName_JESDown  = "infile.root", 
                                int iterNum=0,
-                               bool includeCorrectionFactor = false,
-                               bool includeCharmCorrectionFactor = false,
+                               bool includeCorrectionFactor = !false,
+                               bool includeCharmCorrectionFactor = !false,
                                TString dirPostFix = "" ){
 
   TH1::SetDefaultSumw2();
 
   TString btagger = ( isCSV ) ? "csv" : "cmva";
 
-  TString dirprefix = "Images/Images_2017_2_10_fitHF_" + btagger + "_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images/Images_2018_2_13_fitHF_" + btagger + "_13TeV" + dirPostFix + "/";
 
   
   struct stat st;
@@ -138,7 +138,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
   bool verbose = false;
   bool makePlots = true;
 
-  std::string histofilename = Form("%s_rwt_fit_hf_v%d_final_2017_3_22" + dirPostFix + ".root",btagger.Data(),iterNum) ;
+  std::string histofilename = Form("%s_rwt_fit_hf_v%d_final_2018_2_13" + dirPostFix + ".root",btagger.Data(),iterNum) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -146,7 +146,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
   // TString lumiinfo = "36.8 fb^{-1} (13 TeV)";
   // TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
-  TString lumiinfo = "36 fb^{-1}, #sqrt{s} = 13 TeV, 2016";
+  TString lumiinfo = "41.37 fb^{-1}, #sqrt{s} = 13 TeV, 2017";
   TLatex LumiInfoLatex(0.65, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -201,8 +201,12 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
   double csvbins[] = {-10.0, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
   double csvbins_new[] = {-0.04, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
 
-  double cMVAbins[] = {-1.01, -0.7991, -0.5884, -0.4163, -0.2444, -0.0725, 0.0994, 0.2713, 0.4432, 0.5432, 0.6432, 0.7432, 0.8432, 0.9432, 0.9564, 0.9698, 0.9832, 0.9966, 1.01};
-  double cMVAbins_new[] = {-1.01, -0.7991, -0.5884, -0.4163, -0.2444, -0.0725, 0.0994, 0.2713, 0.4432, 0.5432, 0.6432, 0.7432, 0.8432, 0.9432, 0.9564, 0.9698, 0.9832, 0.9966, 1.01};
+  // double cMVAbins[] = {-1.01, -0.7991, -0.5884, -0.4163, -0.2444, -0.0725, 0.0994, 0.2713, 0.4432, 0.5432, 0.6432, 0.7432, 0.8432, 0.9432, 0.9564, 0.9698, 0.9832, 0.9966, 1.01};
+  // double cMVAbins_new[] = {-1.01, -0.7991, -0.5884, -0.4163, -0.2444, -0.0725, 0.0994, 0.2713, 0.4432, 0.5432, 0.6432, 0.7432, 0.8432, 0.9432, 0.9564, 0.9698, 0.9832, 0.9966, 1.01};
+
+  /// ---------13TeV 2018 Moriond
+  double cMVAbins[] = {-10.0, 0.0, 0.2901, 0.5803, 0.641, 0.7017, 0.7624, 0.8231, 0.8838, 0.9009, 0.918, 0.9351, 0.9522, 0.9693, 0.97564, 0.98198, 0.98832, 0.99466, 1.01}; //csv 2018
+  double cMVAbins_new[] = {-0.04, 0.0, 0.2901, 0.5803, 0.641, 0.7017, 0.7624, 0.8231, 0.8838, 0.9009, 0.918, 0.9351, 0.9522, 0.9693, 0.97564, 0.98198, 0.98832, 0.99466, 1.01}; //csv 2018
 
 
   std::vector<TString> bin_name;
@@ -236,7 +240,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
       else if( iPt==3 ) label_ptbin.push_back("70 < p_{T} < 100 GeV");
       else if( iPt==4 ) label_ptbin.push_back("p_{T} > 100 GeV");
 
-      if( true ) label_etabin.push_back("|#eta| < 2.4");
+      if( true ) label_etabin.push_back("|#eta| < 2.5");
     }
   }
 
@@ -478,7 +482,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
       double delta = h_csv_data[iHist]->GetBinError(iBin+1);
       double stat1Up;
       double stat1Down;
-      if( isCSV ) {
+      if( isCSV || !isCSV ) {
         stat1Up   = content + delta * ( 1 - 2*center );
         stat1Down = content + delta * ( 2*center - 1 );
       } else {
@@ -488,7 +492,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
       
       double stat2Up;
       double stat2Down;
-      if( isCSV ) {
+      if( isCSV || !isCSV ) {
         stat2Up   = content + delta * ( 1 - 6*center*(1-center) );
         stat2Down = content - delta * ( 1 - 6*center*(1-center) );
       } else {
@@ -785,7 +789,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
   h_csv_ratio_cumulative->GetXaxis()->SetRangeUser(0.1,1.00);
   h_csv_ratio_cumulative->SetMarkerStyle(20);
   if( isCSV ) h_csv_ratio_cumulative->SetTitle(";CSV;Heavy flavor scale factor");
-  else        h_csv_ratio_cumulative->SetTitle(";CMVAv2;Heavy flavor scale factor");
+  else        h_csv_ratio_cumulative->SetTitle(";CSVv2;Heavy flavor scale factor");
   
   btagSFUp->SetLineStyle(2);
   btagSFDown->SetLineStyle(2);
@@ -798,7 +802,8 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
   for( int iBin=0; iBin<nBins; iBin++ ){
     double center = h_csv_ratio_cumulative->GetBinCenter(iBin+1);
-    if( center>0.95 || (isCSV && center<0.15) ){
+    // if( center>0.95 || (isCSV && center<0.15) ){
+    if( center>0.95 || (center<0.15) ){
       h_csv_ratio_cumulative->SetBinContent( iBin+1, 0 );
       h_csv_ratio_cumulative_LFUp->SetBinContent( iBin+1, 0 );
       h_csv_ratio_cumulative_LFDown->SetBinContent( iBin+1, 0 );
@@ -893,7 +898,8 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
     for( int iBin=0; iBin<nBins; iBin++ ){
       double center = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
-      if( isCSV && center<0 ) continue;
+      //      if( isCSV && center<0 ) continue;
+      if( center<0 ) continue;
       double sf = h_csv_ratio[iHist]->GetBinContent(iBin+1);
       double sf_JESUp = h_csv_ratio_JESUp[iHist]->GetBinContent(iBin+1);
       double sf_JESDown = h_csv_ratio_JESDown[iHist]->GetBinContent(iBin+1);
@@ -961,7 +967,8 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
     double lastPoint  = x[int(x.size())-1];
     for( int iBin=0; iBin<NumFinalBins; iBin++ ){
       double center = h_csv_ratio_final[iHist]->GetBinCenter(iBin+1);
-      if( isCSV && center<0 ){
+      //      if( isCSV && center<0 ){
+      if( center<0 ){
         h_csv_ratio_final[iHist]->SetBinContent(iBin+1,h_csv_ratio[iHist]->GetBinContent(1));
         h_csv_ratio_final_JESUp[iHist]->SetBinContent(iBin+1,h_csv_ratio_JESUp[iHist]->GetBinContent(1));
         h_csv_ratio_final_JESDown[iHist]->SetBinContent(iBin+1,h_csv_ratio_JESDown[iHist]->GetBinContent(1));
@@ -1119,111 +1126,111 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
          h_csv_ratio_Stats2Down[iHist]->Scale( 0.998546 ); 
       }
     } else if( !isCSV ){
-              if( hist_name[iHist]=="csv_ratio_Pt0_Eta0" ){ 
-                h_csv_ratio_final[iHist]->Scale( 0.993304 ); 
-                h_csv_ratio_final_JESUp[iHist]->Scale( 0.993226 ); 
-                h_csv_ratio_final_JESDown[iHist]->Scale( 0.993601 ); 
-                h_csv_ratio_final_LFUp[iHist]->Scale( 1.225842 ); 
-                h_csv_ratio_final_LFDown[iHist]->Scale( 1.141939 ); 
-                h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.993034 ); 
-                h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.993551 ); 
-                h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.992538 ); 
-                h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.994050 ); 
-       
-                h_csv_ratio[iHist]->Scale( 0.993304 ); 
-                h_csv_ratio_JESUp[iHist]->Scale( 0.993226 ); 
-                h_csv_ratio_JESDown[iHist]->Scale( 0.993601 ); 
-                h_csv_ratio_LFUp[iHist]->Scale( 1.225842 ); 
-                h_csv_ratio_LFDown[iHist]->Scale( 1.141939 ); 
-                h_csv_ratio_Stats1Up[iHist]->Scale( 0.993034 ); 
-                h_csv_ratio_Stats1Down[iHist]->Scale( 0.993551 ); 
-                h_csv_ratio_Stats2Up[iHist]->Scale( 0.992538 ); 
-                h_csv_ratio_Stats2Down[iHist]->Scale( 0.994050 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt1_Eta0" ){ 
-                h_csv_ratio_final[iHist]->Scale( 0.997116 ); 
-                h_csv_ratio_final_JESUp[iHist]->Scale( 0.999013 ); 
-                h_csv_ratio_final_JESDown[iHist]->Scale( 0.994050 ); 
-                h_csv_ratio_final_LFUp[iHist]->Scale( 1.067307 ); 
-                h_csv_ratio_final_LFDown[iHist]->Scale( 1.041428 ); 
-                h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.997233 ); 
-                h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.997001 ); 
-                h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.996310 ); 
-                h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.997948 ); 
-       
-                h_csv_ratio[iHist]->Scale( 0.997116 ); 
-                h_csv_ratio_JESUp[iHist]->Scale( 0.999013 ); 
-                h_csv_ratio_JESDown[iHist]->Scale( 0.994050 ); 
-                h_csv_ratio_LFUp[iHist]->Scale( 1.067307 ); 
-                h_csv_ratio_LFDown[iHist]->Scale( 1.041428 ); 
-                h_csv_ratio_Stats1Up[iHist]->Scale( 0.997233 ); 
-                h_csv_ratio_Stats1Down[iHist]->Scale( 0.997001 ); 
-                h_csv_ratio_Stats2Up[iHist]->Scale( 0.996310 ); 
-                h_csv_ratio_Stats2Down[iHist]->Scale( 0.997948 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt2_Eta0" ){ 
-                h_csv_ratio_final[iHist]->Scale( 0.996351 ); 
-                h_csv_ratio_final_JESUp[iHist]->Scale( 0.997550 ); 
-                h_csv_ratio_final_JESDown[iHist]->Scale( 0.994935 ); 
-                h_csv_ratio_final_LFUp[iHist]->Scale( 1.027951 ); 
-                h_csv_ratio_final_LFDown[iHist]->Scale( 1.015781 ); 
-                h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.996654 ); 
-                h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.996118 ); 
-                h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.995629 ); 
-                h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.997152 ); 
-       
-                h_csv_ratio[iHist]->Scale( 0.996351 ); 
-                h_csv_ratio_JESUp[iHist]->Scale( 0.997550 ); 
-                h_csv_ratio_JESDown[iHist]->Scale( 0.994935 ); 
-                h_csv_ratio_LFUp[iHist]->Scale( 1.027951 ); 
-                h_csv_ratio_LFDown[iHist]->Scale( 1.015781 ); 
-                h_csv_ratio_Stats1Up[iHist]->Scale( 0.996654 ); 
-                h_csv_ratio_Stats1Down[iHist]->Scale( 0.996118 ); 
-                h_csv_ratio_Stats2Up[iHist]->Scale( 0.995629 ); 
-                h_csv_ratio_Stats2Down[iHist]->Scale( 0.997152 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt3_Eta0" ){ 
-                h_csv_ratio_final[iHist]->Scale( 0.999850 ); 
-                h_csv_ratio_final_JESUp[iHist]->Scale( 1.000160 ); 
-                h_csv_ratio_final_JESDown[iHist]->Scale( 0.999616 ); 
-                h_csv_ratio_final_LFUp[iHist]->Scale( 1.018657 ); 
-                h_csv_ratio_final_LFDown[iHist]->Scale( 1.011242 ); 
-                h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.000221 ); 
-                h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.999425 ); 
-                h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.999010 ); 
-                h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.000654 ); 
-       
-                h_csv_ratio[iHist]->Scale( 0.999850 ); 
-                h_csv_ratio_JESUp[iHist]->Scale( 1.000160 ); 
-                h_csv_ratio_JESDown[iHist]->Scale( 0.999616 ); 
-                h_csv_ratio_LFUp[iHist]->Scale( 1.018657 ); 
-                h_csv_ratio_LFDown[iHist]->Scale( 1.011242 ); 
-                h_csv_ratio_Stats1Up[iHist]->Scale( 1.000221 ); 
-                h_csv_ratio_Stats1Down[iHist]->Scale( 0.999425 ); 
-                h_csv_ratio_Stats2Up[iHist]->Scale( 0.999010 ); 
-                h_csv_ratio_Stats2Down[iHist]->Scale( 1.000654 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt4_Eta0" ){ 
-                h_csv_ratio_final[iHist]->Scale( 1.002596 ); 
-                h_csv_ratio_final_JESUp[iHist]->Scale( 1.002092 ); 
-                h_csv_ratio_final_JESDown[iHist]->Scale( 1.002597 ); 
-                h_csv_ratio_final_LFUp[iHist]->Scale( 1.036044 ); 
-                h_csv_ratio_final_LFDown[iHist]->Scale( 1.024838 ); 
-                h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.003410 ); 
-                h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.001804 ); 
-                h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.001425 ); 
-                h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.003817 ); 
-       
-                h_csv_ratio[iHist]->Scale( 1.002596 ); 
-                h_csv_ratio_JESUp[iHist]->Scale( 1.002092 ); 
-                h_csv_ratio_JESDown[iHist]->Scale( 1.002597 ); 
-                h_csv_ratio_LFUp[iHist]->Scale( 1.036044 ); 
-                h_csv_ratio_LFDown[iHist]->Scale( 1.024838 ); 
-                h_csv_ratio_Stats1Up[iHist]->Scale( 1.003410 ); 
-                h_csv_ratio_Stats1Down[iHist]->Scale( 1.001804 ); 
-                h_csv_ratio_Stats2Up[iHist]->Scale( 1.001425 ); 
-                h_csv_ratio_Stats2Down[iHist]->Scale( 1.003817 ); 
-              } 
+	if( hist_name[iHist]=="csv_ratio_Pt0_Eta0" ){ 
+	  h_csv_ratio_final[iHist]->Scale( 0.996897 ); 
+	  h_csv_ratio_final_JESUp[iHist]->Scale( 0.999581 ); 
+	  h_csv_ratio_final_JESDown[iHist]->Scale( 1.001188 ); 
+	  h_csv_ratio_final_LFUp[iHist]->Scale( 1.045640 ); 
+	  h_csv_ratio_final_LFDown[iHist]->Scale( 1.033775 ); 
+	  h_csv_ratio_final_Stats1Up[iHist]->Scale( 0.996175 ); 
+	  h_csv_ratio_final_Stats1Down[iHist]->Scale( 0.997651 ); 
+	  h_csv_ratio_final_Stats2Up[iHist]->Scale( 0.995025 ); 
+	  h_csv_ratio_final_Stats2Down[iHist]->Scale( 0.998729 ); 
+ 
+	  h_csv_ratio[iHist]->Scale( 0.996897 ); 
+	  h_csv_ratio_JESUp[iHist]->Scale( 0.999581 ); 
+	  h_csv_ratio_JESDown[iHist]->Scale( 1.001188 ); 
+	  h_csv_ratio_LFUp[iHist]->Scale( 1.045640 ); 
+	  h_csv_ratio_LFDown[iHist]->Scale( 1.033775 ); 
+	  h_csv_ratio_Stats1Up[iHist]->Scale( 0.996175 ); 
+	  h_csv_ratio_Stats1Down[iHist]->Scale( 0.997651 ); 
+	  h_csv_ratio_Stats2Up[iHist]->Scale( 0.995025 ); 
+	  h_csv_ratio_Stats2Down[iHist]->Scale( 0.998729 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt1_Eta0" ){ 
+	  h_csv_ratio_final[iHist]->Scale( 1.006835 ); 
+	  h_csv_ratio_final_JESUp[iHist]->Scale( 1.009239 ); 
+	  h_csv_ratio_final_JESDown[iHist]->Scale( 1.003326 ); 
+	  h_csv_ratio_final_LFUp[iHist]->Scale( 1.040052 ); 
+	  h_csv_ratio_final_LFDown[iHist]->Scale( 1.029478 ); 
+	  h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.006906 ); 
+	  h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.006784 ); 
+	  h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.006343 ); 
+	  h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.007327 ); 
+ 
+	  h_csv_ratio[iHist]->Scale( 1.006835 ); 
+	  h_csv_ratio_JESUp[iHist]->Scale( 1.009239 ); 
+	  h_csv_ratio_JESDown[iHist]->Scale( 1.003326 ); 
+	  h_csv_ratio_LFUp[iHist]->Scale( 1.040052 ); 
+	  h_csv_ratio_LFDown[iHist]->Scale( 1.029478 ); 
+	  h_csv_ratio_Stats1Up[iHist]->Scale( 1.006906 ); 
+	  h_csv_ratio_Stats1Down[iHist]->Scale( 1.006784 ); 
+	  h_csv_ratio_Stats2Up[iHist]->Scale( 1.006343 ); 
+	  h_csv_ratio_Stats2Down[iHist]->Scale( 1.007327 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt2_Eta0" ){ 
+	  h_csv_ratio_final[iHist]->Scale( 1.011865 ); 
+	  h_csv_ratio_final_JESUp[iHist]->Scale( 1.011531 ); 
+	  h_csv_ratio_final_JESDown[iHist]->Scale( 1.014875 ); 
+	  h_csv_ratio_final_LFUp[iHist]->Scale( 1.031185 ); 
+	  h_csv_ratio_final_LFDown[iHist]->Scale( 1.023886 ); 
+	  h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.012133 ); 
+	  h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.011617 ); 
+	  h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.011598 ); 
+	  h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.012134 ); 
+ 
+	  h_csv_ratio[iHist]->Scale( 1.011865 ); 
+	  h_csv_ratio_JESUp[iHist]->Scale( 1.011531 ); 
+	  h_csv_ratio_JESDown[iHist]->Scale( 1.014875 ); 
+	  h_csv_ratio_LFUp[iHist]->Scale( 1.031185 ); 
+	  h_csv_ratio_LFDown[iHist]->Scale( 1.023886 ); 
+	  h_csv_ratio_Stats1Up[iHist]->Scale( 1.012133 ); 
+	  h_csv_ratio_Stats1Down[iHist]->Scale( 1.011617 ); 
+	  h_csv_ratio_Stats2Up[iHist]->Scale( 1.011598 ); 
+	  h_csv_ratio_Stats2Down[iHist]->Scale( 1.012134 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt3_Eta0" ){ 
+	  h_csv_ratio_final[iHist]->Scale( 1.005116 ); 
+	  h_csv_ratio_final_JESUp[iHist]->Scale( 1.005333 ); 
+	  h_csv_ratio_final_JESDown[iHist]->Scale( 1.004636 ); 
+	  h_csv_ratio_final_LFUp[iHist]->Scale( 1.023729 ); 
+	  h_csv_ratio_final_LFDown[iHist]->Scale( 1.018263 ); 
+	  h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.005442 ); 
+	  h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.004768 ); 
+	  h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.005288 ); 
+	  h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.004938 ); 
+ 
+	  h_csv_ratio[iHist]->Scale( 1.005116 ); 
+	  h_csv_ratio_JESUp[iHist]->Scale( 1.005333 ); 
+	  h_csv_ratio_JESDown[iHist]->Scale( 1.004636 ); 
+	  h_csv_ratio_LFUp[iHist]->Scale( 1.023729 ); 
+	  h_csv_ratio_LFDown[iHist]->Scale( 1.018263 ); 
+	  h_csv_ratio_Stats1Up[iHist]->Scale( 1.005442 ); 
+	  h_csv_ratio_Stats1Down[iHist]->Scale( 1.004768 ); 
+	  h_csv_ratio_Stats2Up[iHist]->Scale( 1.005288 ); 
+	  h_csv_ratio_Stats2Down[iHist]->Scale( 1.004938 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt4_Eta0" ){ 
+	  h_csv_ratio_final[iHist]->Scale( 1.008553 ); 
+	  h_csv_ratio_final_JESUp[iHist]->Scale( 1.008350 ); 
+	  h_csv_ratio_final_JESDown[iHist]->Scale( 1.009293 ); 
+	  h_csv_ratio_final_LFUp[iHist]->Scale( 1.051193 ); 
+	  h_csv_ratio_final_LFDown[iHist]->Scale( 1.035884 ); 
+	  h_csv_ratio_final_Stats1Up[iHist]->Scale( 1.008827 ); 
+	  h_csv_ratio_final_Stats1Down[iHist]->Scale( 1.008270 ); 
+	  h_csv_ratio_final_Stats2Up[iHist]->Scale( 1.008901 ); 
+	  h_csv_ratio_final_Stats2Down[iHist]->Scale( 1.008146 ); 
+ 
+	  h_csv_ratio[iHist]->Scale( 1.008553 ); 
+	  h_csv_ratio_JESUp[iHist]->Scale( 1.008350 ); 
+	  h_csv_ratio_JESDown[iHist]->Scale( 1.009293 ); 
+	  h_csv_ratio_LFUp[iHist]->Scale( 1.051193 ); 
+	  h_csv_ratio_LFDown[iHist]->Scale( 1.035884 ); 
+	  h_csv_ratio_Stats1Up[iHist]->Scale( 1.008827 ); 
+	  h_csv_ratio_Stats1Down[iHist]->Scale( 1.008270 ); 
+	  h_csv_ratio_Stats2Up[iHist]->Scale( 1.008901 ); 
+	  h_csv_ratio_Stats2Down[iHist]->Scale( 1.008146 ); 
+	} 
       }
     }
     
@@ -1235,8 +1242,8 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
     //h_csv_ratio[iHist]->SetTitle("");
     if( iHist==numHists-1 ) h_csv_ratio[iHist]->SetTitle( Form("LF %s", hist_name[iHist].Data() ) );
     h_csv_ratio[iHist]->GetYaxis()->SetTitle("Data/Simulation SF_{b}");
-    if( isCSV ) h_csv_ratio[iHist]->GetXaxis()->SetTitle("CSVv2 Discriminator");
-    else        h_csv_ratio[iHist]->GetXaxis()->SetTitle("CMVAv2 Discriminator");
+    if( isCSV ) h_csv_ratio[iHist]->GetXaxis()->SetTitle("CSV Discriminator");
+    else        h_csv_ratio[iHist]->GetXaxis()->SetTitle("CSVv2 Discriminator");
     
     h_csv_ratio[iHist]->SetStats(0);
 
@@ -1424,7 +1431,8 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
     img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_All.pdf";
     c1->Print(img);
 
-    int firstBin = ( isCSV ) ? 1 : 0;
+    // int firstBin = ( isCSV ) ? 1 : 0;
+    int firstBin = ( isCSV || !isCSV ) ? 1 : 0;
 
     // Piecewise fitting
     int Nbins = h_csv_ratio[iHist]->GetNbinsX();
@@ -1576,7 +1584,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
 
     h_csv_ratio[iHist]->GetYaxis()->SetRangeUser(0.4,1.5);
-    h_csv_ratio[iHist]->GetXaxis()->SetRangeUser(0.8,1.01);
+    h_csv_ratio[iHist]->GetXaxis()->SetRangeUser(-0.041,1.01);
     h_csv_ratio[iHist]->Draw("pe1");
     h_csv_ratio_final[iHist]->Draw("histsame");
     for( int iBin=1; iBin<Nbins-1; iBin++ ) fint[iBin]->Draw("same");
@@ -1811,10 +1819,10 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
     for( int iBin=0; iBin<c_csv_ratio_final[iHist]->GetNbinsX(); iBin++ ){
       double center = h_total_cUp->GetBinCenter(iBin+1);
       double content = 1.0;
-
+      if( center>0 && center<firstPoint ){ center = firstPoint; } ///
       double bSF = h_csv_ratio_final[iHist]->GetBinContent(iBin+1);
       double cUp = content + 2*fabs(h_total_cUp->GetBinContent(iBin+1) - content);
-      double cDown = content - 2*fabs(h_total_cDown->GetBinContent(iBin+1) - content);
+      double cDown = content + 2*fabs(h_total_cDown->GetBinContent(iBin+1) - content); //sign???
       if( (bSF - cUp)>0 )   cUp = bSF;
       if( (cDown - bSF)>0 ) cDown = bSF;
       cUp -= content;
@@ -2060,36 +2068,36 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
            h_cErr2Down->Scale( 1.037868 ); 
         } 
       } else if( !isCSV ){
-              if( hist_name[iHist]=="csv_ratio_Pt0_Eta0" ){ 
-                h_cErr1Up->Scale( 0.727350 ); 
-                h_cErr1Down->Scale( 2.303592 ); 
-                h_cErr2Up->Scale( 0.990359 ); 
-                h_cErr2Down->Scale( 1.009831 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt1_Eta0" ){ 
-                h_cErr1Up->Scale( 0.767877 ); 
-                h_cErr1Down->Scale( 1.843299 ); 
-                h_cErr2Up->Scale( 0.995368 ); 
-                h_cErr2Down->Scale( 1.004675 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt2_Eta0" ){ 
-                h_cErr1Up->Scale( 0.817244 ); 
-                h_cErr1Down->Scale( 1.380438 ); 
-                h_cErr2Up->Scale( 0.997843 ); 
-                h_cErr2Down->Scale( 1.002167 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt3_Eta0" ){ 
-                h_cErr1Up->Scale( 0.868956 ); 
-                h_cErr1Down->Scale( 1.200022 ); 
-                h_cErr2Up->Scale( 0.998496 ); 
-                h_cErr2Down->Scale( 1.001508 ); 
-              } 
-              if( hist_name[iHist]=="csv_ratio_Pt4_Eta0" ){ 
-                h_cErr1Up->Scale( 0.830826 ); 
-                h_cErr1Down->Scale( 1.251338 ); 
-                h_cErr2Up->Scale( 0.997191 ); 
-                h_cErr2Down->Scale( 1.002825 ); 
-              } 
+	if( hist_name[iHist]=="csv_ratio_Pt0_Eta0" ){ 
+	  h_cErr1Up->Scale( 0.895953 ); 
+	  h_cErr1Down->Scale( 1.104402 ); 
+	  h_cErr2Up->Scale( 0.990854 ); 
+	  h_cErr2Down->Scale( 1.009316 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt1_Eta0" ){ 
+	  h_cErr1Up->Scale( 0.882381 ); 
+	  h_cErr1Down->Scale( 1.140875 ); 
+	  h_cErr2Up->Scale( 0.991344 ); 
+	  h_cErr2Down->Scale( 1.008808 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt2_Eta0" ){ 
+	  h_cErr1Up->Scale( 0.921007 ); 
+	  h_cErr1Down->Scale( 1.088762 ); 
+	  h_cErr2Up->Scale( 0.994014 ); 
+	  h_cErr2Down->Scale( 1.006059 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt3_Eta0" ){ 
+	  h_cErr1Up->Scale( 0.926243 ); 
+	  h_cErr1Down->Scale( 1.083743 ); 
+	  h_cErr2Up->Scale( 0.999829 ); 
+	  h_cErr2Down->Scale( 1.000171 ); 
+	} 
+	if( hist_name[iHist]=="csv_ratio_Pt4_Eta0" ){ 
+	  h_cErr1Up->Scale( 0.902197 ); 
+	  h_cErr1Down->Scale( 1.119437 ); 
+	  h_cErr2Up->Scale( 0.992953 ); 
+	  h_cErr2Down->Scale( 1.007147 ); 
+	} 
       }
     }
     
@@ -2271,7 +2279,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
       fit_result_file[iHist].open( Form("BTVScaleFactorFitResult/fitResult_HF_%sSF_13TeV_%s.txt", btagger.Data(),bin_name[iHist].Data()) );
 
       TString etaMin = "0.0";
-      TString etaMax = "2.4";
+      TString etaMax = "2.5";
 
       TString ptMin = "";
       TString ptMax = "";
@@ -2296,11 +2304,13 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
         ptMax = "10000";
       }
 
-      int firstPointBin = h_csv_ratio_final[iHist]->GetXaxis()->FindBin(firstPoint)-1;
-      int lastPointBin = h_csv_ratio_final[iHist]->GetXaxis()->FindBin(lastPoint)-1;
+      int firstPointBin = h_csv_ratio[iHist]->GetXaxis()->FindBin(firstPoint);
+      int lastPointBin = h_csv_ratio[iHist]->GetXaxis()->FindBin(lastPoint);
+
+      // forcing isCSV to be true for the printout
 
       // central
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, central, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2312,11 +2322,11 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
                                << "0" << ", " << firstPoint << ", " 
-//                               << "\"" <<  h_csv_ratio[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
-                               << "\"" << m_i->Eval( firstPoint ) << "\"" << "\n";
+                               << "\"" <<  h_csv_ratio[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
+                               // << "\"" << m_i->Eval( firstPoint ) << "\"" << "\n";
 
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, central, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2342,7 +2352,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                              << "\"" << h_csv_ratio[iHist]->GetBinContent(lastPointBin) << "\"" << "\n";
 
       // JESUp
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, up_jes, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2355,7 +2365,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_JESUp[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, up_jes, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2381,7 +2391,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                              << "\"" << h_csv_ratio_JESUp[iHist]->GetBinContent(lastPointBin) << "\"" << "\n";
 
       // JESDown
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2394,7 +2404,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_JESDown[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, down_jes, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2421,7 +2431,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
 
       // LFUp
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, up_lf, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2434,7 +2444,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_LFUp[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, up_lf, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2461,7 +2471,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "\"" << h_csv_ratio_LFUp[iHist]->GetBinContent(lastPointBin) << "\"" << "\n";
 
       // LFDown
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2474,7 +2484,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_LFDown[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, down_lf, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2501,7 +2511,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
 
       // Stats1Up
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, up_hfstats1, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2514,7 +2524,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_Stats1Up[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, up_hfstats1, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2541,7 +2551,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "\"" << h_csv_ratio_Stats1Up[iHist]->GetBinContent(lastPointBin) << "\"" << "\n";
 
       // Stats1Down
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2554,7 +2564,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_Stats1Down[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, down_hfstats1, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2584,7 +2594,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
 
       // Stats2Up
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, up_hfstats2, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2597,7 +2607,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_Stats2Up[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, up_hfstats2, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2623,7 +2633,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "\"" << h_csv_ratio_Stats2Up[iHist]->GetBinContent(lastPointBin) << "\"" << "\n";
 
       // Stats2Down
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2636,7 +2646,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_csv_ratio_Stats2Down[iHist]->GetBinContent(firstPointBin) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, down_hfstats2, 0, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2664,7 +2674,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
       // Charm uncertainties
       // CErr1Up
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, up_cferr1, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2677,7 +2687,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_cErr1Up->GetBinContent( h_cErr1Up->FindBin(firstPoint) ) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, up_cferr1, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2704,7 +2714,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
 
       // CErr1Down
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, down_cferr1, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2717,7 +2727,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_cErr1Down->GetBinContent( h_cErr1Down->FindBin(firstPoint) ) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, down_cferr1, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2744,7 +2754,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
 
       // CErr2Up
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, up_cferr2, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2757,7 +2767,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_cErr2Up->GetBinContent( h_cErr2Up->FindBin(firstPoint) ) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, up_cferr2, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2784,7 +2794,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
 
 
       // CErr2Down
-      if( isCSV ){
+      if( true ){
         fit_result_file[iHist] << "3, iterativefit, down_cferr2, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2797,7 +2807,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
                                << "0" << ", " << firstPoint << ", " 
                                << "\"" << h_cErr2Down->GetBinContent( h_cErr2Down->FindBin(firstPoint) ) << "\"" << "\n";
       }
-      else if( !isCSV ){
+      else if( !true ){
         fit_result_file[iHist] << "3, iterativefit, down_cferr2, 1, " 
                                << etaMin << ", " << etaMax << ", " 
                                << ptMin << ", " << ptMax << ", " 
@@ -2866,7 +2876,7 @@ void final_fitHF_btagSF_13TeV( bool isCSV = true,
   fit_result_file_charm.open( Form("BTVScaleFactorFitResult/fitResult_CF_%sSF_13TeV.txt",btagger.Data()) );
 
   fit_result_file_charm << "3, iterativefit, central, 1, " 
-                        << "0.0" << ", " << "2.4" << ", " 
+                        << "0.0" << ", " << "2.5" << ", " 
                         << "20.0" << ", " << "10000" << ", " 
                         << "-15" << ", " << "1.1" << ", " 
                         << "\"" << "1.0" << "\"" << "\n";

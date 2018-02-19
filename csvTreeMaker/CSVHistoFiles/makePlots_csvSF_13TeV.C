@@ -40,7 +40,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   TFile *histFile = TFile::Open(inputFileName);
 
   if( compareIterations ) dirPostFix = dirPostFix + "Comparison";
-  TString dirprefix = taggerName +"_SFPlots_2018_1_31_13TeV" + dirPostFix + "/";
+  TString dirprefix = taggerName +"_SFPlots_2018_2_14_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -89,7 +89,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
   ///
   // TString lumiinfo = "36.8 fb^{-1} (13 TeV, 25ns)";
   // TLatex LumiInfoLatex(0.65, 0.93, lumiinfo);
-  TString lumiinfo = "41.86 fb^{-1}, #sqrt{s} = 13 TeV, 2017";
+  TString lumiinfo = "41.37 fb^{-1}, #sqrt{s} = 13 TeV, 2017";
   TLatex LumiInfoLatex(0.62, 0.93, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -122,12 +122,12 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
       iHist++;
       if(isHF){
 	if( iPt==0 )      label_ptbin.push_back("20 < p_{T} < 30 GeV");
-	else if( iPt==1 ) label_ptbin.push_back("30 < p_{T} < 40 GeV");
-	else if( iPt==2 ) label_ptbin.push_back("40 < p_{T} < 60 GeV");
-	else if( iPt==3 ) label_ptbin.push_back("60 < p_{T} < 100 GeV");
+	else if( iPt==1 ) label_ptbin.push_back("30 < p_{T} < 50 GeV");
+	else if( iPt==2 ) label_ptbin.push_back("50 < p_{T} < 70 GeV");
+	else if( iPt==3 ) label_ptbin.push_back("70 < p_{T} < 100 GeV");
 	else if( iPt==4 ) label_ptbin.push_back("p_{T} > 100 GeV");
 	
-	label_etabin.push_back("|#eta| < 2.4");
+	label_etabin.push_back("|#eta| < 2.5");
       }
       else{
 	if( iPt==0 )      label_ptbin.push_back("20 < p_{T} < 30 GeV");
@@ -137,7 +137,7 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 	
 	if( iEta==0 ) label_etabin.push_back("|#eta| < 0.8");
 	else if( iEta==1 ) label_etabin.push_back("0.8 < |#eta| < 1.6");
-	else if( iEta==2 ) label_etabin.push_back("1.6 < |#eta| < 2.4");
+	else if( iEta==2 ) label_etabin.push_back("1.6 < |#eta| < 2.5");
       }
 
     if(!compareIterations){
@@ -372,9 +372,11 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
     }
       if( compareIterations ){
-	TFile *fitFile_iter0 = TFile::Open("../macros/dir_CSV/csv_rwt_fit_" + flavor_file + "_v2.root");
-	TFile *fitFile_iter1 = TFile::Open("../macros/dir_runCtoE/csv_rwt_fit_" + flavor_file + "_v2.root");
-	TFile *fitFile_iter2 = TFile::Open("../macros/dir_runEtoF/csv_rwt_fit_" + flavor_file + "_v2.root");
+	// TFile *fitFile_iter0 = TFile::Open("../macros/dir_CSV/csv_rwt_fit_" + flavor_file + "_v2.root");
+	// TFile *fitFile_iter1 = TFile::Open("../macros/noPU_dir_CSV/csv_rwt_fit_" + flavor_file + "_v2.root");
+	TFile *fitFile_iter2 = TFile::Open("../macros/PU_v0/csv_rwt_fit_" + flavor_file + "_v0.root");
+	TFile *fitFile_iter0 = TFile::Open("../macros/csv_rwt_fit_" + flavor_file + "_v2_final_2018_2_12test.root");
+	TFile *fitFile_iter1 = TFile::Open("../macros/oldJEC_dir_CSV/csv_rwt_fit_" + flavor_file + "_v2_final_2018_2_7test.root");
 
 	// TFile *fitFile_iter0 = TFile::Open("../data/csv_rwt_fit_" + flavor_file + "_v2.root");
 	// TFile *fitFile_iter1 = TFile::Open("../macros/BCDF/csv_rwt_fit_" + flavor_file + "_v2.root");
@@ -477,8 +479,8 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 	h_iter0->Draw("pe1same");
 	h_fit_iter1->Draw("histsame");
 	h_iter1->Draw("pe1same");
-	h_fit_iter2->Draw("histsame");
-	h_iter2->Draw("pe1same");
+	// h_fit_iter2->Draw("histsame");
+	// h_iter2->Draw("pe1same");
 
 	// h_fit_iter1_tmp->Draw("histsame");
 	// h_iter1_tmp->Draw("pe1same");
@@ -506,10 +508,10 @@ void makePlots_csvSF_13TeV( TString inputFileName  = "infile.root", bool isHF = 
 
 	legend_iter->SetNColumns(3);
 
-	legend_iter->AddEntry(h_iter0,"incl","f");
+	legend_iter->AddEntry(h_iter0,"new","f");
 	// legend_iter->AddEntry(h_iter1_tmp,"lumi weighted","f");
-	legend_iter->AddEntry(h_iter1,"CtoE","f");
-	legend_iter->AddEntry(h_iter2,"EtoF","f");
+	legend_iter->AddEntry(h_iter1,"old","f");
+	// legend_iter->AddEntry(h_iter2,"old","f");
 
 	// legend_iter->AddEntry(h_iter0,"Iter0","f");
 	// legend_iter->AddEntry(h_iter1,"Iter1","f");

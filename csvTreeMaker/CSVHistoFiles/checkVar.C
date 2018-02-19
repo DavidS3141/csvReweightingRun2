@@ -37,7 +37,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "31thJan_varImages_" + BTagger + dirPostFix + "/";
+  TString dirprefix = "14thFeb_varImages_" + BTagger + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -103,7 +103,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   TString dirStr = "";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
   TString flavor_file = (isHF) ? "hf" : "lf"; 
   flavor_file.ToLower();
-  TString end_str = "_v0_histo_All.root"; //// file name change
+  TString end_str = "_v5_histo.root"; //// file name change
   TFile *fileTTJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_ttjets" + end_str);
   TFile *fileZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_zjets" + end_str);  //// AMC or MLM
   TFile *filelowMassZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_lowMasszjets" + end_str);
@@ -113,14 +113,14 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   TFile *fileWW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_WW" + end_str);
 
-  TString end_str2 = "_v0_histo_All.root"; //// file name change
+  TString end_str2 = "_v0_histo.root"; //// file name change
   TFile *fileData1 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleEG" + end_str2);
   TFile *fileData2 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
   TFile *fileData3 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_MuonEG" + end_str2);
 
 
   ////
-  TString lumiinfo = "41.86 fb^{-1} (13 TeV)"; //36.81
+  TString lumiinfo = "41.37 fb^{-1} (13 TeV)"; //36.81
   TLatex LumiInfoLatex(0.70, 0.91, lumiinfo);
   LumiInfoLatex.SetNDC(); LumiInfoLatex.SetTextFont(42);
   LumiInfoLatex.SetTextSize(0.04);
@@ -355,10 +355,11 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   myRatio->GetYaxis()->SetTitleSize(0.09);
   myRatio->GetYaxis()->SetTitleOffset(.55);
   myRatio->GetYaxis()->CenterTitle();
-  TString newXTitle = myRatio->GetXaxis()->GetTitle();
+  string newXTitle = myRatio->GetXaxis()->GetTitle();
   if(varName.Contains("csv"))   {
-    newXTitle += "v2";
-    myRatio->GetXaxis()->SetTitle(newXTitle);
+    //    newXTitle += "v2";
+    newXTitle.replace(newXTitle.end()-3, newXTitle.end(), "DeepCSV");
+    myRatio->GetXaxis()->SetTitle(newXTitle.c_str());
   }
   myRatio->Draw("pe1");
   

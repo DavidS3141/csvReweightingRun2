@@ -117,7 +117,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images_2018_1_16_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
+  TString dirprefix = "Images_2018_2_11_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
 
   struct stat st;
   if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
@@ -183,8 +183,9 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
   /// ---------13TeV 2018 Moriond
   int ncsvbins = 17; //13TeV
-  double cMVAbins[] = {-10.0, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
-  double cMVAbins_new[] = {-0.04, 0.0, 0.2712, 0.5426, 0.6036, 0.6648, 0.726, 0.7872, 0.8484, 0.8695, 0.8905, 0.9115, 0.9325, 0.9535, 0.9648, 0.9761, 0.9874, 0.9987, 1.01};
+  if(!isCSV) ncsvbins = 18;
+  double cMVAbins[] = {-10.0, 0.0, 0.2901, 0.5803, 0.641, 0.7017, 0.7624, 0.8231, 0.8838, 0.9009, 0.918, 0.9351, 0.9522, 0.9693, 0.97564, 0.98198, 0.98832, 0.99466, 1.01}; //csv 2018
+  double cMVAbins_new[] = {-0.04, 0.0, 0.2901, 0.5803, 0.641, 0.7017, 0.7624, 0.8231, 0.8838, 0.9009, 0.918, 0.9351, 0.9522, 0.9693, 0.97564, 0.98198, 0.98832, 0.99466, 1.01}; //csv 2018
 
   // double csvbins[] = {-2.01, 0.0, 0.0762, 0.1522, 0.2205, 0.2889, 0.3573, 0.4257, 0.4941, 0.5553, 0.6165, 0.6777, 0.7389, 0.8001, 0.842, 0.884, 0.926, 0.968, 1.01};
   // double csvbins_new[] = {-0.04, 0.0, 0.0762, 0.1522, 0.2205, 0.2889, 0.3573, 0.4257, 0.4941, 0.5553, 0.6165, 0.6777, 0.7389, 0.8001, 0.842, 0.884, 0.926, 0.968, 1.01};
@@ -732,7 +733,8 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     for( int iBin=0; iBin<nBins; iBin++ ){
       double center = h_csv_ratio[iHist]->GetBinCenter(iBin+1);
-      if( isCSV && center<0 ) continue;
+      //      if( isCSV && center<0 ) continue;
+      if( center<0 ) continue;
       double sf = h_csv_ratio[iHist]->GetBinContent(iBin+1);
       double sf_JESUp = h_csv_ratio_JESUp[iHist]->GetBinContent(iBin+1);
       double sf_JESDown = h_csv_ratio_JESDown[iHist]->GetBinContent(iBin+1);
@@ -800,7 +802,8 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     double lastPoint  = x[int(x.size())-1];
     for( int iBin=0; iBin<NumFinalBins; iBin++ ){
       double center = h_csv_ratio_final[iHist]->GetBinCenter(iBin+1);
-      if( isCSV && center<0 ){
+      //      if( isCSV && center<0 ){
+      if( center<0 ){
 	h_csv_ratio_final[iHist]->SetBinContent(iBin+1,h_csv_ratio[iHist]->GetBinContent(1));
 	h_csv_ratio_final_JESUp[iHist]->SetBinContent(iBin+1,h_csv_ratio_JESUp[iHist]->GetBinContent(1));
 	h_csv_ratio_final_JESDown[iHist]->SetBinContent(iBin+1,h_csv_ratio_JESDown[iHist]->GetBinContent(1));

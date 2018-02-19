@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
-
+import os
 process = cms.Process("MAOD")
 
 # initialize MessageLogger and output report
@@ -61,9 +61,42 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 ##)
 ##########
 
+######################
+process.load("CondCore.CondDB.CondDB_cfi")
+from CondCore.CondDB.CondDB_cfi import *
+process.jec = cms.ESSource("PoolDBESSource",
+      DBParameters = cms.PSet(
+        messageLevel = cms.untracked.int32(0)
+        ),
+      timetype = cms.string('runnumber'),
+      toGet = cms.VPSet(
+            cms.PSet(
+                record = cms.string('JetCorrectionsRecord'),
+                tag    = cms.string('JetCorrectorParametersCollection_Fall17_17Nov2017_V4_MC_AK4PFchs'),
+                label  = cms.untracked.string('AK4PFchs')
+                ),
+#            cms.PSet(
+#                record = cms.string('JetCorrectionsRecord'),
+#                tag    = cms.string('JetCorrectorParametersCollection_Fall17_17Nov2017_V4_MC_AK8PFchs'),
+#                label  = cms.untracked.string('AK8PFchs')
+#                ),
+      ## here you add as many jet types as you need
+      ## note that the tag name is specific for the particular sqlite file 
+      ), 
+      connect = cms.string('sqlite:Fall17_17Nov2017_V4_MC.db')
+)
+## add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
+process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jec')
+##################
+
+
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
         '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/0E935780-64F2-E711-83A9-B083FED406AC.root',
+#        '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/08623B16-9AF2-E711-A0A1-D8D385AE8BD0.root',
+#        '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/1693A157-CCF2-E711-8E01-A4BF01125E46.root',
+#        '/store/mc/RunIIFall17MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/94X_mc2017_realistic_v10_ext1-v1/00000/0000BD66-99F4-E711-97DF-24BE05C33C22.root',
+#        '/store/mc/RunIIFall17MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/94X_mc2017_realistic_v10_ext1-v1/00000/043785DE-CDF4-E711-82EB-0CC47AA98F92.root',
 #        '/store/mc/RunIISummer16MiniAODv2/TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/0030B9D6-72C1-E611-AE49-02163E00E602.root'
 #        '/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/120000/02A210D6-F5C3-E611-B570-008CFA197BD4.root',
 #        '/store/mc/RunIISpring16MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/60000/0005201C-D41B-E611-8E37-002481E0D398.root'
@@ -85,10 +118,10 @@ process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
 #    sampleName = cms.string("ZJets"),##
 #    inSample = cms.int32(2310),##
 #    sampleName = cms.string("LowMassZJets"),##
-    inSample = cms.int32(2514),##
-    sampleName = cms.string("singletW"),##
-#    inSample = cms.int32(2515),##
-#    sampleName = cms.string("singletbarW"),##
+#    inSample = cms.int32(2514),##
+#    sampleName = cms.string("singletW"),##
+    inSample = cms.int32(2515),##
+    sampleName = cms.string("singletbarW"),##
 #    inSample = cms.int32(2600),##
 #    sampleName = cms.string("WW"),##
     XS = cms.double(1.),

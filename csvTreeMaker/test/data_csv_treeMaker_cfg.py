@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
-
+import os
 process = cms.Process("MAOD")
 
 # initialize MessageLogger and output report
@@ -64,11 +64,40 @@ process.ak4PFchsL1L2L3 = cms.ESProducer("JetCorrectionESChain",
 ##)
 ########
 
+######################
+process.load("CondCore.CondDB.CondDB_cfi")
+from CondCore.CondDB.CondDB_cfi import *
+process.jec = cms.ESSource("PoolDBESSource",
+      DBParameters = cms.PSet(
+        messageLevel = cms.untracked.int32(0)
+        ),
+      timetype = cms.string('runnumber'),
+      toGet = cms.VPSet(
+            cms.PSet(
+                record = cms.string('JetCorrectionsRecord'),
+                tag    = cms.string('JetCorrectorParametersCollection_Fall17_17Nov2017C_V4_DATA_AK4PFchs'),
+                label  = cms.untracked.string('AK4PFchs')
+                ),
+#            cms.PSet(
+#                record = cms.string('JetCorrectionsRecord'),
+#                tag    = cms.string('JetCorrectorParametersCollection_Fall17_17Nov2017C_V4_DATA_AK8PFchs'),
+#                label  = cms.untracked.string('AK8PFchs')
+#                ),
+      ## here you add as many jet types as you need
+      ## note that the tag name is specific for the particular sqlite file 
+      ), 
+      connect = cms.string('sqlite:Fall17_17Nov2017C_V4_DATA.db')
+)
+## add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
+process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jec')
+##################
+
+
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
         '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/009DC3A2-A7DE-E711-99F7-02163E013717.root',
-        '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/00FB06B4-0DDF-E711-9291-02163E012A3F.root',
-        '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/029276DB-60DE-E711-B66E-001E67792650.root',
+#        '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/00FB06B4-0DDF-E711-9291-02163E012A3F.root',
+#        '/store/data/Run2017F/DoubleMuon/MINIAOD/17Nov2017-v1/50000/029276DB-60DE-E711-B66E-001E67792650.root',
 
 #        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/0005AD9F-64ED-E611-A952-0CC47A78A42C.root',
 #        '/store/data/Run2016B/DoubleMuon/MINIAOD/03Feb2017_ver2-v2/100000/00415FAC-B5EC-E611-A1C9-00266CF3E130.root',
@@ -87,10 +116,10 @@ process.source = cms.Source("PoolSource",
 process.ttHTreeMaker = cms.EDAnalyzer('csvTreeMaker',
 #    inSample = cms.int32(-100),##
 #    sampleName = cms.string("DoubleEG"),##
-    inSample = cms.int32(-200),##
-    sampleName = cms.string("DoubleMuon"),##
-#    inSample = cms.int32(-300),##
-#    sampleName = cms.string("MuonEG"),##
+#    inSample = cms.int32(-200),##
+#    sampleName = cms.string("DoubleMuon"),##
+    inSample = cms.int32(-300),##
+    sampleName = cms.string("MuonEG"),##
 
     XS = cms.double(1.),
     nGen = cms.double(1.),
