@@ -69,9 +69,9 @@ TH1D* h_csv_wgt_lf[9][4][3];
 //*****************************************************************************
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900 //35867
 // 2017 total lumi = 41370, B = 4764, CtoE = 22005, EtoF = 15187,
-void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 41370) {
+void csvSF_treeReader_13TeV(std::string histofilename, bool useTriggerWeights, bool inclusiveSelection, bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 41370) {
   /// inclusive Selection or not
-  bool inclusiveSelection = !true;//false;
+  // bool inclusiveSelection = !true;//false;
 
   //// speicify the runEras
   string runEra = "full"; // blank means full data, "B", "CtoE", "EtoF"
@@ -200,20 +200,20 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     mySample_sampleName_ = "ttjets";//"TTJets";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150217_005136/0000/";
     //mySample_inputDir_ = "/uscms_data/d2/dpuigh/TTH/miniAOD/CMSSW_7_2_3/src/ttH-LeptonPlusJets/YggdrasilTreeMaker/";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==2300 ){
     mySample_xSec_ = 3*2008.4;//*1.3; // SF = 1.15 for DY
     mySample_nGen_ = 85231710;//85121526; //18181997; //96658928; //49144252;//19198079;//AMC  //49877132;//MLM     //19259739;//19554161; //9006339; //----//19259101;//19310834; //28445565; 
     mySample_sampleName_ = "zjets";//"DYJetsToLL";
     // mySample_inputDir_ = "/eos/uscms/store/user/puigh/DYJetsToLL_M-50_13TeV-madgraph-pythia8/Phys14DR-PU20bx25_PHYS14_25_V1-v1_yggdrasilTree_v1/150216_233924/0000/";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==2310 ){
     mySample_xSec_ = 18610;//*1.3;//correctMe
     mySample_nGen_ = 23023730; //21006092; //35291552; //35256264; //35079800;//Spring16 //22494699;//AMC  //35079776;//MLM   //22482549;//22460462;//21843377;//correctMe
     mySample_sampleName_ = "lowMasszjets";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==2400 ){
     mySample_xSec_ = 20508.9;  
@@ -261,19 +261,19 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     mySample_xSec_ = 35.6;  
     mySample_nGen_ = 7636171;//4495030;//992024; //6952830;//998400;//1000000;//995600;
     mySample_sampleName_ = "singletW";//"T_tW_DR";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==2515 ){
     mySample_xSec_ = 35.6;  
     mySample_nGen_ = 7756300;//5487976; //998276; //6933094;//985000;//999400;//988500;
     mySample_sampleName_ = "singletbarW";//"Tbar_tW_DR";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==2600 ){
     mySample_xSec_ =  12.178; // correctMe???
     mySample_nGen_ = 1818828; //1408239; //1999000;//1996600;//1979988;//1999000;//1965200;
     mySample_sampleName_ = "WW";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==9125 ){
     mySample_xSec_ = 0.5085 * 1.0;// YR3 * BR(all)  
@@ -285,19 +285,19 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     mySample_xSec_ = 1; 
     mySample_nGen_ = 1; 
     mySample_sampleName_ = "DoubleEG";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==-200 ){
     mySample_xSec_ = 1; 
     mySample_nGen_ = 1; 
     mySample_sampleName_ = "DoubleMuon";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
   else if( insample==-300 ){
     mySample_xSec_ = 1; 
     mySample_nGen_ = 1; 
     mySample_sampleName_ = "MuonEG";
-    mySample_inputDir_ = "/afs/cern.ch/work/l/lwming/public/";
+    mySample_inputDir_ = "/user/djschmidt/btaggingSF/jet-tagging-sf-output/in/2018-02-10/";
   }
 
 
@@ -308,13 +308,13 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
   // std::string treefilename = "test/csv_treeMaker*.root";
    // std::string treefilename = "/afs/cern.ch/work/l/lwming/public/DoubleMuon_Run2017B_17Nov2017_11thJan.root";
 
-  std::string s_end = "_histo_" + str_jobN + ".root";
-  if( Njobs==1 ) s_end = "_histo.root";
-  if( Njobs==1 && inclusiveSelection) s_end = "_histo_All.root"; // tpj //change the output file name; checking different dilepton categories
-
-
-  std::string histofilename = Form("CSVHistoFiles/%s_rwt_hf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
-  if( !isHF ) histofilename = Form("CSVHistoFiles/%s_rwt_lf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
+  // std::string s_end = "_histo_" + str_jobN + ".root";
+  // if( Njobs==1 ) s_end = "_histo.root";
+  // if( Njobs==1 && inclusiveSelection) s_end = "_histo_All.root"; // tpj //change the output file name; checking different dilepton categories
+  //
+  //
+  // std::string histofilename = Form("CSVHistoFiles/%s_rwt_hf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
+  // if( !isHF ) histofilename = Form("CSVHistoFiles/%s_rwt_lf_%s_v%i%s%s",taggerName.c_str(), mySample_sampleName_.c_str(), verNum, JES.c_str(), s_end.c_str());
 
   std::cout << "  treefilename  = " << treefilename.c_str() << std::endl;
   std::cout << "  histofilename = " << histofilename.c_str() << std::endl;
@@ -675,7 +675,7 @@ void csvSF_treeReader_13TeV(bool isCSV=1, bool isHF=1, int verNum = 0, string JE
     int MuonElectron = eve->MuonElectron_ ;
 
     double triggerWgt = 1;
-      if(insample >= 0){
+      if(insample >= 0 && useTriggerWeights){
         if(TwoMuon)           triggerWgt = (isHF) ? 0.983314 : 0.881084; //0.938895 : 0.878761; // 0.962157 : 1.08586; //0.981907 : 1.06953; //0.458962 : 0.560058;//0.624151 : 0.717502; //0.723 : 0.84; ///
         else if(TwoElectron)  triggerWgt = (isHF) ? 0.882536 : 0.791254; //0.847295 : 0.78991; // 0.939806 : 1.05302; //0.982675 : 0.93381; //0.480722 : 0.579719;//0.65228 : 0.74553; //0.749 : 0.865;
         else if(MuonElectron) triggerWgt = 0.901382; //0.887031; //0.916678; //0.905494; //0.517857;//0.67727; //0.7948;
