@@ -30,17 +30,17 @@
 #include <sstream>
 
 //void checkVar( bool isHF = true, TString dirPostFix = "", TString varName = "first_jet_pt" ) {
-void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
+void checkVar(bool isCSV = 1, bool isHF = true, TString dirprefix_out = "", TString dirStr_in = "", TString end_str = "", TString leptonType = "") {
 
   TString BTagger = "csv";
   if (!isCSV) BTagger = "cMVA";
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "14thFeb_varImages_" + BTagger + dirPostFix + "/";
+  // TString dirprefix_out = "14thFeb_varImages_" + BTagger + dirPostFix + "/";
 
   struct stat st;
-  if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
+  if( stat(dirprefix_out.Data(),&st) != 0 )  mkdir(dirprefix_out.Data(),0777);
 
 
   /////
@@ -100,23 +100,25 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   // c1->SetRightMargin(0.08);
 
 
-  TString dirStr = "";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
+  // TString dirStr_in = "";//"histoFiles_tHFmLF/"; /// directory change   _ge2jNoTagCut
   TString flavor_file = (isHF) ? "hf" : "lf"; 
   flavor_file.ToLower();
-  TString end_str = "_v5_histo.root"; //// file name change
-  TFile *fileTTJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_ttjets" + end_str);
-  TFile *fileZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_zjets" + end_str);  //// AMC or MLM
-  TFile *filelowMassZJets = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_lowMasszjets" + end_str);
+  // TString end_str = "_v5_histo.root"; //// file name change
+  TFile *fileTTJets = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_ttjets" + end_str);
+  TFile *fileZJets = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_zjets" + end_str);  //// AMC or MLM
+  TFile *filelowMassZJets = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_lowMasszjets" + end_str);
 
-  TFile *filetW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_singletW" + end_str);
-  TFile *filetbarW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_singletbarW" + end_str);
+  TFile *filetW = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_singletW" + end_str);
+  TFile *filetbarW = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_singletbarW" + end_str);
 
-  TFile *fileWW = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_WW" + end_str);
+  TFile *fileWW = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_WW" + end_str);
 
-  TString end_str2 = "_v0_histo.root"; //// file name change
-  TFile *fileData1 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleEG" + end_str2);
-  TFile *fileData2 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
-  TFile *fileData3 = TFile::Open(dirStr+BTagger+"_rwt_" + flavor_file + "_MuonEG" + end_str2);
+  // TString end_str2 = "_v0_histo.root"; //// file name change
+  TString end_str2 = end_str;
+  // TFile *fileData1 = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_DoubleEG" + end_str2);
+  // TFile *fileData2 = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
+  // TFile *fileData3 = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_MuonEG" + end_str2);
+  TFile *fileData = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_" + leptonType + end_str2);
 
 
   ////
@@ -143,8 +145,8 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   for (int i=0; i< var_list.size(); i++){
     TString varName = var_list[i];
 
-  TString plotName = dirprefix + BTagger +"_"+ varName + flavor_file + ".png";
-  // TString plotName = dirprefix + BTagger +"_"+ varName + flavor_file + ".pdf";
+  TString plotName = dirprefix_out + BTagger +"_"+ varName + "_" + flavor_file + ".png";
+  // TString plotName = dirprefix_out + BTagger +"_"+ varName + "_" + flavor_file + ".pdf";
 
   TString h_var_Name = Form("h_%s",varName.Data());
 
@@ -169,14 +171,15 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   double norm_mc = norm_ttjets + norm_zjets + norm_tW + norm_WW + norm_lowMasszjets;
 
-  TH1D* h_var_2 = (TH1D*)fileData1->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleEG");
-  TH1D* h_var_3 = (TH1D*)fileData2->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleMuon");
-  TH1D* h_var_4 = (TH1D*)fileData3->Get(h_var_Name.Data())->Clone(h_var_Name+"_MuonEG");
-
-  TH1D* h_var_data = (TH1D*)h_var_2->Clone(h_var_Name+"_data");
-  h_var_data->Add(h_var_3);
-  h_var_data->Add(h_var_4);
+  // TH1D* h_var_2 = (TH1D*)fileData1->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleEG");
+  // TH1D* h_var_3 = (TH1D*)fileData2->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleMuon");
+  // TH1D* h_var_4 = (TH1D*)fileData3->Get(h_var_Name.Data())->Clone(h_var_Name+"_MuonEG");
+  //
+  // TH1D* h_var_data = (TH1D*)h_var_2->Clone(h_var_Name+"_data");
+  // h_var_data->Add(h_var_3);
+  // h_var_data->Add(h_var_4);
   // TH1D* h_var_data = (TH1D*)h_var_4->Clone(h_var_Name+"_data");
+  TH1D* h_var_data = (TH1D*)fileData->Get(h_var_Name.Data())->Clone(h_var_Name+"_"+leptonType);
 
   double norm_data = h_var_data->Integral( 0, 1+nBins );
 
@@ -194,6 +197,11 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
 
   std::cout << "number of data: " << norm_data << "; Data/MC ratio is " << norm_data/norm_mc << std::endl;
   std::cout << "---------------------------------: " << std::endl;
+  if(varName.Contains("second_jet_csv")){
+    std::ofstream ratioFile(dirprefix_out + flavor_file + "_dataMCratio.txt");
+    ratioFile << std::setprecision(15) << norm_data/norm_mc << std::endl;
+    ratioFile.close();
+  }
   }
   ////
   if( !varName.Contains ("flavour") && !varName.Contains ("nJets") && !varName.Contains ("nTags") 
@@ -371,7 +379,7 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirPostFix = "" ) {
   ///---------
   myC->RedrawAxis();
 
-      // plotName = dirprefix + varName + ".png";
+      // plotName = dirprefix_out + varName + ".png";
 
   myC->Print(plotName.Data());
 
