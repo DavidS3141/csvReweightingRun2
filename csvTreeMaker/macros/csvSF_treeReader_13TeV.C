@@ -69,7 +69,7 @@ TH1D* h_csv_wgt_lf[9][4][3];
 //*****************************************************************************
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900 //35867
 // 2017 total lumi = 41370, B = 4764, CtoE = 22005, EtoF = 15187,
-void csvSF_treeReader_13TeV(std::string histofilename, bool useTriggerWeights, bool inclusiveSelection, bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 41370) {
+void csvSF_treeReader_13TeV(std::string leptonType, std::string histofilename, bool useTriggerWeights, bool inclusiveSelection, bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 41370) {
   /// inclusive Selection or not
   // bool inclusiveSelection = !true;//false;
 
@@ -892,7 +892,12 @@ void csvSF_treeReader_13TeV(std::string histofilename, bool useTriggerWeights, b
       else   lepselection2 = (lepselection1a || lepselection1b);
     }
     // ///// different lepton flavor
-    // lepselection2 = lepselection1a;
+    if (leptonType == "DoubleEG")
+        lepselection2 = lepselection1a;
+    else if (leptonType == "DoubleMuon")
+        lepselection2 = lepselection1b;
+    else if (leptonType == "MuonEG")
+        lepselection2 = lepselection1c;
 
     if ( insample == -100 ) lepselection2 = lepselection1a;
     if ( insample == -200 ) lepselection2 = lepselection1b;
