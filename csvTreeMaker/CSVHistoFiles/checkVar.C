@@ -115,11 +115,17 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirprefix_out = "", TStr
 
   // TString end_str2 = "_v0_histo.root"; //// file name change
   TString end_str2 = end_str;
-  // TFile *fileData1 = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_DoubleEG" + end_str2);
-  // TFile *fileData2 = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
-  // TFile *fileData3 = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_MuonEG" + end_str2);
-  TFile *fileData = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_" + leptonType + end_str2);
+  TFile *fileDataEE;
+  TFile *fileDataMM;
+  TFile *fileDataME;
+  TFile *fileData;
 
+  if (leptonType == "All") {
+    fileDataEE = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_DoubleEG" + end_str2);
+    fileDataMM = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_DoubleMuon" + end_str2);
+    fileDataME = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_MuonEG" + end_str2);
+  } else
+    fileData = TFile::Open(dirStr_in+BTagger+"_rwt_" + flavor_file + "_" + leptonType + end_str2);
 
   ////
   TString lumiinfo = "41.37 fb^{-1} (13 TeV)"; //36.81
@@ -171,15 +177,18 @@ void checkVar(bool isCSV = 1, bool isHF = true, TString dirprefix_out = "", TStr
 
   double norm_mc = norm_ttjets + norm_zjets + norm_tW + norm_WW + norm_lowMasszjets;
 
-  // TH1D* h_var_2 = (TH1D*)fileData1->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleEG");
-  // TH1D* h_var_3 = (TH1D*)fileData2->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleMuon");
-  // TH1D* h_var_4 = (TH1D*)fileData3->Get(h_var_Name.Data())->Clone(h_var_Name+"_MuonEG");
-  //
-  // TH1D* h_var_data = (TH1D*)h_var_2->Clone(h_var_Name+"_data");
-  // h_var_data->Add(h_var_3);
-  // h_var_data->Add(h_var_4);
+  TH1D* h_var_data;
+  if (leptonType == "All") {
+    TH1D* h_var_EE = (TH1D*)fileDataEE->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleEG");
+    TH1D* h_var_MM = (TH1D*)fileDataMM->Get(h_var_Name.Data())->Clone(h_var_Name+"_DoubleMuon");
+    TH1D* h_var_ME = (TH1D*)fileDataME->Get(h_var_Name.Data())->Clone(h_var_Name+"_MuonEG");
+
+    h_var_data = (TH1D*)h_var_EE->Clone(h_var_Name+"_data");
+    h_var_data->Add(h_var_MM);
+    h_var_data->Add(h_var_ME);
   // TH1D* h_var_data = (TH1D*)h_var_4->Clone(h_var_Name+"_data");
-  TH1D* h_var_data = (TH1D*)fileData->Get(h_var_Name.Data())->Clone(h_var_Name+"_"+leptonType);
+  } else
+    h_var_data = (TH1D*)fileData->Get(h_var_Name.Data())->Clone(h_var_Name+"_"+leptonType);
 
   double norm_data = h_var_data->Integral( 0, 1+nBins );
 
