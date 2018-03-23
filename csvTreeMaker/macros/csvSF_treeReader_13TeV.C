@@ -69,7 +69,7 @@ TH1D* h_csv_wgt_lf[9][4][3];
 //*****************************************************************************
 // old data 552.673 + 993.722 = 1546.395 ;  latest 924.846 + 1579.186 = 2504.032    //2549.850 ;2552.241 ; 2612.323 // 589.333 ////2068.329 //3992.165 //12900 //35867
 // 2017 total lumi = 41370, B = 4764, CtoE = 22005, EtoF = 15187,
-void csvSF_treeReader_13TeV(std::string leptonType, std::string histofilename, bool useTriggerWeights, bool inclusiveSelection, bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 41370) {
+void csvSF_treeReader_13TeV(std::string prevVerDir, std::string leptonType, std::string histofilename, bool useTriggerWeights, bool inclusiveSelection, bool isCSV=1, bool isHF=1, int verNum = 0, string JES="", int insample=1, int maxNentries=-1, int Njobs=1, int jobN=1, double intLumi= 41370) {
   /// inclusive Selection or not
   // bool inclusiveSelection = !true;//false;
 
@@ -157,8 +157,8 @@ void csvSF_treeReader_13TeV(std::string leptonType, std::string histofilename, b
   std::string inputFileLF = "data/csv_rwt_lf_IT.root";
 
   if( verNum>0 ){
-    inputFileHF = Form("data/%s_rwt_fit_hf_v%i%s.root", taggerName.c_str(), verNum-1, JES.c_str());
-    inputFileLF = Form("data/%s_rwt_fit_lf_v%i%s.root", taggerName.c_str(), verNum-1, JES.c_str());
+    inputFileHF = Form("%s/%s_rwt_fit_hf_v%i%s.root", prevVerDir.c_str(), taggerName.c_str(), verNum-1, JES.c_str());
+    inputFileLF = Form("%s/%s_rwt_fit_lf_v%i%s.root", prevVerDir.c_str(), taggerName.c_str(), verNum-1, JES.c_str());
 
     /////// update file name
     if(verNum > 3){
@@ -173,8 +173,11 @@ void csvSF_treeReader_13TeV(std::string leptonType, std::string histofilename, b
     std::cout << "\t inputFileLF = " << inputFileLF << std::endl;
   }
 
-  TFile* f_CSVwgt_HF = new TFile ((string(getenv("CMSSW_BASE")) + "/src/csvReweightingRun2/csvTreeMaker/" + inputFileHF).c_str());
-  TFile* f_CSVwgt_LF = new TFile ((string(getenv("CMSSW_BASE")) + "/src/csvReweightingRun2/csvTreeMaker/" + inputFileLF).c_str());
+  TFile* f_CSVwgt_HF = new TFile (inputFileHF.c_str());
+  TFile* f_CSVwgt_LF = new TFile (inputFileLF.c_str());
+
+  // TFile* f_CSVwgt_HF = new TFile ((string(getenv("CMSSW_BASE")) + "/src/csvReweightingRun2/csvTreeMaker/" + inputFileHF).c_str());
+  // TFile* f_CSVwgt_LF = new TFile ((string(getenv("CMSSW_BASE")) + "/src/csvReweightingRun2/csvTreeMaker/" + inputFileLF).c_str());
 
   fillCSVhistos(f_CSVwgt_HF, f_CSVwgt_LF);
 

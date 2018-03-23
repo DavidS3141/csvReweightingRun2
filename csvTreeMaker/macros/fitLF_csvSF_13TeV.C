@@ -27,17 +27,22 @@
 #include "Math/MinimizerOptions.h"
 
 //______________________________________________________________________________
-void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root", int iterNum=0, string JES="", TString dirPostFix = "" ){
+void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root", int iterNum=0, string JES="", TString dirprefix_out = "" ){
 
+  TString dirprefix_out_png = dirprefix_out + "png/";
+  TString dirprefix_out_txt = dirprefix_out + "txt/";
   TString taggerName = "csv";
   if(!isCSV) taggerName = "cMVA";
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images_2018_2_11_fitLF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
+  // TString dirprefix_out_png = "Images_2018_2_11_fitLF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
 
   struct stat st;
-  if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
+  if( stat(dirprefix_out_png.Data(),&st) != 0 )  mkdir(dirprefix_out_png.Data(),0777);
+
+  struct stat st2;
+  if( stat(dirprefix_out_txt.Data(),&st2) != 0 )  mkdir(dirprefix_out_txt.Data(),0777);
 
 
   TString inputFileName_JESUp = "csv_rwt_lf_IT_JESup.root";
@@ -54,7 +59,7 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
   std::cout << " ###===> iteration version " << iterNum << std::endl;
 
 
-  std::string histofilename = Form("%s_rwt_fit_lf_v%d%s.root", taggerName.Data(), iterNum, JES.c_str()) ;
+  std::string histofilename = Form(dirprefix_out+"%s_rwt_fit_lf_v%d%s.root", taggerName.Data(), iterNum, JES.c_str()) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -787,9 +792,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend4->Draw();
 
-    TString img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_only.png";
+    TString img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_only.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_only.pdf";
+    // img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_only.pdf";
     // c1->Print(img);
 
 
@@ -802,9 +807,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend->Draw();
 
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_JES.png";
+    img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_JES.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_JES.pdf";
+    // img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_JES.pdf";
     // c1->Print(img);
 
 
@@ -816,9 +821,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend->Draw();
 
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_HF.png";
+    img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_HF.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_HF.pdf";
+    // img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_HF.pdf";
     // c1->Print(img);
 
 
@@ -830,9 +835,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend->Draw();
 
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats1.png";
+    img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_Stats1.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats1.pdf";
+    // img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_Stats1.pdf";
     // c1->Print(img);
 
 
@@ -844,9 +849,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend->Draw();
 
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats2.png";
+    img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_Stats2.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_Stats2.pdf";
+    // img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_Stats2.pdf";
     // c1->Print(img);
 
 
@@ -899,9 +904,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_ratio_Stats1Down->Draw("histsame");
     legend2->Draw();
 
-    img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats1.png";
+    img = dirprefix_out_png + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats1.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats1.pdf";
+    // img = dirprefix_out_png + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats1.pdf";
     // c1->Print(img);
 
 
@@ -928,9 +933,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_ratio_Stats2Down->Draw("histsame");
     legend3->Draw();
 
-    img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats2.png";
+    img = dirprefix_out_png + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats2.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats2.pdf";
+    // img = dirprefix_out_png + "lfSF_ratio_" + hist_name[iHist] + "_fit_Stats2.pdf";
     // c1->Print(img);
 
 
@@ -948,9 +953,9 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend->Draw();
 
-    img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_All.png";
+    img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_All.png";
     c1->Print(img);
-    // img = dirprefix + "lfSF_" + hist_name[iHist] + "_fit_All.pdf";
+    // img = dirprefix_out_png + "lfSF_" + hist_name[iHist] + "_fit_All.pdf";
     // c1->Print(img);
 
 
@@ -985,7 +990,7 @@ void fitLF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
 
     if( iHist<NumHists_normal ){
-      fit_result_file[iHist].open( Form("testScaleFactorFitResult/fitResult_LF_csvSF_13TeV_%s.txt", bin_name[iHist].Data()) );
+      fit_result_file[iHist].open( Form(dirprefix_out_txt+"fitResult_LF_csvSF_13TeV_%s.txt", bin_name[iHist].Data()) );
       fit_result_file[iHist] << "central\t" << f0->GetExpFormula("p") << "\n";
       fit_result_file[iHist] << "up_hf\t" << f0_HFUp->GetExpFormula("p") << "\n";
       fit_result_file[iHist] << "down_hf\t" << f0_HFDown->GetExpFormula("p") << "\n";

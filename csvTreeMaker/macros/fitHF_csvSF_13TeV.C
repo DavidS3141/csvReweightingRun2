@@ -107,20 +107,25 @@ Double_t fit_csv_5(Double_t *x, Double_t *par)
 
 
 //______________________________________________________________________________
-void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root", int iterNum=0, string JES="", TString dirPostFix = "" ){
+void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root", int iterNum=0, string JES="", TString dirprefix_out = "" ){
 
+  TString dirprefix_out_png = dirprefix_out + "png/";
+  TString dirprefix_out_txt = dirprefix_out + "txt/";
   TString taggerName = "csv";
   if(!isCSV) taggerName = "cMVA";
 
   ofstream fit_result_file;
-  fit_result_file.open (dirPostFix+"fitResult_HF_"+ taggerName +"SF_13TeV.txt");
+  fit_result_file.open (dirprefix_out_txt+"fitResult_HF_"+ taggerName +"SF_13TeV.txt");
 
   TH1::SetDefaultSumw2();
 
-  TString dirprefix = "Images_2018_2_11_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
+  // TString dirprefix_out_png = "Images_2018_2_11_fitHF_"+ taggerName +"SF_13TeV" + dirPostFix + "/";
 
   struct stat st;
-  if( stat(dirprefix.Data(),&st) != 0 )  mkdir(dirprefix.Data(),0777);
+  if( stat(dirprefix_out_png.Data(),&st) != 0 )  mkdir(dirprefix_out_png.Data(),0777);
+
+  struct stat st2;
+  if( stat(dirprefix_out_txt.Data(),&st2) != 0 )  mkdir(dirprefix_out_txt.Data(),0777);
 
   TString inputFileName_JESUp = "csv_rwt_hf_IT_JESup.root";
   TString inputFileName_JESDown = "csv_rwt_hf_IT_JESdown.root";
@@ -139,7 +144,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
   bool makePlots = true;
 
   // std::string histofilename = Form("csv_rwt_fit_hf_v%d%s%s.root",iterNum, JES.c_str(),dirPostFix.Data()) ;
-  std::string histofilename = Form("%s_rwt_fit_hf_v%d%s.root", taggerName.Data(), iterNum, JES.c_str()) ;
+  std::string histofilename = Form(dirprefix_out + "%s_rwt_fit_hf_v%d%s.root", taggerName.Data(), iterNum, JES.c_str()) ;
   TFile histofile(histofilename.c_str(),"recreate");
   histofile.cd();
 
@@ -697,10 +702,10 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
   legend2->Draw();
 
-  TString myimg = dirprefix + "hfSF_cumulative.png";
+  TString myimg = dirprefix_out_png + "hfSF_cumulative.png";
   c1->Print(myimg);
 
-  // myimg = dirprefix + "hfSF_cumulative.pdf";
+  // myimg = dirprefix_out_png + "hfSF_cumulative.pdf";
   // c1->Print(myimg);
   double xMin = csvbins_new[0];
   if(!isCSV) xMin = cMVAbins_new[0];
@@ -926,10 +931,10 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_csv_ratio[iHist]->Draw("pe1same");
 
     legend2->Draw();
- 
-    img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_only.png";
+
+    img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_only.png";
     c1->Print(img);
-    // img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_only.pdf";
+    // img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_only.pdf";
     // c1->Print(img);
 
 
@@ -941,10 +946,10 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_csv_ratio[iHist]->Draw("pe1same");
 
     legend->Draw();
- 
-    img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_JES.png";
+
+    img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_JES.png";
     c1->Print(img);
-    // img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_JES.pdf";
+    // img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_JES.pdf";
     // c1->Print(img);
 
 
@@ -955,10 +960,10 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_csv_ratio[iHist]->Draw("pe1same");
 
     legend->Draw();
- 
-    img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_LF.png";
+
+    img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_LF.png";
     c1->Print(img);
-    // img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_LF.pdf";
+    // img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_LF.pdf";
     // c1->Print(img);
 
 
@@ -969,10 +974,10 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_csv_ratio[iHist]->Draw("pe1same");
 
     legend->Draw();
- 
-    img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_Stats1.png";
+
+    img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_Stats1.png";
     c1->Print(img);
-    // img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_Stats1.pdf";
+    // img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_Stats1.pdf";
     // c1->Print(img);
 
 
@@ -984,10 +989,10 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_csv_ratio[iHist]->Draw("pe1same");
 
     legend->Draw();
- 
-    img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_Stats2.png";
+
+    img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_Stats2.png";
     c1->Print(img);
-    // img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_Stats2.pdf";
+    // img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_Stats2.pdf";
     // c1->Print(img);
 
 
@@ -1005,9 +1010,9 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend->Draw();
 
-    img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_All.png";
+    img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_All.png";
     c1->Print(img);
-    // img = dirprefix + "hfSF_" + hist_name[iHist] + "_fit_All.pdf";
+    // img = dirprefix_out_png + "hfSF_" + hist_name[iHist] + "_fit_All.pdf";
     // c1->Print(img);
 
 
@@ -1263,9 +1268,9 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend3->Draw();
 
-    img = dirprefix + "cSF_" + hist_name[iHist] + "_fit_All.png";
+    img = dirprefix_out_png + "cSF_" + hist_name[iHist] + "_fit_All.png";
     if( makePlots ) c1->Print(img);
-    // img = dirprefix + "cSF_" + hist_name[iHist] + "_fit_All.pdf";
+    // img = dirprefix_out_png + "cSF_" + hist_name[iHist] + "_fit_All.pdf";
     // if( makePlots ) c1->Print(img);
 
 
@@ -1341,9 +1346,9 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     legend4->Draw();
 
-    img = dirprefix + "cSF_totalErr_" + hist_name[iHist] + "_fit_All.png";
+    img = dirprefix_out_png + "cSF_totalErr_" + hist_name[iHist] + "_fit_All.png";
     if( makePlots ) c1->Print(img);
-    // img = dirprefix + "cSF_totalErr_" + hist_name[iHist] + "_fit_All.pdf";
+    // img = dirprefix_out_png + "cSF_totalErr_" + hist_name[iHist] + "_fit_All.pdf";
     // if( makePlots ) c1->Print(img);
 
 
@@ -1390,9 +1395,9 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
 
     //h_csv_ratio_final[iHist]->Draw("histsame");
 
-    img = dirprefix + "cSF_totalErr_compare_" + hist_name[iHist] + "_fit_All.png";
+    img = dirprefix_out_png + "cSF_totalErr_compare_" + hist_name[iHist] + "_fit_All.png";
     if( makePlots ) c1->Print(img);
-    // img = dirprefix + "cSF_totalErr_compare_" + hist_name[iHist] + "_fit_All.pdf";
+    // img = dirprefix_out_png + "cSF_totalErr_compare_" + hist_name[iHist] + "_fit_All.pdf";
     // if( makePlots ) c1->Print(img);
 
 
@@ -1490,7 +1495,7 @@ void fitHF_csvSF_13TeV( bool isCSV = true, TString inputFileName  = "infile.root
     h_fit_csv_ratio_final_rebin->SetLineColor(kBlue);
     h_fit_csv_ratio_final_rebin->Draw("histsame");
 
-    img = dirprefix + "piecewise_fit_compare_" + hist_name[iHist] + ".png";
+    img = dirprefix_out_png + "piecewise_fit_compare_" + hist_name[iHist] + ".png";
     if( makePlots ) c1->Print(img);
 
 
